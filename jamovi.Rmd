@@ -1,0 +1,6 @@
+---
+title: "Contact Experiment Data Analysis (JAMOVI)"
+output: html_notebook
+---
+
+Data analysis done using Jamovi

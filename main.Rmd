@@ -1,0 +1,141 @@
+---
+title: "Contact Experiment Data Analysis"
+output: html_notebook
+---
+
+[//]: # (Reading RAW data) 
+
+For each participant folder in rawdata, load its csv
+**make sure there is no empty folder**, i.e we expect a csv file per participant folder
+
+```{r}
+directoryIndex <- list.dirs(path = "./rawdata", full.names = TRUE)
+
+# for debugging, let's work by now with only the first case
+nrParticipants <- length(directoryIndex[-1])
+#nrParticipants <- 1
+
+# let's declare a list of dataframes (a generic list)
+particpantsRawDF <- list()
+
+for (i in 1:nrParticipants)
+{
+  name <- sprintf("rawdata/%d/%d.csv",i, i)
+  #print(name)
+  particpantsRawDF[[i]] <- read.csv(name)
+}
+
+```
+
+let's transform distances from meters to centimeters.
+
+```{r}
+# for tidyverse
+if(!require(dplyr)){install.packages('dplyr')}
+library(dplyr)
+
+
+for (i in 1 :length(particpantsRawDF))
+{
+  particpantsRawDF[[i]] <-  particpantsRawDF[[i]] %>%
+    mutate(MaxInterpenetrationCM = MaxInterpenetration * 100.0) %>%
+    mutate(AverageInterpenetrationCM = AverageInterpenetration * 100.0) %>%
+    mutate(AverageOffsetFromSurfaceCM = AverageOffsetFromSurface * 100.0)
+}
+```
+
+Discard first X trials per interpenetration feedback condition and then create a summary
+table for each participant. You need to define **nrTrialsPerBlockToRemove**.
+
+```{r}
+
+nrTrialsPerBlockToRemove <- 2
+#trialsToRemove <- seq(from = 1, to = nrTrialsPerBlockToRemove)
+
+experimentDF <- data.frame(
+  ParticipantID=numeric(),
+  InterpenetrationFeedback=character(),
+  NrOfAdjustments=numeric(),
+  InterpenetrationTime=numeric(),
+  TrialTime=numeric(),
+  FirstContactTime=numeric(),
+  MaxInterpenetrationCM=numeric(),
+  AverageInterpenetrationCM=numeric(),
+  AverageOffsetFromSurfaceCM=numeric(),
+  ReleaseReactionTime=numeric(),
+  stringsAsFactors=FALSE)
+
+participantsFilteredDF <- particpantsRawDF
+for (i in 1 :length(particpantsRawDF))
+{
+  participantsFilteredDF[[i]] <-  participantsFilteredDF[[i]] %>%
+    group_by(Block, InterpenetrationFeedback) %>%
+    slice(nrTrialsPerBlockToRemove+1:n())
+    
+  # to double check we are discarding the right rows
+  #print(participantsFilteredDF[[i]]$Trial)
+  
+
+  
+  # create summary (we are not considering here the shading variable)
+  # this time we don't care anymore grouping by "block".
+  # we care now only for interpenetration feedback
+  participantSummaryEntry <- participantsFilteredDF[[i]] %>%
+    group_by(InterpenetrationFeedback) %>%
+    summarise_at(
+      vars(
+        NrOfAdjustments,# maybe nr of adjustments should be treated differently
+        InterpenetrationTime,
+        TrialTime,
+        FirstContactTime,
+        MaxInterpenetrationCM,
+        AverageInterpenetrationCM,
+        AverageOffsetFromSurfaceCM,
+        ReleaseReactionTime),
+      funs(mean(., na.rm=TRUE))
+    )
+  
+  # add 'participant id' column for reference
+  participantSummaryEntry <- participantSummaryEntry %>%
+    mutate(ParticipantID = i)
+  
+  experimentDF <- rbind(experimentDF, participantSummaryEntry)
+}
+
+```
+
+Let's show distribution of dependent variables by interpenetration feedback
+
+```{r}
+
+# for ggplot
+if(!require(ggplot2)){install.packages('ggplot2')}
+library(ggplot2)
+
+experimentElectrotactile <- experimentDF %>%
+                              filter(InterpenetrationFeedback == "Electrotactile")
+
+experimentVisual <- experimentDF %>%
+                              filter(InterpenetrationFeedback == "Visual")
+
+experimentBoth <- experimentDF %>%
+                              filter(InterpenetrationFeedback == "Both")
+
+experimentNoFeedback <- experimentDF %>%
+                              filter(InterpenetrationFeedback == "NoFeedback")
+
+binSize = 0.25# cm
+
+ggplot(data=experimentElectrotactile, aes(AverageInterpenetrationCM)) + 
+  geom_histogram(binwidth = binSize, col="white", size=.5)
+
+ggplot(data=experimentVisual, aes(AverageInterpenetrationCM)) + 
+  geom_histogram(binwidth = binSize, col="white", size=.5)
+
+ggplot(data=experimentBoth, aes(AverageInterpenetrationCM)) + 
+  geom_histogram(binwidth = binSize, col="white", size=.5)
+
+ggplot(data=experimentNoFeedback, aes(AverageInterpenetrationCM)) + 
+  geom_histogram(binwidth = binSize, col="white", size=.5)
+
+```

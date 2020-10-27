@@ -1,0 +1,23 @@
+userId = 11
+block order id = 2
+block order = Electrotactile > Both > NoFeedback > Visual > 
+block order latin square = LatinSquare4C3 (bmlTUX.Scripts.VariableSystem.BlockOrderDefinition)
+experiment start time = 2020-10-21_15-16-24
+experiment end time = 2020-10-21_15-36-28
+cube position = (-0.9, 1.3, 0.6)
+cube scale = (0.2, 0.2, 0.2)
+surface reference altitude = 1.325
+approaching cube local scale = (1.3, 1.3, 1.3)
+resting volume position = (-0.4, 1.3, 0.7)
+resting volume scale = (0.5, 0.5, 0.5)
+visual feedback clamp distance = 0.03
+visual feedback remap = (1.0, 1.2)
+electrotactitle feedback clamp distance = 0.03
+electrotactile feedback remap = pulseWidth: EaseLinear y = 300*t + 200; frequency: Gamma encoding y = 170 * (t + 0)^3 + 30
+electrotactile feedback pulsewidth = 500
+velec = v2_1_i1_c5
+intensities [sensation, pain, actual value]:
+(0.8, 1.2, 1.0)
+(1.3, 1.8, 1.6)
+(0.7, 1.6, 1.2)
+
