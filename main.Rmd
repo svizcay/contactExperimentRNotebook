@@ -3,6 +3,27 @@ title: "Contact Experiment Data Analysis"
 output: html_notebook
 ---
 
+First Step is to load the necessary package, If you dont have them just install them. For jjstatsplot you need to install it remotely.
+Just remove the dash and press enter. Then Press 3 (none package to be updated). 
+
+```{r}
+#remotes::install_github("sbalci/jjstatsplot") #Press 3 !!!!! i.e., installing/Updating none package! 
+library(jmv)
+library(datasets)
+library(plyr)
+library(readr)
+library(dataframes2xls)
+library(dplyr)
+library(data.table)
+library(plyr)
+library(ggstatsplot)
+library(jjstatsplot)
+library(lme4)
+library(lmerTest)
+```
+
+
+
 [//]: # (Reading RAW data) 
 
 For each participant folder in rawdata, load its csv
@@ -16,13 +37,13 @@ nrParticipants <- length(directoryIndex[-1])
 #nrParticipants <- 1
 
 # let's declare a list of dataframes (a generic list)
-particpantsRawDF <- list()
+participantsRawList <- list()
 
 for (i in 1:nrParticipants)
 {
   name <- sprintf("rawdata/%d/%d.csv",i, i)
   #print(name)
-  particpantsRawDF[[i]] <- read.csv(name)
+  participantsRawList[[i]] <- read.csv(name)
 }
 
 ```
@@ -35,9 +56,9 @@ if(!require(dplyr)){install.packages('dplyr')}
 library(dplyr)
 
 
-for (i in 1 :length(particpantsRawDF))
+for (i in 1 :length(participantsRawList))
 {
-  particpantsRawDF[[i]] <-  particpantsRawDF[[i]] %>%
+  participantsRawList[[i]] <-  participantsRawList[[i]] %>%
     mutate(MaxInterpenetrationCM = MaxInterpenetration * 100.0) %>%
     mutate(AverageInterpenetrationCM = AverageInterpenetration * 100.0) %>%
     mutate(AverageOffsetFromSurfaceCM = AverageOffsetFromSurface * 100.0)
@@ -52,6 +73,27 @@ table for each participant. You need to define **nrTrialsPerBlockToRemove**.
 nrTrialsPerBlockToRemove <- 2
 #trialsToRemove <- seq(from = 1, to = nrTrialsPerBlockToRemove)
 
+
+
+participantsFilteredDF <- participantsRawList
+for (i in 1 :length(participantsRawList))
+{
+  participantsFilteredDF[[i]] <-  participantsFilteredDF[[i]] %>%
+    group_by(Block, InterpenetrationFeedback) %>%
+    slice(nrTrialsPerBlockToRemove+1:n())
+  # to double check we are discarding the right rows
+  #print(participantsFilteredDF[[i]]$Trial)
+}
+
+ paok <- bind_rows(participantsFilteredDF, .id = "column_label")
+
+```
+  
+```{r}  
+  # create summary (we are not considering here the shading variable)
+  # this time we don't care anymore grouping by "block".
+  # we care now only for interpenetration feedback
+
 experimentDF <- data.frame(
   ParticipantID=numeric(),
   InterpenetrationFeedback=character(),
@@ -65,22 +107,9 @@ experimentDF <- data.frame(
   ReleaseReactionTime=numeric(),
   stringsAsFactors=FALSE)
 
-participantsFilteredDF <- particpantsRawDF
-for (i in 1 :length(particpantsRawDF))
+ for (i in 1 :length(participantsRawList))
 {
-  participantsFilteredDF[[i]] <-  participantsFilteredDF[[i]] %>%
-    group_by(Block, InterpenetrationFeedback) %>%
-    slice(nrTrialsPerBlockToRemove+1:n())
-    
-  # to double check we are discarding the right rows
-  #print(participantsFilteredDF[[i]]$Trial)
-  
-
-  
-  # create summary (we are not considering here the shading variable)
-  # this time we don't care anymore grouping by "block".
-  # we care now only for interpenetration feedback
-  participantSummaryEntry <- participantsFilteredDF[[i]] %>%
+   participantSummaryEntry <- participantsFilteredDF[[i]] %>%
     group_by(InterpenetrationFeedback) %>%
     summarise_at(
       vars(
@@ -93,7 +122,10 @@ for (i in 1 :length(particpantsRawDF))
         AverageOffsetFromSurfaceCM,
         ReleaseReactionTime),
       funs(mean(., na.rm=TRUE))
+      
     )
+   
+
   
   # add 'participant id' column for reference
   participantSummaryEntry <- participantSummaryEntry %>%
@@ -139,3 +171,4 @@ ggplot(data=experimentNoFeedback, aes(AverageInterpenetrationCM)) +
   geom_histogram(binwidth = binSize, col="white", size=.5)
 
 ```
+
