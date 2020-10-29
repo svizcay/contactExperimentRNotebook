@@ -20,6 +20,7 @@ library(ggstatsplot)
 library(jjstatsplot)
 library(lme4)
 library(lmerTest)
+library(ggplot2)
 ```
 
 
@@ -85,9 +86,10 @@ for (i in 1 :length(participantsRawList))
   #print(participantsFilteredDF[[i]]$Trial)
 }
 
- paok <- bind_rows(participantsFilteredDF, .id = "column_label")
+ df_ForSubsets <- bind_rows(participantsFilteredDF, .id = "column_label") # This df will be used to create the subsets for 1st part and 2nd part of the experiment. 
 
 ```
+  
   
 ```{r}  
   # create summary (we are not considering here the shading variable)
@@ -171,4 +173,240 @@ ggplot(data=experimentNoFeedback, aes(AverageInterpenetrationCM)) +
   geom_histogram(binwidth = binSize, col="white", size=.5)
 
 ```
+Convert from meters to cm (df for subsets)
+
+```{r}
+df_ForSubsets$MaxInterpenetration <- df_ForSubsets$MaxInterpenetration * 100
+df_ForSubsets$AverageInterpenetration <- df_ForSubsets$AverageInterpenetration * 100
+df_ForSubsets$AverageOffsetFromSurface <- df_ForSubsets$AverageOffsetFromSurface * 100
+
+```
+
+
+Now I want to a simple name for our experiment df
+```{r}
+
+df <- experimentDF
+
+df$MaxInterpenetration <- df$MaxInterpenetrationCM
+df$AverageInterpenetration <- df$AverageInterpenetrationCM
+
+```
+
+Cleaning Outliers (The threshold will be 2.5 standard deviations from the mean - in both directions!)
+
+```{r}
+
+# We NA every entry which is beyond our threshold (We focus on the performace variables)
+
+df$MaxInterpenetration[df$MaxInterpenetration > mean(df$MaxInterpenetration) + 2.5 * sd(df$MaxInterpenetration)] <- NA
+
+df$AverageInterpenetration[df$AverageInterpenetration > mean(df$AverageInterpenetration) + 2.5 * sd(df$AverageInterpenetration)] <- NA
+
+df$MaxInterpenetration[df$MaxInterpenetration < mean(df$MaxInterpenetration) - 2.5 * sd(df$MaxInterpenetration)] <- NA
+
+df$AverageInterpenetration[df$AverageInterpenetration < mean(df$AverageInterpenetration) - 2.5 * sd(df$AverageInterpenetration)] <- NA
+
+df_clean <- na.omit(df) #We omit the rows which have NA values !!! and we create a new dataset without outliers.
+
+#we check again the histograms
+hist(df_clean$MaxInterpenetration) 
+hist(df_clean$AverageInterpenetration)
+#Positively skewed!
+
+```
+
+We will run an Anova to see the comparisons amongst the 4 types of feedbcak for our performance variables
+
+```{r}
+jmv::anovaOneW(
+  formula = MaxInterpenetration + AverageInterpenetration  ~ InterpenetrationFeedback,
+  data = df_clean,
+  fishers = TRUE,
+  desc = TRUE,
+  descPlot = TRUE,
+  norm = TRUE,
+  qq = TRUE,
+  eqv = TRUE,
+  phMethod = "gamesHowell",
+  phTest = TRUE,
+  phFlag = TRUE)
+
+```
+The intepretation of an ANOVA: 
+
+1st We check the Normality (distribution of the data) ---- 
+
+Unfortunately, the p value is below .05 for each performance variable,  which means that we dont have a normal distribution. 
+Since the ANOVA is highly dependent on the variance, and our data dont have a normally distributed variance,  
+that means that the results of this ANOVA are utterly unreliable and dont demonstrate the true effects between the independent variables (IVs).
+The IVs in this care are the 4 types of feedback.
+
+
+2nd We check also the homoscedacity of the variance (i.e., if the variance is homogeneous or not). 
+This tests works as the above, i.e., we dont want a p-value below .05 ! 
+In this case the variance is homogeneous 
+
+(Homogeneity of variance (also called homoscedasticity) is used to describe a set of data that has the same variance. Visually, the data will have the same scatter on a scatter plot. If data does not have the same variance, it will show a heteroscedastic (“not the same”) scatter pattern.)
+
+So check the scatter plots above to get it also visually
+
+
+We dont need to check the results further since we have a problem with the Normality of the Variance, 
+so the ANOVA cannot detect and measure the possible effects. 
+
+As you can see the on the Games-Howell Post-Hoc Test, there is NOT any effect between the IVs for every dependent variable (DV). 
+
+
+
+Let's try to correct the problem with the Normality of the Variance. 
+The reason, as we can see above by checking the histograms, is that the distribution is very positively skewed.
+We dont want any type of an intense skew (Though, always there is somewhat of skewness in the data). 
+
+```{r}
+#A common thing to resolve the positive skewness is to covert the data to logarithms 
+
+df_clean$MaxInterpenetration <- log10(df_clean$MaxInterpenetration)
+
+df_clean$AverageInterpenetration <- log10(df_clean$AverageInterpenetration)
+
+# You may run the ANOVA from above, and you will see that we stll violate the Normality assumption.
+
+```
+
+
+```{r}
+#Another more extreme solution for positive skewness
+# For extreme cases like this one we can try also to divide 1 by our values (Re assign )
+
+df_clean$MaxInterpenetration <- 1/df_clean$MaxInterpenetration
+
+df_clean$AverageInterpenetration <- 1/df_clean$AverageInterpenetration
+
+# You may run the ANOVA from above, and you will see that we stll violate the Normality assumption.
+
+```
+
+
+let's check the plots of the means to see what happens (df clean first).
+
+
+```{r}
+
+p1 <- ggstatsplot::ggbetweenstats(
+  data = df_clean,
+  x = "InterpenetrationFeedback",
+  y = "MaxInterpenetration",
+  grvar= NULL,
+  ) 
+
+p2 <- ggstatsplot::ggbetweenstats(
+  data = df_clean,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grvar= NULL,
+) 
+
+plist <- list(p1,p2)
+
+combine_plots2(
+  plotlist = plist, 
+  labels = c("(Maximum)", "(Average)", "(Time)"),
+  title.text = "Interpenetration Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
+  title.color = "black",
+  caption.color = "black")
+
+
+```
+
+
+So,based on the plot, we can see that should be an effect at least between Both (combined feedback) and No Feedback.
+
+Anyhow, we need to go for a non-parametric ANOVA because we cant resolve the normality issue. 
+
+In this case, we want an equivalent of one-way ANOVA (one way = one IV, as we have in our case i.e., our IV is the Interpenetration feedback which has 4 levels i.e., the types of feedback). 
+
+The non-parametric equivalent of one-way ANOVA is the Kruskal – Wallis test. 
+FYI, the equivalent of two-way ANOVA is the Friedmann’s test.
+
+
+So, lets go for a Kruskal-Wallis test. 
+
+```{r}
+kruskal.test(MaxInterpenetration + AverageInterpenetration  ~ InterpenetrationFeedback, data = df_clean) 
+#OK we have a significant effect of the IV levels on the DV. But which one has the greatest effect?
+
+
+#To see the differences between them, we do pairwist test.
+#Though, because we will do multiple comparisons, we also need a post hoc test to avoid a false positive (see multiple comparisons problem https://en.wikipedia.org/wiki/Multiple_comparisons_problem). The most parsimonious adjustment is 
+# the bonferonni correction. 
+pairwise.wilcox.test(df_clean$MaxInterpenetration, df_clean$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+pairwise.wilcox.test(df_clean$AverageInterpenetration, df_clean$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+```
+
+We can see that there is an effect between Visual & NoFeedback, Both & NoFeedback, and the rest comparisons did not 
+show significant differences. 
+
+However, for non-paranetric we dont care for normality so we may even include the outliers (i.e., df dataframe)
+
+```{r}
+#Let's see the means plot for df
+  p3 <- ggstatsplot::ggbetweenstats(
+    data = df,
+    x = "InterpenetrationFeedback",
+    y = "MaxInterpenetration",
+    grvar= NULL,
+  ) 
+
+p4 <- ggstatsplot::ggbetweenstats(
+  data = df,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grvar= NULL,
+) 
+
+plist2 <- list(p3,p4)
+
+combine_plots2(
+  plotlist = plist2, 
+  labels = c("(Maximum)", "(Average)"),
+  title.text = "Interpenetration Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
+  title.color = "black",
+  caption.color = "black")
+
+
+```
+OK, it very similar to the cleaned one
+
+we may now run the non-parametric ANOVA with df now
+
+```{r}
+
+
+```
+
+
+
+
+We check simple histograms to understand the skewness of the data
+```{r}
+
+hist(paok$MaxInterpenetration) #Positively Skewed 
+hist(paok$AverageInterpenetration) #Positively Skewed 
+hist(paok$AverageOffsetFromSurface) #Positively Skewed 
+
+#The skew is characterised as a positive because the slope is going downwards from left to right
+
+#The reverse direction is called negatively skewed.
+
+```
+
+
+
+
+
 
