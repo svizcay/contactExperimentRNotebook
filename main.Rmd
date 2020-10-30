@@ -313,7 +313,7 @@ combine_plots2(
   plotlist = plist, 
   labels = c("(Maximum)", "(Average)", "(Time)"),
   title.text = "Interpenetration Violin Plots",
-  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
   title.color = "black",
   caption.color = "black")
 
@@ -357,7 +357,8 @@ However, for non-paranetric we dont care for normality so we may even include th
   p3 <- ggstatsplot::ggbetweenstats(
     data = df,
     x = "InterpenetrationFeedback",
-    y = "MaxInterpenetration",
+    y = "MaxInterpenetration", 
+    x_legeng =
     grvar= NULL,
   ) 
 
@@ -374,7 +375,7 @@ combine_plots2(
   plotlist = plist2, 
   labels = c("(Maximum)", "(Average)"),
   title.text = "Interpenetration Violin Plots",
-  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
   title.color = "black",
   caption.color = "black")
 
