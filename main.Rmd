@@ -339,26 +339,23 @@ kruskal.test(MaxInterpenetration + AverageInterpenetration  ~ InterpenetrationFe
 
 
 #To see the differences between them, we do pairwist test.
-#Though, because we will do multiple comparisons, we also need a post hoc test to avoid a false positive (see multiple comparisons problem https://en.wikipedia.org/wiki/Multiple_comparisons_problem). The most parsimonious adjustment is 
+#Though, because we will do multiple comparisons, we also need a post hoc test to avoid a false positive (see multiple comparisons problem: https://en.wikipedia.org/wiki/Multiple_comparisons_problem). The most parsimonious adjustment is 
 # the bonferonni correction. 
 pairwise.wilcox.test(df_clean$MaxInterpenetration, df_clean$InterpenetrationFeedback, p.adjust.method = "bonferroni")
 
 pairwise.wilcox.test(df_clean$AverageInterpenetration, df_clean$InterpenetrationFeedback, p.adjust.method = "bonferroni")
-
 ```
 
 We can see that there is an effect between Visual & NoFeedback, Both & NoFeedback, and the rest comparisons did not 
 show significant differences. 
 
 However, for non-paranetric we dont care for normality so we may even include the outliers (i.e., df dataframe)
-
 ```{r}
 #Let's see the means plot for df
   p3 <- ggstatsplot::ggbetweenstats(
     data = df,
     x = "InterpenetrationFeedback",
     y = "MaxInterpenetration", 
-    x_legeng =
     grvar= NULL,
   ) 
 
@@ -387,27 +384,166 @@ we may now run the non-parametric ANOVA with df now
 
 ```{r}
 
+kruskal.test(MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback, data = df)
+
+pairwise.wilcox.test(df$MaxInterpenetration, df$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+pairwise.wilcox.test(df$AverageInterpenetration, df$InterpenetrationFeedback, p.adjust.method = "bonferroni")
 
 ```
 
 
+Now let's split our dataframe into two subtests (1st part and 2nd part of the experiment) to inspect whether there is
+an effect of familirisation with electrotactile feedback, as well as a learning effect
+```{r}
+df_ForSubsets$ID <- df_ForSubsets$column_label
+
+Data_1st <- subset(df_ForSubsets, df_ForSubsets$Block < 4)
+
+Data_2nd <- subset(df_ForSubsets, df_ForSubsets$Block > 3)
+
+Data_1st <- select(Data_1st, "ID", "Age", "Gender", "InterpenetrationFeedback", "MaxInterpenetration", "AverageInterpenetration")
+Data_2nd <- select(Data_2nd, "ID", "Age", "Gender", "InterpenetrationFeedback", "MaxInterpenetration", "AverageInterpenetration")
+
+Data_1st <- aggregate(. ~ ID + InterpenetrationFeedback + Age + Gender, Data_1st, mean)
+
+Data_2nd <- aggregate(. ~ ID + InterpenetrationFeedback + Age + Gender, Data_2nd, mean)
+```
 
 
-We check simple histograms to understand the skewness of the data
+
+No we wil check the same analyses (ANOVA Parametric, ANOVA Non-Parametric, Pairwise Comps) for each subset.
 ```{r}
 
-hist(paok$MaxInterpenetration) #Positively Skewed 
-hist(paok$AverageInterpenetration) #Positively Skewed 
-hist(paok$AverageOffsetFromSurface) #Positively Skewed 
+# 1st Part
+jmv::anovaOneW(
+  formula = MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback,
+  data = Data_1st,
+  fishers = TRUE,
+  desc = TRUE,
+  descPlot = TRUE,
+  norm = TRUE,
+  qq = TRUE,
+  eqv = TRUE,
+  phMethod = "gamesHowell",
+  phTest = TRUE,
+  phFlag = TRUE)
 
-#The skew is characterised as a positive because the slope is going downwards from left to right
 
-#The reverse direction is called negatively skewed.
+kruskal.test(MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback, data = Data_1st)
+
+pairwise.wilcox.test(Data_1st$MaxInterpenetration, Data_1st$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+pairwise.wilcox.test(Data_1st$AverageInterpenetration, Data_1st$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+par(mfrow=c(2,2))
+
+
+  p5 <- ggstatsplot::ggbetweenstats(
+    data = Data_1st,
+    x = "InterpenetrationFeedback",
+    y = "MaxInterpenetration",
+    grvar= NULL,
+  ) 
+
+p6 <- ggstatsplot::ggbetweenstats(
+  data = Data_1st,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grvar= NULL,
+) 
+
+plist3 <- list(p5,p6)
+
+combine_plots2(
+  plotlist = plist3, 
+  labels = c("(Maximum)", "(Average)"),
+  title.text = "Interpenetration Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
+  title.color = "black",
+  caption.color = "black")
+
+
+#Second Part
+
+jmv::anovaOneW(
+  formula = MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback,
+  data = Data_2nd,
+  fishers = TRUE,
+  desc = TRUE,
+  descPlot = TRUE,
+  norm = TRUE,
+  qq = TRUE,
+  eqv = TRUE,
+  phMethod = "gamesHowell",
+  phTest = TRUE,
+  phFlag = TRUE)
+
+
+kruskal.test(MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback, data = Data_2nd)
+
+pairwise.wilcox.test(Data_2nd$MaxInterpenetration, Data_2nd$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+pairwise.wilcox.test(Data_2nd$AverageInterpenetration, Data_2nd$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+
+  p7 <- ggstatsplot::ggbetweenstats(
+    data = Data_2nd,
+    x = "InterpenetrationFeedback",
+    y = "MaxInterpenetration",
+    grvar= NULL,
+  ) 
+
+p8 <- ggstatsplot::ggbetweenstats(
+  data = Data_2nd,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grvar= NULL,
+) 
+
+plist4 <- list(p7,p8)
+
+combine_plots2(
+  plotlist = plist4, 
+  labels = c("(Maximum)", "(Average)"),
+  title.text = "Interpenetration Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
+  title.color = "black",
+  caption.color = "black")
 
 ```
 
 
+```{r}
+
+```
 
 
+```{r}
+
+```
 
 
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
