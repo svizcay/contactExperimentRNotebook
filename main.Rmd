@@ -5,6 +5,7 @@ output: html_notebook
 
 First Step is to load the necessary package, If you dont have them just install them. For jjstatsplot you need to install it remotely.
 Just remove the dash and press enter. Then Press 3 (none package to be updated). 
+?group_by()
 
 ```{r}
 #remotes::install_github("sbalci/jjstatsplot") #Press 3 !!!!! i.e., installing/Updating none package! 
@@ -21,6 +22,9 @@ library(jjstatsplot)
 library(lme4)
 library(lmerTest)
 library(ggplot2)
+library(rstatix)
+library(coin)
+library(ARTool)
 ```
 
 
@@ -71,33 +75,32 @@ table for each participant. You need to define **nrTrialsPerBlockToRemove**.
 
 ```{r}
 
-nrTrialsPerBlockToRemove <- 2
+nrTrialsPerBlockToRemove <- 1
 #trialsToRemove <- seq(from = 1, to = nrTrialsPerBlockToRemove)
 
-
-
 participantsFilteredDF <- participantsRawList
+
 for (i in 1 :length(participantsRawList))
 {
   participantsFilteredDF[[i]] <-  participantsFilteredDF[[i]] %>%
-    group_by(Block, InterpenetrationFeedback) %>%
+    group_by(Block, InterpenetrationFeedback, FullyShaded) %>% # I have added here the fully shaded because we need to do a 
     slice(nrTrialsPerBlockToRemove+1:n())
   # to double check we are discarding the right rows
   #print(participantsFilteredDF[[i]]$Trial)
 }
 
- df_ForSubsets <- bind_rows(participantsFilteredDF, .id = "column_label") # This df will be used to create the subsets for 1st part and 2nd part of the experiment. 
+ df_ForSubsets <- bind_rows(participantsFilteredDF, .id = "ID") # This df will be used to create the subsets for 1st part and 2nd part of the experiment. 
 
 ```
   
   
 ```{r}  
-  # create summary (we are not considering here the shading variable)
+  # create summary 
   # this time we don't care anymore grouping by "block".
-  # we care now only for interpenetration feedback
+  # we care now only for interpenetration feedback and shaded
 
 experimentDF <- data.frame(
-  ParticipantID=numeric(),
+  ID=numeric(),
   InterpenetrationFeedback=character(),
   NrOfAdjustments=numeric(),
   InterpenetrationTime=numeric(),
@@ -109,10 +112,11 @@ experimentDF <- data.frame(
   ReleaseReactionTime=numeric(),
   stringsAsFactors=FALSE)
 
+
  for (i in 1 :length(participantsRawList))
 {
    participantSummaryEntry <- participantsFilteredDF[[i]] %>%
-    group_by(InterpenetrationFeedback) %>%
+    group_by(Age, Gender, InterpenetrationFeedback, FullyShaded) %>%     ##### Added FullyShaded here
     summarise_at(
       vars(
         NrOfAdjustments,# maybe nr of adjustments should be treated differently
@@ -128,10 +132,10 @@ experimentDF <- data.frame(
     )
    
 
-  
-  # add 'participant id' column for reference
+# add 'participant id' column for reference
   participantSummaryEntry <- participantSummaryEntry %>%
-    mutate(ParticipantID = i)
+    mutate(ID = i)  
+
   
   experimentDF <- rbind(experimentDF, participantSummaryEntry)
 }
@@ -323,18 +327,20 @@ combine_plots2(
 
 So,based on the plot, we can see that should be an effect at least between Both (combined feedback) and No Feedback.
 
-Anyhow, we need to go for a non-parametric ANOVA because we cant resolve the normality issue. 
+Anyhow, we need to go for a non-parametric Repeated measures ANOVA because we cant resolve the normality issue. 
 
 In this case, we want an equivalent of one-way ANOVA (one way = one IV, as we have in our case i.e., our IV is the Interpenetration feedback which has 4 levels i.e., the types of feedback). 
 
-The non-parametric equivalent of one-way ANOVA is the Kruskal – Wallis test. 
-FYI, the equivalent of two-way ANOVA is the Friedmann’s test.
+The non-parametric equivalent of one-way Repeated measure ANOVA is the Friedman's test. 
 
 
-So, lets go for a Kruskal-Wallis test. 
+So, lets go for a Friedman's test. 
 
 ```{r}
-kruskal.test(MaxInterpenetration + AverageInterpenetration  ~ InterpenetrationFeedback, data = df_clean) 
+friedman_test(MaxInterpenetration + AverageInterpenetration  ~ InterpenetrationFeedback + Shaded, data = df_clean) 
+?friedman_test()
+
+
 #OK we have a significant effect of the IV levels on the DV. But which one has the greatest effect?
 
 
@@ -380,7 +386,7 @@ combine_plots2(
 ```
 OK, it very similar to the cleaned one
 
-we may now run the non-parametric ANOVA with df now
+we may now run the non-parametric Repeated measures ANOVA with df now
 
 ```{r}
 
@@ -389,6 +395,8 @@ kruskal.test(MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFee
 pairwise.wilcox.test(df$MaxInterpenetration, df$InterpenetrationFeedback, p.adjust.method = "bonferroni")
 
 pairwise.wilcox.test(df$AverageInterpenetration, df$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+
+?pairwise.wilcox.test()
 
 ```
 
@@ -412,7 +420,7 @@ Data_2nd <- aggregate(. ~ ID + InterpenetrationFeedback + Age + Gender, Data_2nd
 
 
 
-No we wil check the same analyses (ANOVA Parametric, ANOVA Non-Parametric, Pairwise Comps) for each subset.
+No we wil check the same analyses (ANOVA Parametric, ANOVA non-parametric Repeated measures, Pairwise Comps) for each subset.
 ```{r}
 
 # 1st Part
@@ -514,8 +522,212 @@ combine_plots2(
 ```
 
 
+
+
+
+############################# Preparation of the datasets for t-tests: 1st part vs 2nd part for each type of feedback
+```{r}
+#Divide them to before and after
+B1 <- filter(Data_1st, InterpenetrationFeedback == "Both")
+B1$B1MaxInt <- select(B1, MaxInterpenetration) 
+B1$B1AvInt <- select(B1, AverageInterpenetration)
+
+El1 <-filter(Data_1st, InterpenetrationFeedback == "Electrotactile")
+El1$El1Maxint <- select(El1, MaxInterpenetration) 
+El1$El1AvInt  <- select(El1, AverageInterpenetration)
+
+No1 <- filter(Data_1st, InterpenetrationFeedback == "NoFeedback")
+No1$No1MaxInt <- select(No1, MaxInterpenetration) 
+No1$No1AvInt <- select(No1, AverageInterpenetration)
+
+V1 <- filter(Data_1st, InterpenetrationFeedback == "Visual")
+V1$V1MaxInt <- select(V1, MaxInterpenetration) 
+V1$V1AvInt <- select(V1, AverageInterpenetration)
+
+B2 <- filter(Data_2nd, InterpenetrationFeedback == "Both")
+B2$B2MaxInt <- select(B2, MaxInterpenetration) 
+B2$B2AvInt <- select(B2, AverageInterpenetration)
+
+El2 <-filter(Data_2nd, InterpenetrationFeedback == "Electrotactile")
+El2$El2Maxint <- select(El2, MaxInterpenetration) 
+El2$El2AvInt  <- select(El2, AverageInterpenetration)
+
+No2 <- filter(Data_2nd, InterpenetrationFeedback == "NoFeedback")
+No2$No2MaxInt <- select(No2, MaxInterpenetration) 
+No2$No2AvInt <- select(No2, AverageInterpenetration)
+
+V2 <- filter(Data_2nd, InterpenetrationFeedback == "Visual")
+V2$V2MaxInt <- select(V2, MaxInterpenetration) 
+V2$V2AvInt <- select(V2, AverageInterpenetration)
+
+
+#Merge the new datasets  (e.g., B1 & B2) and now we have two variables for the DVs (e.g., Max Interpenetration)
+#the one is for the 1st part and the other for the 2nd part
+
+Rm1 <- merge(B1,B2, by = c("ID", "Gender", "Age"))
+B_MaxInt <- Rm1  %>%
+  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
+
+B_AvInt <- Rm1  %>%
+  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
+
+Rm2 <- merge(El1,El2, by = c("ID", "Gender", "Age"))
+E_MaxInt <- Rm2  %>%
+  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
+E_AvInt <- Rm2  %>%
+  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
+
+Rm3 <- merge(No1, No2, by = c("ID", "Gender", "Age"))
+N_MaxInt <- Rm3  %>%
+  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
+N_AvInt <- Rm3  %>%
+  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
+
+Rm4 <- merge(V1,V2, by = c("ID", "Gender", "Age"))
+V_MaxInt <- Rm4  %>%
+  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
+V_AvInt <- Rm4  %>%
+  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
+
+#Now we merge all together to runt the test
+Rm5 <- merge(Rm1,Rm2, by = c("ID", "Gender", "Age"))
+
+
+Rm6 <- merge(Rm3,Rm4, by = c("ID", "Gender", "Age"))
+
+
+RM <- merge(Rm5, Rm6, by = c("ID", "Gender", "Age"))
+RM <- select(RM,
+             - "InterpenetrationFeedback.x.x.y",
+             - "MaxInterpenetration.x.y.y",
+             - "MaxInterpenetration.y.x.y",
+             - "MaxInterpenetration.y.y.x",
+             - "MaxInterpenetration.y.y.y",
+             - "AverageInterpenetration.x.x.y",
+             - "AverageInterpenetration.x.y.y",
+             - "AverageInterpenetration.y.x.y",
+             - "AverageInterpenetration.y.y.x",
+             - "AverageInterpenetration.y.y.y"
+)
+
+RM <- select(RM,
+             - "InterpenetrationFeedback.x.x.x",
+             - "InterpenetrationFeedback.y.x.x",
+             - "InterpenetrationFeedback.x.y.x",
+             - "InterpenetrationFeedback.x.y.y", 
+             - "InterpenetrationFeedback.y.x.x",
+             - "InterpenetrationFeedback.y.x.y",
+             - "InterpenetrationFeedback.y.y.x",
+             - "InterpenetrationFeedback.y.y.y",
+             - "MaxInterpenetration.x.x.x",
+             - "MaxInterpenetration.y.x.x", 
+             - "MaxInterpenetration.x.y.x",
+             - "MaxInterpenetration.x.x.y",
+             - "AverageInterpenetration.x.x.x",
+             - "AverageInterpenetration.y.x.x", 
+             - "AverageInterpenetration.x.y.x",
+)
+
+RM$B1Maxint <- RM$B1MaxInt$MaxInterpenetration
+RM$B2Maxint <- RM$B2MaxInt$MaxInterpenetration
+RM$El1Maxint <- RM$El1Maxint$MaxInterpenetration
+RM$El2Maxint <- RM$El2Maxint$MaxInterpenetration
+RM$V1Maxint <- RM$V1MaxInt$MaxInterpenetration
+RM$V2Maxint <- RM$V2MaxInt$MaxInterpenetration
+RM$No1Maxint <- RM$No1MaxInt$MaxInterpenetration
+RM$No2Maxint <- RM$No2MaxInt$MaxInterpenetration
+
+RM$B1AvInt <- RM$B1AvInt$AverageInterpenetration
+RM$B2AvInt <- RM$B2AvInt$AverageInterpenetration
+RM$El1AvInt <- RM$El1AvInt$AverageInterpenetration
+RM$El2AvInt <- RM$El2AvInt$AverageInterpenetration
+RM$V1AvInt <- RM$V1AvInt$AverageInterpenetration
+RM$V2AvInt <- RM$V2AvInt$AverageInterpenetration
+RM$No1AvInt <- RM$No1AvInt$AverageInterpenetration
+RM$No2AvInt <- RM$No2AvInt$AverageInterpenetration
+
+
+
+```
+
+
+
+Now we are ready to run the T-tests 1st vs 2nd part, as wel as to calculate the effect size for each one comparison. The tested hypothesis will be that the Maximum or the Averaged interpenetration will be greater in each condition (type of feedback) in the first part than the 2n part. However, our research hypothesis is that the effect size will be greater for the electrotactile and both.
 ```{r}
 
+wilcox.test(RM$B1Maxint,RM$B2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+
+stats_B_Max <- wilcox_effsize(B_MaxInt, 
+               formula = MaxInt ~ part,
+               paired =  TRUE, # The type of t-test is a paired
+               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
+               nboot = 1000 #bootstrapping 1000 samples
+               )
+
+View(stats_B_Max)
+
+wilcox.test(RM$El1Maxint,RM$El2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+
+stats_E_Max <- wilcox_effsize(E_MaxInt, 
+               formula = MaxInt ~ part,
+               paired =  TRUE, # The type of t-test is a paired
+               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
+               nboot = 1000 #bootstrapping 1000 samples
+               )
+View(stats_E_Max)
+
+wilcox.test(RM$V1Maxint, RM$V2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+
+stats_V_Max <- wilcox_effsize(V_MaxInt, 
+               formula = MaxInt ~ part,
+               paired =  TRUE, # The type of t-test is a paired
+               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
+               nboot = 1000 #bootstrapping 1000 samples
+               )
+View(stats_V_Max)
+
+
+wilcox.test(RM$No1Maxint, RM$No2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+stats_N_Max <- wilcox_effsize(V_MaxInt, 
+               formula = MaxInt ~ part,
+               paired =  TRUE, # The type of t-test is a paired
+               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
+               nboot = 1000 #bootstrapping 1000 samples
+               )
+View(stats_N_Max)
+
+
+
+
+#For Averaged 
+
+wilcox.test(RM$B1AvInt,RM$B2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+
+wilcox.test(RM$El1AvInt,RM$El2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+
+wilcox.test(RM$V1AvInt, RM$V2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+
+wilcox.test(RM$No1AvInt, RM$No2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
+
+
+
+               
+wilcox_effsize(B_MaxInt, 
+               formula = B_MaxInt$MaxInt ~ B_MaxInt$part,
+               comparisons = list(c(B_MaxInt$B1MaxInt, B_MaxInt$B2MaxInt)),
+               paired =  TRUE, # The type of t-test is a paired
+               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
+               nboot = 1000 #bootstrapping 1000 samples
+               )
+
+wilcox_effsize(RM, 
+               formula = B1MaxInt ~ B2MaxInt, #the formula is redundant here so we just add the 1 to consider random effects  
+               comparisons = list(c("RM$B1MaxInt", "RM$B2MaxInt")),
+               paired =  TRUE, # The type of t-test is a paired
+               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
+               ci = TRUE, #provide the confidence intervals
+               nboot = 1000 #bootstrapping 1000 samples
+               )
 ```
 
 
@@ -524,26 +736,9 @@ combine_plots2(
 ```
 
 
-```{r}
-
-```
 
 ```{r}
 
 ```
 
-```{r}
 
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
