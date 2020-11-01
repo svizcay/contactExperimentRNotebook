@@ -71,7 +71,7 @@ names(NewData)
 Let's average the data. This will create 8 (Eight) averaged rows per participant. 
 The logic is 4 Types of interpenetration feedback * 2 Shade conditions (4 x 2 = 8)   
 ```{r}  
-Averaged_Data <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, NewData, mean)
+Averaged_Data <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + FullyShaded, NewData, mean)
 
 
 df <- Averaged_Data # A more Convenient name for our dataset
@@ -560,7 +560,7 @@ data_clean <- na.omit(data)
 newDF <- select(data_clean, -"Trial", -"TrialInBlock", -"NrOfAdjustments" ,
                   -"Completed" , -"Attempts" , -"Skipped", -"Extreme1", -"Extreme2")
 
-AVnewDF <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, newDF, mean)
+AVnewDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + FullyShaded, newDF, mean)
 
 AVnewDF$MaxInterpenetration <- AVnewDF$MaxInterpenetration * 100
 AVnewDF$MaxInterpenetration <- AVnewDF$MaxInterpenetration * 100
@@ -821,8 +821,7 @@ The rest remain as we interpreted above for the plots using the df_clean2
 
 Let's check the Two Way Repeated Measures ANOVA now
 ```{r}
-
-res.aov <- anova_test(
+"res.aov <- anova_test(
   data = AVnewDF, dv = MaxInterpenetration, wid = ID,
   within = c(InterpenetrationFeedback, FullyShaded)
   )
@@ -831,6 +830,8 @@ res.aov <- anova_test(
 RM <- lmer(MaxInterpenetration ~  InterpenetrationFeedback*FullyShaded + (1|ID), data = AVnewDF)
 anova(RM)
 summary(RM)
+"
+
 
 ```
 
@@ -866,9 +867,9 @@ Data_2nd <- subset(newDF, newDF$Block > 3)
 Data_1st <- select(Data_1st, "ID", "Age", "Gender", "InterpenetrationFeedback", "MaxInterpenetration", "AverageInterpenetration")
 Data_2nd <- select(Data_2nd, "ID", "Age", "Gender", "InterpenetrationFeedback", "MaxInterpenetration", "AverageInterpenetration")
 
-Data_1st <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, Data_1st, mean)
+Data_1st <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + FullyShaded, Data_1st, mean)
 
-Data_2nd <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, Data_2nd, mean)
+Data_2nd <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + FullyShaded, Data_2nd, mean)
 ```
 
 
