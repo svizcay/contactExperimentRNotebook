@@ -25,378 +25,833 @@ library(ggplot2)
 library(rstatix)
 library(coin)
 library(ARTool)
+library(ggpubr)
+library(tidyverse)
 ```
 
 
 
-[//]: # (Reading RAW data) 
-
-For each participant folder in rawdata, load its csv
-**make sure there is no empty folder**, i.e we expect a csv file per participant folder
-
+Import and merge all the csv files (x.csv where x = ID) of the folder. Note, that the ID is has already been added as column 
 ```{r}
-directoryIndex <- list.dirs(path = "./rawdata", full.names = TRUE)
-
-# for debugging, let's work by now with only the first case
-nrParticipants <- length(directoryIndex[-1])
-#nrParticipants <- 1
-
-# let's declare a list of dataframes (a generic list)
-participantsRawList <- list()
-
-for (i in 1:nrParticipants)
-{
-  name <- sprintf("rawdata/%d/%d.csv",i, i)
-  #print(name)
-  participantsRawList[[i]] <- read.csv(name)
-}
-
+data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
+                       pattern = "*.csv", full.names = TRUE) %>% 
+  lapply(read_csv) %>%                                            # Store all files in list
+  bind_rows                                                       # Combine data sets into one data set 
+data 
 ```
 
-let's transform distances from meters to centimeters.
-
-```{r}
-# for tidyverse
-if(!require(dplyr)){install.packages('dplyr')}
-library(dplyr)
-
-
-for (i in 1 :length(participantsRawList))
-{
-  participantsRawList[[i]] <-  participantsRawList[[i]] %>%
-    mutate(MaxInterpenetrationCM = MaxInterpenetration * 100.0) %>%
-    mutate(AverageInterpenetrationCM = AverageInterpenetration * 100.0) %>%
-    mutate(AverageOffsetFromSurfaceCM = AverageOffsetFromSurface * 100.0)
-}
-```
 
 Discard first X trials per interpenetration feedback condition and then create a summary
 table for each participant. You need to define **nrTrialsPerBlockToRemove**.
-
 ```{r}
 
 nrTrialsPerBlockToRemove <- 1
 #trialsToRemove <- seq(from = 1, to = nrTrialsPerBlockToRemove)
 
-participantsFilteredDF <- participantsRawList
-
-for (i in 1 :length(participantsRawList))
-{
-  participantsFilteredDF[[i]] <-  participantsFilteredDF[[i]] %>%
-    group_by(Block, InterpenetrationFeedback, FullyShaded) %>% # I have added here the fully shaded because we need to do a 
+  data <-  data %>%
+    group_by(ID, Block, InterpenetrationFeedback, FullyShaded) %>% # I have added here the fully shaded 
     slice(nrTrialsPerBlockToRemove+1:n())
   # to double check we are discarding the right rows
-  #print(participantsFilteredDF[[i]]$Trial)
-}
+  #print(data[[i]]$Trial)
 
- df_ForSubsets <- bind_rows(participantsFilteredDF, .id = "ID") # This df will be used to create the subsets for 1st part and 2nd part of the experiment. 
+ # This df will be used to create the subsets for 1st part and 2nd part of the experiment. 
 
 ```
   
-  
+
+Discard unnecessary variables 
+
+```{r}
+NewData <- data
+NewData <- select(NewData,-"Block", -"Trial", -"TrialInBlock", -"NrOfAdjustments" ,
+                  -"Completed" , -"Attempts" , -"Skipped")
+names(NewData)
+```
+
+Let's average the data. This will create 8 (Eight) averaged rows per participant. 
+The logic is 4 Types of interpenetration feedback * 2 Shade conditions (4 x 2 = 8)   
 ```{r}  
-  # create summary 
-  # this time we don't care anymore grouping by "block".
-  # we care now only for interpenetration feedback and shaded
-
-experimentDF <- data.frame(
-  ID=numeric(),
-  InterpenetrationFeedback=character(),
-  NrOfAdjustments=numeric(),
-  InterpenetrationTime=numeric(),
-  TrialTime=numeric(),
-  FirstContactTime=numeric(),
-  MaxInterpenetrationCM=numeric(),
-  AverageInterpenetrationCM=numeric(),
-  AverageOffsetFromSurfaceCM=numeric(),
-  ReleaseReactionTime=numeric(),
-  stringsAsFactors=FALSE)
+Averaged_Data <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, NewData, mean)
 
 
- for (i in 1 :length(participantsRawList))
-{
-   participantSummaryEntry <- participantsFilteredDF[[i]] %>%
-    group_by(Age, Gender, InterpenetrationFeedback, FullyShaded) %>%     ##### Added FullyShaded here
-    summarise_at(
-      vars(
-        NrOfAdjustments,# maybe nr of adjustments should be treated differently
-        InterpenetrationTime,
-        TrialTime,
-        FirstContactTime,
-        MaxInterpenetrationCM,
-        AverageInterpenetrationCM,
-        AverageOffsetFromSurfaceCM,
-        ReleaseReactionTime),
-      funs(mean(., na.rm=TRUE))
-      
-    )
-   
-
-# add 'participant id' column for reference
-  participantSummaryEntry <- participantSummaryEntry %>%
-    mutate(ID = i)  
-
-  
-  experimentDF <- rbind(experimentDF, participantSummaryEntry)
-}
-
-```
-
-Let's show distribution of dependent variables by interpenetration feedback
-
-```{r}
-
-# for ggplot
-if(!require(ggplot2)){install.packages('ggplot2')}
-library(ggplot2)
-
-experimentElectrotactile <- experimentDF %>%
-                              filter(InterpenetrationFeedback == "Electrotactile")
-
-experimentVisual <- experimentDF %>%
-                              filter(InterpenetrationFeedback == "Visual")
-
-experimentBoth <- experimentDF %>%
-                              filter(InterpenetrationFeedback == "Both")
-
-experimentNoFeedback <- experimentDF %>%
-                              filter(InterpenetrationFeedback == "NoFeedback")
-
-binSize = 0.25# cm
-
-ggplot(data=experimentElectrotactile, aes(AverageInterpenetrationCM)) + 
-  geom_histogram(binwidth = binSize, col="white", size=.5)
-
-ggplot(data=experimentVisual, aes(AverageInterpenetrationCM)) + 
-  geom_histogram(binwidth = binSize, col="white", size=.5)
-
-ggplot(data=experimentBoth, aes(AverageInterpenetrationCM)) + 
-  geom_histogram(binwidth = binSize, col="white", size=.5)
-
-ggplot(data=experimentNoFeedback, aes(AverageInterpenetrationCM)) + 
-  geom_histogram(binwidth = binSize, col="white", size=.5)
-
-```
-Convert from meters to cm (df for subsets)
-
-```{r}
-df_ForSubsets$MaxInterpenetration <- df_ForSubsets$MaxInterpenetration * 100
-df_ForSubsets$AverageInterpenetration <- df_ForSubsets$AverageInterpenetration * 100
-df_ForSubsets$AverageOffsetFromSurface <- df_ForSubsets$AverageOffsetFromSurface * 100
+df <- Averaged_Data # A more Convenient name for our dataset
 
 ```
 
 
-Now I want to a simple name for our experiment df
+Convert from meters to cm  
 ```{r}
-
-df <- experimentDF
-
-df$MaxInterpenetration <- df$MaxInterpenetrationCM
-df$AverageInterpenetration <- df$AverageInterpenetrationCM
+df$MaxInterpenetration <- df$MaxInterpenetration * 100
+df$AverageInterpenetration <- df$AverageInterpenetration * 100
+df$AverageOffsetFromSurface <- df$AverageOffsetFromSurface * 100
 
 ```
 
-Cleaning Outliers (The threshold will be 2.5 standard deviations from the mean - in both directions!)
 
+Check the distribution of the main dependent variables using histograms
 ```{r}
+hist(df$MaxInterpenetration)
+hist(df$AverageInterpenetration)
+```
+Based on the histograms, the distribution is heavily positively skewed, which is not good, probably we ve violated the normality assumption
+Let's check the normality assumption (i.e., whether we have normal distribution or not)
+```{r}
+shapiro_test(df$MaxInterpenetration)
+shapiro_test(df$AverageInterpenetration)
+ggqqplot(df$MaxInterpenetration)
+ggqqplot(df$AverageInterpenetration)
 
-# We NA every entry which is beyond our threshold (We focus on the performace variables)
+#Let's check the assumption for each interpenetration feedback and shade condition
+df %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(MaxInterpenetration) #It is violated!
 
-df$MaxInterpenetration[df$MaxInterpenetration > mean(df$MaxInterpenetration) + 2.5 * sd(df$MaxInterpenetration)] <- NA
+df %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(AverageInterpenetration)  #It is violated!
 
-df$AverageInterpenetration[df$AverageInterpenetration > mean(df$AverageInterpenetration) + 2.5 * sd(df$AverageInterpenetration)] <- NA
+```
 
-df$MaxInterpenetration[df$MaxInterpenetration < mean(df$MaxInterpenetration) - 2.5 * sd(df$MaxInterpenetration)] <- NA
+OK, we have significant results which means that we have violated the normality assumption (i.e, abnormal distribution).
+Let's try to identify the outliers
+```{r}
+# One df for outliers (1.5 coeff), one for extremes (3 coeff)
+df2 <- df
+###############################
 
-df$AverageInterpenetration[df$AverageInterpenetration < mean(df$AverageInterpenetration) - 2.5 * sd(df$AverageInterpenetration)] <- NA
+
+df_outliers <- identify_outliers(df, variable = "MaxInterpenetration") #we have several ones
+df_outliers2  <- identify_outliers(df, variable = "MaxInterpenetration")
+
+
+df$Outlier <- is_outlier(df$MaxInterpenetration) #Let's make another variable indicating whether the row is an outlier or not
+df$Outlier2 <- is_outlier(df$AverageInterpenetration)
+
+df$Extreme1 <- is_extreme(df$MaxInterpenetration)
+
+df$Extreme2 <- is_extreme(df$AverageInterpenetration)
+
+
+####### Only extreme values for df2
+
+df_Extremes <- identify_outliers(df, variable = "MaxInterpenetration", coef = 3) #we have several ones
+df_Extremes2  <- identify_outliers(df, variable = "MaxInterpenetration", coef = 3)
+
+df2$Extreme1 <- is_extreme(df2$MaxInterpenetration)
+
+df2$Extreme2 <- is_extreme(df2$AverageInterpenetration)
+
+```
+
+Let's try to solve it by omitting the outliers 
+```{r}
+df$Outlier[df$Outlier == TRUE]  <- NA
+df$Outlier2[df$Outlier2 == TRUE]  <- NA
 
 df_clean <- na.omit(df) #We omit the rows which have NA values !!! and we create a new dataset without outliers.
 
-#we check again the histograms
+#we check again the histograms, qqplots, and normality assumption
 hist(df_clean$MaxInterpenetration) 
-hist(df_clean$AverageInterpenetration)
-#Positively skewed!
+hist(df_clean$AverageInterpenetration) #better than before but stil skewed
+shapiro_test(df_clean$MaxInterpenetration)
+shapiro_test(df_clean$AverageInterpenetration) # violated!
+ggqqplot(df_clean$MaxInterpenetration)
+ggqqplot(df_clean$AverageInterpenetration) #qqplots are good.
 
+df_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(MaxInterpenetration) #Still some violate the assumption
+
+df_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(AverageInterpenetration) #Still some violate the assumption
+ 
+
+
+################# Let's do the same just only for the extreme values
+
+df2$Extreme1[df2$Extreme1 == TRUE]  <- NA
+df2$Extreme2[df2$Extreme2 == TRUE]  <- NA
+
+df2_clean <- na.omit(df2) #We omit the rows which have NA values !!! and we create a new dataset without outliers.
+
+
+df2_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(MaxInterpenetration) #Still some violate the assumption
+
+
+
+df2_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(AverageInterpenetration) #Still some violate the assumption
+ 
 ```
 
-We will run an Anova to see the comparisons amongst the 4 types of feedbcak for our performance variables
-
-```{r}
-jmv::anovaOneW(
-  formula = MaxInterpenetration + AverageInterpenetration  ~ InterpenetrationFeedback,
-  data = df_clean,
-  fishers = TRUE,
-  desc = TRUE,
-  descPlot = TRUE,
-  norm = TRUE,
-  qq = TRUE,
-  eqv = TRUE,
-  phMethod = "gamesHowell",
-  phTest = TRUE,
-  phFlag = TRUE)
-
-```
-The intepretation of an ANOVA: 
-
-1st We check the Normality (distribution of the data) ---- 
-
-Unfortunately, the p value is below .05 for each performance variable,  which means that we dont have a normal distribution. 
-Since the ANOVA is highly dependent on the variance, and our data dont have a normally distributed variance,  
-that means that the results of this ANOVA are utterly unreliable and dont demonstrate the true effects between the independent variables (IVs).
-The IVs in this care are the 4 types of feedback.
-
-
-2nd We check also the homoscedacity of the variance (i.e., if the variance is homogeneous or not). 
-This tests works as the above, i.e., we dont want a p-value below .05 ! 
-In this case the variance is homogeneous 
-
-(Homogeneity of variance (also called homoscedasticity) is used to describe a set of data that has the same variance. Visually, the data will have the same scatter on a scatter plot. If data does not have the same variance, it will show a heteroscedastic (“not the same”) scatter pattern.)
-
-So check the scatter plots above to get it also visually
-
-
-We dont need to check the results further since we have a problem with the Normality of the Variance, 
-so the ANOVA cannot detect and measure the possible effects. 
-
-As you can see the on the Games-Howell Post-Hoc Test, there is NOT any effect between the IVs for every dependent variable (DV). 
-
-
+OK the distribution is better now but again it violates the normality assumption
 
 Let's try to correct the problem with the Normality of the Variance. 
 The reason, as we can see above by checking the histograms, is that the distribution is very positively skewed.
 We dont want any type of an intense skew (Though, always there is somewhat of skewness in the data). 
-
 ```{r}
-#A common thing to resolve the positive skewness is to covert the data to logarithms 
+#A common thing to resolve the positive skewness is to covert the IVs into logarithms 
 
 df_clean$MaxInterpenetration <- log10(df_clean$MaxInterpenetration)
 
 df_clean$AverageInterpenetration <- log10(df_clean$AverageInterpenetration)
 
-# You may run the ANOVA from above, and you will see that we stll violate the Normality assumption.
+#we check again the histograms, qqplots, and normality assumption
+hist(df_clean$MaxInterpenetration) 
+hist(df_clean$AverageInterpenetration) # WoW, they seems like normally distributed
+shapiro_test(df_clean$MaxInterpenetration) #WOW! That's it Normal Distribution
+shapiro_test(df_clean$AverageInterpenetration) # YEAH! Normal Distribution ladies and gentlemen :) 
+ggqqplot(df_clean$MaxInterpenetration)
+ggqqplot(df_clean$AverageInterpenetration) #qqplots are still good.
+
+
+df_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(MaxInterpenetration)
+
+df_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(AverageInterpenetration)
+# No Violations . We are ready for Two Way Repeated Measures ANOVA
+
+
+
+####################### The same for the df where we excluded only the extreme values (i.e., coeff = or > 3)
+
+df2_clean$MaxInterpenetration <- log10(df2_clean$MaxInterpenetration)
+
+df2_clean$AverageInterpenetration <- log10(df2_clean$AverageInterpenetration)
+
+#we check again the histograms, qqplots, and normality assumption
+hist(df2_clean$MaxInterpenetration) 
+hist(df2_clean$AverageInterpenetration) # WoW, they seems like normally distributed
+shapiro_test(df2_clean$MaxInterpenetration) #WOW! That's it Normal Distribution
+shapiro_test(df2_clean$AverageInterpenetration) # YEAH! Normal Distribution ladies and gentlemen :) 
+ggqqplot(df2_clean$MaxInterpenetration)
+ggqqplot(df2_clean$AverageInterpenetration) #qqplots are still good.
+
+
+df2_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(MaxInterpenetration)
+
+df2_clean %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(AverageInterpenetration)
+# No Violations . We are ready for Two Way Repeated Measures ANOVA
+
+
+# However 
+#It seems that many of the outliers (> 1.5 coeff) were also extremes (> 3 coeff) 
+# While all the outliers and the extremes derive from the IDs : 9 , 17 , and 20
 
 ```
 
 
+Another Solution for solving the normality violation
 ```{r}
 #Another more extreme solution for positive skewness
-# For extreme cases like this one we can try also to divide 1 by our values (Re assign )
+# For extreme cases, we can also try also to divide 1 by our values (Re assign )
 
-df_clean$MaxInterpenetration <- 1/df_clean$MaxInterpenetration
+# df_clean$MaxInterpenetration <- 1/df_clean$MaxInterpenetration
 
-df_clean$AverageInterpenetration <- 1/df_clean$AverageInterpenetration
-
-# You may run the ANOVA from above, and you will see that we stll violate the Normality assumption.
+# df_clean$AverageInterpenetration <- 1/df_clean$AverageInterpenetration
 
 ```
 
 
-let's check the plots of the means to see what happens (df clean first).
 
+let's check the plots of the means to see what happens in our cleaned data.
 
 ```{r}
+# We are going to prefer the one where we excluded only the extreme values
+# so df2_clean will be the df that we will use
 
+# The first two blocks comparing IVs effect on DV
 p1 <- ggstatsplot::ggbetweenstats(
-  data = df_clean,
-  x = "InterpenetrationFeedback",
-  y = "MaxInterpenetration",
-  grvar= NULL,
+  data = df2_clean,
+  x = "InterpenetrationFeedback", #Indepedent Variable
+  y = "MaxInterpenetration", # Depedent Variable
+  grouping.var = "FullyShaded", # 2nd IV 
+  type = "p", # parametric test i.e., p values
+  pairwise.comparisons = TRUE, #compute pairwise comparisons
+  pairwise.display = "significant", 
+  p.adjust.method = "bonferroni", # correction of p-value
+  effsize.type = "unbiased", # Calculates the Hedge's g for t tests and the partial Omega for ANOVA
+  xlab = "Type of Feedback", #label of X axis
+  ylab = "Maximum Interpenetration", #label of y axis
+  var.equal = TRUE, #Assuming Equal variances
+  mean.ci = TRUE, #display the confidence interval of the mean
+  notch = TRUE, #Compare the medians i.e., IQR with 95% confidence interval
+  paired = TRUE #indicating that we have a within subject design
   ) 
 
 p2 <- ggstatsplot::ggbetweenstats(
-  data = df_clean,
+  data = df2_clean,
   x = "InterpenetrationFeedback",
   y = "AverageInterpenetration",
-  grvar= NULL,
-) 
-
-plist <- list(p1,p2)
-
-combine_plots2(
-  plotlist = plist, 
-  labels = c("(Maximum)", "(Average)", "(Time)"),
-  title.text = "Interpenetration Violin Plots",
-  caption.text = "Note: Interpenetration distance is displayed in cm.",
-  title.color = "black",
-  caption.color = "black")
-
-
-```
+  grouping.var = "FullyShaded",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+)
 
 
-So,based on the plot, we can see that should be an effect at least between Both (combined feedback) and No Feedback.
-
-Anyhow, we need to go for a non-parametric Repeated measures ANOVA because we cant resolve the normality issue. 
-
-In this case, we want an equivalent of one-way ANOVA (one way = one IV, as we have in our case i.e., our IV is the Interpenetration feedback which has 4 levels i.e., the types of feedback). 
-
-The non-parametric equivalent of one-way Repeated measure ANOVA is the Friedman's test. 
-
-
-So, lets go for a Friedman's test. 
-
-```{r}
-friedman_test(MaxInterpenetration + AverageInterpenetration  ~ InterpenetrationFeedback + Shaded, data = df_clean) 
-?friedman_test()
-
-
-#OK we have a significant effect of the IV levels on the DV. But which one has the greatest effect?
-
-
-#To see the differences between them, we do pairwist test.
-#Though, because we will do multiple comparisons, we also need a post hoc test to avoid a false positive (see multiple comparisons problem: https://en.wikipedia.org/wiki/Multiple_comparisons_problem). The most parsimonious adjustment is 
-# the bonferonni correction. 
-pairwise.wilcox.test(df_clean$MaxInterpenetration, df_clean$InterpenetrationFeedback, p.adjust.method = "bonferroni")
-
-pairwise.wilcox.test(df_clean$AverageInterpenetration, df_clean$InterpenetrationFeedback, p.adjust.method = "bonferroni")
-```
-
-We can see that there is an effect between Visual & NoFeedback, Both & NoFeedback, and the rest comparisons did not 
-show significant differences. 
-
-However, for non-paranetric we dont care for normality so we may even include the outliers (i.e., df dataframe)
-```{r}
-#Let's see the means plot for df
-  p3 <- ggstatsplot::ggbetweenstats(
-    data = df,
-    x = "InterpenetrationFeedback",
-    y = "MaxInterpenetration", 
-    grvar= NULL,
+# Replicating the above but this time we look on the effect of the type of feedback on the DVs when the shaded is true and when it is false.
+p3 <- ggstatsplot::grouped_ggbetweenstats(
+  data = df2_clean,
+  x = "InterpenetrationFeedback",
+  y = "MaxInterpenetration",
+  grouping.var = "FullyShaded",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Type of Feedback",
+  ylab = "Maximum Interpenetration",
+  sub.text = "Explicit Visual Representation" ,
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
   ) 
 
-p4 <- ggstatsplot::ggbetweenstats(
-  data = df,
+p4 <- ggstatsplot::grouped_ggbetweenstats(
+  data = df2_clean,
   x = "InterpenetrationFeedback",
   y = "AverageInterpenetration",
-  grvar= NULL,
+  grouping.var = "FullyShaded",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
 ) 
 
-plist2 <- list(p3,p4)
+# Lets check the effect of shaded condition on DVs
+p5 <- ggstatsplot:: ggbetweenstats(
+  data = df2_clean,
+  x = "FullyShaded",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Maximum Interpenetration",
+  sub.text = "Explicit Visual Representation" ,
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+  ) 
 
-combine_plots2(
-  plotlist = plist2, 
-  labels = c("(Maximum)", "(Average)"),
-  title.text = "Interpenetration Violin Plots",
+p6 <- ggstatsplot::ggbetweenstats(
+  data = df2_clean,
+  x = "FullyShaded",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+) 
+
+p7 <- ggstatsplot::grouped_ggbetweenstats(
+  data = df2_clean,
+  x = "FullyShaded",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Maximum Interpenetration",
+  sub.text = "Explicit Visual Representation" ,
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+  ) 
+
+p8 <- ggstatsplot::grouped_ggbetweenstats(
+  data = df2_clean,
+  x = "FullyShaded",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+) 
+p1
+
+p2
+
+p3 
+
+p4
+
+p5 
+
+p6
+
+p7
+
+p8
+
+plist <- list(p1,p2)
+plist2 <- list(p3,p4)
+plist3 <- list(p5,p6)
+plist4 <- list(p7,p8)
+
+combine_plots(
+  plotlist = plist, 
+  title.text = "Interpenetration Box-Violin Plots",
   caption.text = "Note: Interpenetration distance is displayed in cm.",
   title.color = "black",
   caption.color = "black")
 
+combine_plots(
+  plotlist = plist2, 
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black")
+
+combine_plots(
+  plotlist = plist3, 
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black")
+
+combine_plots(
+  plotlist = plist4, 
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black")
 
 ```
-OK, it very similar to the cleaned one
+So based on the above plots we can see that
+###############################################
+For the maximum interpenetration (plot 1): 
 
-we may now run the non-parametric Repeated measures ANOVA with df now
+the both, electrotactile, and visual types of feedback are significantly better than no feedback. 
+while there NOT significant differences amongst them. 
+Another important info is the effect size based on partial omega squared which is 0.20 i.e., the effect size is large
+
+Reference for interpreting Omega Squared
+Small effect: ω2 = 0.01;
+Medium effect: ω2 = 0.06;
+Large effect: ω2 = 0.14.
+
+Also, the logarith of Bayes Factor [ Log(BF01) ] for testing hypotheses is -14.86 
+which means that there are extremely strong evidence in favor of H1 alternative hypothesis. 
+
+
+##############
+For averaged interpenentration (plot2):
+
+Similar to the results for the maximum interpenetration
+
+
+#############################################################################################################
+For the relationship between the shade condition and the type of feedback on 
+
+##########
+maximum interpenetration (plot3) & averaged interpenetration (plot4):
+
+We can see that the results are similar to the plot1 when the shaded condition is false (i.e., when there is not an explicit visual representation of the target object).
+
+However, when the visual representation of the object is explicit (i.e., shaded = TRUE) then the effect of electrotactile feedback is substantially alleviated, 
+which results to a non-significant difference between electrotactile and no-feedback conditions. In contrast, the visual and both conditions are still significantly different from the no-feedback condition. However, we can see that the range of the confidence intervals of the both condition is being stretched when the target is fully shaded (an explicit visual representation). 
+In contrast, the range of the confidence intervals of visual condition remains intact or slightly decreases when the target's visual representation is explicit. 
+
+Hence, we can theorize that an implicit visual representation of the target (i.e., non-fully shaded) increases the importance of the electrotactile feedback on the performance aspects. This also postulates that when the visual information is insufficient or ambiguous, then the electrotactile feedback complements the sensory information which facilitates visuospatial perception.
+
+
+####################################
+For the shaded condition alone, we can see that it doesn't have an effect on performance (plot 5 & 6) regardless of the type of feedback (plot 7 & 8) 
+
+
+
+########################## To Move on ###################################
+So, we saw that there is indeed an effect of IV levels (i.e., type of the interpenetration feedback) on the DVs, 
+as well as that there is an interrelationship between the levels of the interpenetration feedback and the levels of the shaded condition., especially regarding electrotactile feedback.   
 
 ```{r}
 
-kruskal.test(MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback, data = df)
+#res.aov <- anova_test(
+#  data = df2_clean, dv = MaxInterpenetration, wid = ID,
+#  within = c(InterpenetrationFeedback, FullyShaded)
+#  )
+# get_anova_table(res.aov)
 
-pairwise.wilcox.test(df$MaxInterpenetration, df$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+#RM <- lmer(MaxInterpenetration ~ InterpenetrationFeedback + FullyShaded + InterpenetrationFeedback*FullyShaded + (1|ID), data = df2_clean, #family = )
+#anova(RM)
+#summary(RM)
+```
+ If you run the above then you will see that we get the errors because we don not have ballanced data (i.e., unballanced data)
+ 
+ 
+ Possible solutions: 
+ 
+ 1) Using the ezMixed function from the ez package, which wraps lmer and produces likelihood ratios (a superior metric of evidence)
+ 
+ 2) Deleting the IDs which produced the extreme values. However, we will reduce the sample size to N = 21.
+ Also, the observations will be 21 (the participants) * 8 Conditions (i.e., 4 types of feedback * 2 Shaded conditions) = 168 observations
+ 
+ 3) To try and catch the extreme values before averaging the data! By doing that, we may be able to keep the N = 24. 
+ Thanks Ferran :)
+ 
+ 
+ 
+So, we will start from solution 3, because it is the best case scenario
+```{r}
 
-pairwise.wilcox.test(df$AverageInterpenetration, df$InterpenetrationFeedback, p.adjust.method = "bonferroni")
+data$Extreme1 <- is_extreme(data$MaxInterpenetration)
 
-?pairwise.wilcox.test()
+data$Extreme2 <- is_extreme(data$AverageInterpenetration)
+
+data$Extreme1[data$Extreme1 == TRUE]  <- NA
+data$Extreme2[data$Extreme2 == TRUE]  <- NA
+
+data_clean <- na.omit(data)
+
+newDF <- select(data_clean, -"Trial", -"TrialInBlock", -"NrOfAdjustments" ,
+                  -"Completed" , -"Attempts" , -"Skipped", -"Extreme1", -"Extreme2")
+
+AVnewDF <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, newDF, mean)
+
+AVnewDF$MaxInterpenetration <- AVnewDF$MaxInterpenetration * 100
+AVnewDF$MaxInterpenetration <- AVnewDF$MaxInterpenetration * 100
+AVnewDF$MaxInterpenetration <- AVnewDF$MaxInterpenetration * 100
+
+hist(AVnewDF$MaxInterpenetration) 
+hist(AVnewDF$AverageInterpenetration) 
+ggqqplot(AVnewDF$MaxInterpenetration)
+ggqqplot(AVnewDF$AverageInterpenetration)
+shapiro_test(AVnewDF$MaxInterpenetration)
+shapiro_test(AVnewDF$AverageInterpenetration) 
+
+AVnewDF %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(MaxInterpenetration)
+
+AVnewDF %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(AverageInterpenetration)
+
+# We still have a problem with distribution
+
+
+#Try by converting the DVs into logarithms again 
+AVnewDF$MaxInterpenetration <- log10(AVnewDF$MaxInterpenetration)
+
+AVnewDF$AverageInterpenetration <- log10(AVnewDF$AverageInterpenetration)
+
+
+hist(AVnewDF$MaxInterpenetration) 
+hist(AVnewDF$AverageInterpenetration) 
+ggqqplot(AVnewDF$MaxInterpenetration)
+ggqqplot(AVnewDF$AverageInterpenetration)
+shapiro_test(AVnewDF$MaxInterpenetration)
+shapiro_test(AVnewDF$AverageInterpenetration) 
+
+AVnewDF %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(MaxInterpenetration)
+
+AVnewDF %>%
+  group_by(InterpenetrationFeedback, FullyShaded) %>%
+  shapiro_test(AverageInterpenetration)
+############### PERFECT WE ARE GOOD TO GO !!!!!!!!!!!!!!!!!!!!!
+```
+
+
+
+Lets do the box-violin plots again
+```{r}
+
+p1 <- ggstatsplot::ggbetweenstats(
+  data = AVnewDF,
+  x = "InterpenetrationFeedback", #Indepedent Variable
+  y = "MaxInterpenetration", # Depedent Variable
+  grouping.var = "FullyShaded", # 2nd IV 
+  type = "p", # parametric test i.e., p values
+  pairwise.comparisons = TRUE, #compute pairwise comparisons
+  pairwise.display = "significant", 
+  p.adjust.method = "bonferroni", # correction of p-value
+  effsize.type = "unbiased", # Calculates the Hedge's g for t tests and the partial Omega for ANOVA
+  xlab = "Type of Feedback", #label of X axis
+  ylab = "Maximum Interpenetration", #label of y axis
+  var.equal = TRUE, #Assuming Equal variances
+  mean.ci = TRUE, #display the confidence interval of the mean
+  notch = TRUE, #Compare the medians i.e., IQR with 95% confidence interval
+  paired = TRUE #indicating that we have a within subject design
+  ) 
+
+p2 <- ggstatsplot::ggbetweenstats(
+  data = AVnewDF,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grouping.var = "FullyShaded",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+)
+
+
+# Replicating the above but this time we look on the effect of the type of feedback on the DVs when the shaded is true and when it is false.
+p3 <- ggstatsplot::grouped_ggbetweenstats(
+  data = AVnewDF,
+  x = "InterpenetrationFeedback",
+  y = "MaxInterpenetration",
+  grouping.var = "FullyShaded",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Type of Feedback",
+  ylab = "Maximum Interpenetration",
+  sub.text = "Explicit Visual Representation" ,
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+  ) 
+
+p4 <- ggstatsplot::grouped_ggbetweenstats(
+  data = AVnewDF,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grouping.var = "FullyShaded",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+) 
+
+# Lets check the effect of shaded condition on DVs
+p5 <- ggstatsplot:: ggbetweenstats(
+  data = AVnewDF,
+  x = "FullyShaded",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Maximum Interpenetration",
+  sub.text = "Explicit Visual Representation" ,
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+  ) 
+
+p6 <- ggstatsplot::ggbetweenstats(
+  data = AVnewDF,
+  x = "FullyShaded",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+) 
+
+p7 <- ggstatsplot::grouped_ggbetweenstats(
+  data = AVnewDF,
+  x = "FullyShaded",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Maximum Interpenetration",
+  sub.text = "Explicit Visual Representation" ,
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+  ) 
+
+p8 <- ggstatsplot::grouped_ggbetweenstats(
+  data = AVnewDF,
+  x = "FullyShaded",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = TRUE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  xlab = "Target's Visual Representation",
+  ylab = "Average Interpenetration",
+  var.equal = TRUE,
+  mean.ci = TRUE,
+  notch = TRUE,
+  paired = TRUE
+) 
+p1
+
+p2
+
+p3 
+
+p4
+
+p5 
+
+p6
+
+p7
+
+p8
+
+plist <- list(p1,p2)
+plist2 <- list(p3,p4)
+plist3 <- list(p5,p6)
+plist4 <- list(p7,p8)
+
+combine_plots(
+  plotlist = plist, 
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black")
+
+combine_plots(
+  plotlist = plist2, 
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black")
+
+combine_plots(
+  plotlist = plist3, 
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black")
+
+combine_plots(
+  plotlist = plist4, 
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black")
+
+```
+
+The bad news are that now we do not have an effect between electrotactile and No Feedback conditions
+
+Also, there is a significant difference between Both and Electrotactile Feedback. 
+
+The rest remain as we interpreted above for the plots using the df_clean2 
+
+
+Let's check the Two Way Repeated Measures ANOVA now
+```{r}
+
+res.aov <- anova_test(
+  data = AVnewDF, dv = MaxInterpenetration, wid = ID,
+  within = c(InterpenetrationFeedback, FullyShaded)
+  )
+ get_anova_table(res.aov)
+
+RM <- lmer(MaxInterpenetration ~  InterpenetrationFeedback*FullyShaded + (1|ID), data = AVnewDF)
+anova(RM)
+summary(RM)
+
+```
+
+
+
+```{r}
+
+```
+
+
+```{r}
+
+#res.aov <- anova_test(
+#  data = df2_clean, dv = MaxInterpenetration, wid = ID,
+#  within = c(InterpenetrationFeedback, FullyShaded)
+#  )
+# get_anova_table(res.aov)
+
+#RM <- lmer(MaxInterpenetration ~ InterpenetrationFeedback + FullyShaded + InterpenetrationFeedback*FullyShaded + (1|ID), data = df2_clean, #family = )
+#anova(RM)
+#summary(RM)
 
 ```
 
@@ -404,330 +859,23 @@ pairwise.wilcox.test(df$AverageInterpenetration, df$InterpenetrationFeedback, p.
 Now let's split our dataframe into two subtests (1st part and 2nd part of the experiment) to inspect whether there is
 an effect of familirisation with electrotactile feedback, as well as a learning effect
 ```{r}
-df_ForSubsets$ID <- df_ForSubsets$column_label
+Data_1st <- subset(newDF, newDF$Block < 4)
 
-Data_1st <- subset(df_ForSubsets, df_ForSubsets$Block < 4)
-
-Data_2nd <- subset(df_ForSubsets, df_ForSubsets$Block > 3)
+Data_2nd <- subset(newDF, newDF$Block > 3)
 
 Data_1st <- select(Data_1st, "ID", "Age", "Gender", "InterpenetrationFeedback", "MaxInterpenetration", "AverageInterpenetration")
 Data_2nd <- select(Data_2nd, "ID", "Age", "Gender", "InterpenetrationFeedback", "MaxInterpenetration", "AverageInterpenetration")
 
-Data_1st <- aggregate(. ~ ID + InterpenetrationFeedback + Age + Gender, Data_1st, mean)
+Data_1st <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, Data_1st, mean)
 
-Data_2nd <- aggregate(. ~ ID + InterpenetrationFeedback + Age + Gender, Data_2nd, mean)
-```
-
-
-
-No we wil check the same analyses (ANOVA Parametric, ANOVA non-parametric Repeated measures, Pairwise Comps) for each subset.
-```{r}
-
-# 1st Part
-jmv::anovaOneW(
-  formula = MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback,
-  data = Data_1st,
-  fishers = TRUE,
-  desc = TRUE,
-  descPlot = TRUE,
-  norm = TRUE,
-  qq = TRUE,
-  eqv = TRUE,
-  phMethod = "gamesHowell",
-  phTest = TRUE,
-  phFlag = TRUE)
-
-
-kruskal.test(MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback, data = Data_1st)
-
-pairwise.wilcox.test(Data_1st$MaxInterpenetration, Data_1st$InterpenetrationFeedback, p.adjust.method = "bonferroni")
-
-pairwise.wilcox.test(Data_1st$AverageInterpenetration, Data_1st$InterpenetrationFeedback, p.adjust.method = "bonferroni")
-
-par(mfrow=c(2,2))
-
-
-  p5 <- ggstatsplot::ggbetweenstats(
-    data = Data_1st,
-    x = "InterpenetrationFeedback",
-    y = "MaxInterpenetration",
-    grvar= NULL,
-  ) 
-
-p6 <- ggstatsplot::ggbetweenstats(
-  data = Data_1st,
-  x = "InterpenetrationFeedback",
-  y = "AverageInterpenetration",
-  grvar= NULL,
-) 
-
-plist3 <- list(p5,p6)
-
-combine_plots2(
-  plotlist = plist3, 
-  labels = c("(Maximum)", "(Average)"),
-  title.text = "Interpenetration Violin Plots",
-  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
-  title.color = "black",
-  caption.color = "black")
-
-
-#Second Part
-
-jmv::anovaOneW(
-  formula = MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback,
-  data = Data_2nd,
-  fishers = TRUE,
-  desc = TRUE,
-  descPlot = TRUE,
-  norm = TRUE,
-  qq = TRUE,
-  eqv = TRUE,
-  phMethod = "gamesHowell",
-  phTest = TRUE,
-  phFlag = TRUE)
-
-
-kruskal.test(MaxInterpenetration + AverageInterpenetration ~ InterpenetrationFeedback, data = Data_2nd)
-
-pairwise.wilcox.test(Data_2nd$MaxInterpenetration, Data_2nd$InterpenetrationFeedback, p.adjust.method = "bonferroni")
-
-pairwise.wilcox.test(Data_2nd$AverageInterpenetration, Data_2nd$InterpenetrationFeedback, p.adjust.method = "bonferroni")
-
-
-  p7 <- ggstatsplot::ggbetweenstats(
-    data = Data_2nd,
-    x = "InterpenetrationFeedback",
-    y = "MaxInterpenetration",
-    grvar= NULL,
-  ) 
-
-p8 <- ggstatsplot::ggbetweenstats(
-  data = Data_2nd,
-  x = "InterpenetrationFeedback",
-  y = "AverageInterpenetration",
-  grvar= NULL,
-) 
-
-plist4 <- list(p7,p8)
-
-combine_plots2(
-  plotlist = plist4, 
-  labels = c("(Maximum)", "(Average)"),
-  title.text = "Interpenetration Violin Plots",
-  caption.text = "Note: Interpenetration distance is displayed in cm, time in seconds",
-  title.color = "black",
-  caption.color = "black")
-
+Data_2nd <- aggregate(. ~ ID + InterpenetrationFeedback + FullyShaded, Data_2nd, mean)
 ```
 
 
 
 
-
-############################# Preparation of the datasets for t-tests: 1st part vs 2nd part for each type of feedback
-```{r}
-#Divide them to before and after
-B1 <- filter(Data_1st, InterpenetrationFeedback == "Both")
-B1$B1MaxInt <- select(B1, MaxInterpenetration) 
-B1$B1AvInt <- select(B1, AverageInterpenetration)
-
-El1 <-filter(Data_1st, InterpenetrationFeedback == "Electrotactile")
-El1$El1Maxint <- select(El1, MaxInterpenetration) 
-El1$El1AvInt  <- select(El1, AverageInterpenetration)
-
-No1 <- filter(Data_1st, InterpenetrationFeedback == "NoFeedback")
-No1$No1MaxInt <- select(No1, MaxInterpenetration) 
-No1$No1AvInt <- select(No1, AverageInterpenetration)
-
-V1 <- filter(Data_1st, InterpenetrationFeedback == "Visual")
-V1$V1MaxInt <- select(V1, MaxInterpenetration) 
-V1$V1AvInt <- select(V1, AverageInterpenetration)
-
-B2 <- filter(Data_2nd, InterpenetrationFeedback == "Both")
-B2$B2MaxInt <- select(B2, MaxInterpenetration) 
-B2$B2AvInt <- select(B2, AverageInterpenetration)
-
-El2 <-filter(Data_2nd, InterpenetrationFeedback == "Electrotactile")
-El2$El2Maxint <- select(El2, MaxInterpenetration) 
-El2$El2AvInt  <- select(El2, AverageInterpenetration)
-
-No2 <- filter(Data_2nd, InterpenetrationFeedback == "NoFeedback")
-No2$No2MaxInt <- select(No2, MaxInterpenetration) 
-No2$No2AvInt <- select(No2, AverageInterpenetration)
-
-V2 <- filter(Data_2nd, InterpenetrationFeedback == "Visual")
-V2$V2MaxInt <- select(V2, MaxInterpenetration) 
-V2$V2AvInt <- select(V2, AverageInterpenetration)
-
-
-#Merge the new datasets  (e.g., B1 & B2) and now we have two variables for the DVs (e.g., Max Interpenetration)
-#the one is for the 1st part and the other for the 2nd part
-
-Rm1 <- merge(B1,B2, by = c("ID", "Gender", "Age"))
-B_MaxInt <- Rm1  %>%
-  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
-
-B_AvInt <- Rm1  %>%
-  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
-
-Rm2 <- merge(El1,El2, by = c("ID", "Gender", "Age"))
-E_MaxInt <- Rm2  %>%
-  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
-E_AvInt <- Rm2  %>%
-  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
-
-Rm3 <- merge(No1, No2, by = c("ID", "Gender", "Age"))
-N_MaxInt <- Rm3  %>%
-  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
-N_AvInt <- Rm3  %>%
-  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
-
-Rm4 <- merge(V1,V2, by = c("ID", "Gender", "Age"))
-V_MaxInt <- Rm4  %>%
-  gather(key = "part", value = "MaxInt", MaxInterpenetration.x, MaxInterpenetration.y)
-V_AvInt <- Rm4  %>%
-  gather(key = "part", value = "AvInt", AverageInterpenetration.x, AverageInterpenetration.y)
-
-#Now we merge all together to runt the test
-Rm5 <- merge(Rm1,Rm2, by = c("ID", "Gender", "Age"))
-
-
-Rm6 <- merge(Rm3,Rm4, by = c("ID", "Gender", "Age"))
-
-
-RM <- merge(Rm5, Rm6, by = c("ID", "Gender", "Age"))
-RM <- select(RM,
-             - "InterpenetrationFeedback.x.x.y",
-             - "MaxInterpenetration.x.y.y",
-             - "MaxInterpenetration.y.x.y",
-             - "MaxInterpenetration.y.y.x",
-             - "MaxInterpenetration.y.y.y",
-             - "AverageInterpenetration.x.x.y",
-             - "AverageInterpenetration.x.y.y",
-             - "AverageInterpenetration.y.x.y",
-             - "AverageInterpenetration.y.y.x",
-             - "AverageInterpenetration.y.y.y"
-)
-
-RM <- select(RM,
-             - "InterpenetrationFeedback.x.x.x",
-             - "InterpenetrationFeedback.y.x.x",
-             - "InterpenetrationFeedback.x.y.x",
-             - "InterpenetrationFeedback.x.y.y", 
-             - "InterpenetrationFeedback.y.x.x",
-             - "InterpenetrationFeedback.y.x.y",
-             - "InterpenetrationFeedback.y.y.x",
-             - "InterpenetrationFeedback.y.y.y",
-             - "MaxInterpenetration.x.x.x",
-             - "MaxInterpenetration.y.x.x", 
-             - "MaxInterpenetration.x.y.x",
-             - "MaxInterpenetration.x.x.y",
-             - "AverageInterpenetration.x.x.x",
-             - "AverageInterpenetration.y.x.x", 
-             - "AverageInterpenetration.x.y.x",
-)
-
-RM$B1Maxint <- RM$B1MaxInt$MaxInterpenetration
-RM$B2Maxint <- RM$B2MaxInt$MaxInterpenetration
-RM$El1Maxint <- RM$El1Maxint$MaxInterpenetration
-RM$El2Maxint <- RM$El2Maxint$MaxInterpenetration
-RM$V1Maxint <- RM$V1MaxInt$MaxInterpenetration
-RM$V2Maxint <- RM$V2MaxInt$MaxInterpenetration
-RM$No1Maxint <- RM$No1MaxInt$MaxInterpenetration
-RM$No2Maxint <- RM$No2MaxInt$MaxInterpenetration
-
-RM$B1AvInt <- RM$B1AvInt$AverageInterpenetration
-RM$B2AvInt <- RM$B2AvInt$AverageInterpenetration
-RM$El1AvInt <- RM$El1AvInt$AverageInterpenetration
-RM$El2AvInt <- RM$El2AvInt$AverageInterpenetration
-RM$V1AvInt <- RM$V1AvInt$AverageInterpenetration
-RM$V2AvInt <- RM$V2AvInt$AverageInterpenetration
-RM$No1AvInt <- RM$No1AvInt$AverageInterpenetration
-RM$No2AvInt <- RM$No2AvInt$AverageInterpenetration
-
-
-
-```
-
-
-
-Now we are ready to run the T-tests 1st vs 2nd part, as wel as to calculate the effect size for each one comparison. The tested hypothesis will be that the Maximum or the Averaged interpenetration will be greater in each condition (type of feedback) in the first part than the 2n part. However, our research hypothesis is that the effect size will be greater for the electrotactile and both.
 ```{r}
 
-wilcox.test(RM$B1Maxint,RM$B2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-
-stats_B_Max <- wilcox_effsize(B_MaxInt, 
-               formula = MaxInt ~ part,
-               paired =  TRUE, # The type of t-test is a paired
-               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
-               nboot = 1000 #bootstrapping 1000 samples
-               )
-
-View(stats_B_Max)
-
-wilcox.test(RM$El1Maxint,RM$El2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-
-stats_E_Max <- wilcox_effsize(E_MaxInt, 
-               formula = MaxInt ~ part,
-               paired =  TRUE, # The type of t-test is a paired
-               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
-               nboot = 1000 #bootstrapping 1000 samples
-               )
-View(stats_E_Max)
-
-wilcox.test(RM$V1Maxint, RM$V2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-
-stats_V_Max <- wilcox_effsize(V_MaxInt, 
-               formula = MaxInt ~ part,
-               paired =  TRUE, # The type of t-test is a paired
-               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
-               nboot = 1000 #bootstrapping 1000 samples
-               )
-View(stats_V_Max)
-
-
-wilcox.test(RM$No1Maxint, RM$No2Maxint, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-stats_N_Max <- wilcox_effsize(V_MaxInt, 
-               formula = MaxInt ~ part,
-               paired =  TRUE, # The type of t-test is a paired
-               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
-               nboot = 1000 #bootstrapping 1000 samples
-               )
-View(stats_N_Max)
-
-
-
-
-#For Averaged 
-
-wilcox.test(RM$B1AvInt,RM$B2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-
-wilcox.test(RM$El1AvInt,RM$El2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-
-wilcox.test(RM$V1AvInt, RM$V2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-
-wilcox.test(RM$No1AvInt, RM$No2AvInt, paired = TRUE, exact = TRUE, conf.int = TRUE,alternative = "greater")
-
-
-
-               
-wilcox_effsize(B_MaxInt, 
-               formula = B_MaxInt$MaxInt ~ B_MaxInt$part,
-               comparisons = list(c(B_MaxInt$B1MaxInt, B_MaxInt$B2MaxInt)),
-               paired =  TRUE, # The type of t-test is a paired
-               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
-               nboot = 1000 #bootstrapping 1000 samples
-               )
-
-wilcox_effsize(RM, 
-               formula = B1MaxInt ~ B2MaxInt, #the formula is redundant here so we just add the 1 to consider random effects  
-               comparisons = list(c("RM$B1MaxInt", "RM$B2MaxInt")),
-               paired =  TRUE, # The type of t-test is a paired
-               alternative = "greater", #The direction of the hypothesis i.e., in this case A > B
-               ci = TRUE, #provide the confidence intervals
-               nboot = 1000 #bootstrapping 1000 samples
-               )
 ```
 
 
@@ -740,5 +888,6 @@ wilcox_effsize(RM,
 ```{r}
 
 ```
+
 
 
