@@ -34,7 +34,7 @@ library(dplyr)
 
 
 Import and merge all the csv files (x.csv where x = ID) of the folder. Note, that the ID is has already been added as column 
-```{r}
+```{r, echo=FALSE, results='hide',message=FALSE,cache=FALSE}
 data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
                        pattern = "*.csv", full.names = TRUE) %>% 
   lapply(read_csv) %>%                                            # Store all files in list
@@ -592,19 +592,13 @@ pwAv
 
 We have significant results but the paired = TRUE option wasn't possible because the levels of the IV do NOT have the same length (unbalanced data)
 
-```{r}
-
-```
 
 
- 
- 
- 
- 
- 
- 
 
- 
+
+
+
+
  
 If you run the ANOVA above then you will see that we get some errors indicating that don not have balanced data (i.e., unbalanced data)
  
@@ -1001,7 +995,7 @@ newDF_Parts <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part
 ```
 
 
-```{r Anova, echo=FALSE}
+```{r}
 ?aov_ez()
 a1 <- aov_ez("ID", "MaxInterpenetration", newDF_Parts,
              within = c("Part", "InterpenetrationFeedback"),
@@ -1011,7 +1005,7 @@ knitr::kable(nice(a1$anova_table))
 ```
 
 
-```{r Anova, echo=FALSE}
+```{r}
 
 a2 <- aov_ez("ID", "AverageInterpenetration", newDF_Parts,
              within = c("Part", "InterpenetrationFeedback"),
@@ -1554,7 +1548,7 @@ Large effect: ω2 = 0.14.
 
 
 Let's check the Two Way Repeated Measures ANOVA
-```{r Anova, echo=FALSE}
+```{r}
 aMax <- aov_ez("ID", "MaxInterpenetration", ParsiDF,
              within = c("Part", "InterpenetrationFeedback"),
              anova_table = list(es = "pes"))
@@ -1562,7 +1556,7 @@ aMax <- aov_ez("ID", "MaxInterpenetration", ParsiDF,
 knitr::kable(nice(aMax$anova_table))
 ```
 
-```{r Anova, echo=FALSE}
+```{r}
 aAv <- aov_ez("ID", "AverageInterpenetration", ParsiDF,
              within = c("Part", "InterpenetrationFeedback"),
              anova_table = list(es = "pes"))
