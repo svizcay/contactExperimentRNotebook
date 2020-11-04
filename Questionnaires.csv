@@ -1,0 +1,57 @@
+﻿ID,Age,Gender,Handedness,VRExperienced,TactileExperienced,ElectrotactileExperienced,FeelingAboutElectro,VisualUseful,ElectrotactileUseful,RelyingMoreOn,VisualResembling,ElectrotactileResembling,CombinedResembling,ElectricalSensation,ElectricalUpdatePerception,ElectricalCoherent,VisualCoherent,ModalitiesSynchronized,Enjoyable,Important Comments
+1,1,male,Left,1,0,0,6,5,7,6,4,3,4,5,7,7,6,6,6,"it was a cool new way to get the touching feeling.
+a buzz on the finger"
+2,1,male,right,1,1,0,6,5,6,5,3,5,4,4,3,5,5,5,5,"electrical feels a bit like a warning
+while visual was more 'preventive'"
+3,1,male,right,1,1,0,7,6,7,3,3,1,4,5,6,6,6,5,4,"I quickly assimilated the tactile feedback with the contact, but it is still very different from an actual contact.
+i guess the immersive environment and the feel i was touching a virtual surface helped in this assimilation.
+the visual helps for the actual task
+the electrotactile feedback helped for the immersion"
+4,1,male,left,1,1,0,5,6,6,3,4,2,5,6,7,5,6,6,5,"it's satisfaying but a bit tiring for the arm. the device is a bit cumbersome
+some small spikes in the center of my index, 'slight vibrations' on the finger"
+5,2,male,right,1,0,0,7,6,5,3,3,1,2,3,7,4,6,7,3,"the feeling was unpleasant, maybe lower levels of feedback could have been more enjoyable
+tingling, like getting the senses after your hand goes numb from sleeping on it for example"
+6,1,female,right,1,1,1,5,6,5,5,3,2,3,3,5,6,4,5,4,"some problems with the hardware at the beginning, electrotacitle sometimes annoying
+""intriguant"" in french (couldnt find the word in english), surprising?"
+7,2,male,right,1,1,0,5,5,7,6,4,4,5,5,5,6,6,5,4,"the combination of tracking device plus tactile is a bit heavy for daily use.
+it's a new type of tactile feedback for me and it is in midway between funny and annoying. it feels like when blood stops circulating"
+8,1,male,right,0,0,0,3,2,2,5,1,1,1,3,7,5,5,7,3,"my arm was tired; the electrotactile feedback was a bit strong sometimes
+it's liek getting perced by a needle"
+9,4,female,left,1,0,0,5,5,4,5,5,4,5,4,4,5,5,5,5,like ants on finger
+10,1,other,left,1,1,0,6,5,6,6,5,3,5,5,5,5,4,4,6,a bit like a vibration
+11,1,female,right,1,1,0,5,5,5,5,3,1,2,4,3,5,5,2,4,"interesting but with some strange feelings in the finger sometimes
+it can cause some strange feelings in the finger; during the experiment, it wa very helpful to know when there was a contact with the wooden box"
+12,2,female,right,1,1,0,5,2,2,3,4,2,4,5,2,5,5,7,5,"i enjoyed specially the combined visual + tactile feedback. after the 2nd calibration, the tactile feedback was strong.
+i think it made it less comfortable to stay 3 secs on the object but it would suit better for fast collision.
+i also found funny that only in the ""no feedback"" condition i noticed my virtual hand could not collide inside the cube and then my hand position was dissociated from the virtual position
+
+i would say like a vibration"
+13,1,female,left,1,1,1,6,5,6,4,3,5,4,4,6,5,5,7,5,"it's interesting to feel tactile feedback on the finger, but we can't feel the texture of the surface with this experience
+it was pleasant and the experience was interesting because it provided new sensations that we don't experiment usually. the feeling on the finger
+were like soft tickles.
+for the virtual hand, i had the feeling that my real hand was below the virtual during the experience. thus, i had to push down deeper to touch the surface. otherwise, it was really interesting, thanks."
+14,1,male,left,1,0,0,6,5,5,5,2,4,4,4,5,5,5,6,5,touching a low voltage battery more than a real surface
+15,1,male,right,1,0,0,5,7,5,3,2,1,3,4,6,5,6,6,5,"interesting, but the sensation is a bit strange.
+it feels like touching a motor turned on"
+16,2,male,left,1,1,0,5,6,6,5,1,1,5,3,4,6,5,6,5,"electrotactile a bit strong; suystem is heavy
+the feedback was a bit too strong at the surface"
+17,1,male,right,1,0,0,7,6,7,4,5,3,5,4,7,7,7,7,7,"i like it, it is very interesting approach by having the right intensity i believe it can help users to acknowledge the moment when they're contacting a surface. great job.
+the intensity i chose was higher than expected"
+18,2,male,right,1,1,0,6,6,5,3,2,1,2,4,5,6,6,7,6,"at the beginning a bit less (enjoyable) but once use to the electrotactile feedback it was good.
+it's tingling"
+19,1,male,right,0,0,0,5,7,7,6,5,2,5,5,6,5,5,7,6,"when the upper threshold (pain) was at maximum (9mA), i didn't feel any difference in feedback between the surface and the inside of the wooden cube
+""picotements agreables"""
+20,2,male,right,1,0,0,4,4,5,5,1,1,1,5,6,6,7,5,5,"1) unnatural because sensation is pulsatil (it is not a pressure or a vibration)
+2) the material to attach electrotactile ""velcro"" was heavy and too tight
+3) first calibration was hard because i had difficulties to differentiate between the sensation of velcro and electrotactile feedback"
+21,1,female,right,1,0,0,6,5,6,3,3,5,3,6,5,4,4,3,5,the electrotactile feedback is to soft when i touch the box. i need to penetrate ht ebox to feel the electrotactile feedback
+22,1,male,right,1,0,0,6,7,7,4,6,6,6,3,7,6,6,6,5,"- interesting to have the dual feedback
+- i had the reflexes to higher the finger whereas the captor was attached to the hand
+- the electrodes sensation were unpleasant, nearly painful
+the sensation generated by the electrodes was unpleasant, hence it was instinctive to reduce the annoyance and higher my hand when i was too low.
+at sometime it went from no sensation at all to a moderate sensation, without having the lowest one."
+23,2,female,right,1,1,1,5,7,6,3,2,3,3,4,6,7,7,7,6,"stingy/tingle sensation, like a multitude of very very thin needles are poking you on the finger"
+24,1,male,right,0,0,0,6,6,5,3,2,3,3,4,4,5,5,6,6,"-first time vr
+- 1st calibrationwere good (almost very good and cool)
+- 2nd a bit less because of the higher calibration i guess (a bit painful)
+sensation of noise in the finger"
