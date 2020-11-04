@@ -1,0 +1,570 @@
+---
+title: "Contact Experiment Data Analysis"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+  html_notebook: default
+---
+
+First Step is to load the necessary package, If you dont have them just install them. For jjstatsplot you need to install it remotely.
+Just remove the dash and press enter. Then Press 3 (none package to be updated). 
+?group_by()
+
+```{r}
+#remotes::install_github("sbalci/jjstatsplot") #Press 3 !!!!! i.e., installing/Updating none package! 
+library(jmv)
+library(datasets)
+library(plyr)
+library(readr)
+library(dataframes2xls)
+library(data.table)
+library(plyr)
+library(ggstatsplot)
+library(jjstatsplot)
+library(lme4)
+library(lmerTest)
+library(ggplot2)
+library(rstatix)
+library(coin)
+library(ARTool)
+library(ggpubr)
+library(tidyverse)
+library(dplyr)
+library("afex")     
+library("emmeans")  
+library("multcomp") 
+library(tinytex)
+library(rsconnect)
+library(shiny)
+```
+
+
+
+Import and merge all the csv files (x.csv where x = ID) of the folder. Note, that the ID is has already been added as column 
+```{r, echo=FALSE, results='hide',message=FALSE,cache=FALSE}
+data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
+                       pattern = "*.csv", full.names = TRUE) %>% 
+  lapply(read_csv) %>%                                            # Store all files in list
+  bind_rows                                                       # Combine data sets into a single data set 
+data 
+```
+
+
+Discard first X trials per interpenetration feedback condition and then create a summary
+table for each participant. You need to define **nrTrialsPerBlockToRemove**.
+```{r}
+
+
+data$Part <- as.factor(data$Block < 4)
+levels(data$Part)
+
+data$Part <- factor(data$Part,levels = c("TRUE","FALSE"),
+                  labels = c("Part 1","Part 2"))
+
+nrTrialsPerBlockToRemove <- 1
+#trialsToRemove <- seq(from = 1, to = nrTrialsPerBlockToRemove)
+
+  data <-  data %>%
+    group_by(ID, Part, InterpenetrationFeedback, FullyShaded) %>% # I have added here the fully shaded 
+    slice(nrTrialsPerBlockToRemove+1:n())
+  # to double check we are discarding the right rows
+  #print(data[[i]]$Trial)
+
+ # This df will be used to create the subsets for 1st part and 2nd part of the experiment. 
+  
+data$InterpenetrationFeedback  <- as.factor(data$InterpenetrationFeedback)
+data$FullyShaded <- as.factor(data$FullyShaded)
+```
+  
+  
+```{r}
+ParsiDF <- data
+
+
+# Exclude the IDs which produced the extreme values (i.e., = or > 3 coefficients from the mean)
+ParsiDF$ID[ParsiDF$ID == 9] <- NA 
+ParsiDF$ID[ParsiDF$ID == 17] <- NA
+ParsiDF$ID[ParsiDF$ID == 20] <- NA
+
+ParsiDF <- na.omit(ParsiDF)
+
+ParsiDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDF, mean)
+
+#Before Conversion to logarithms (showing the abnormal distribution)
+shapiro_test(ParsiDF$MaxInterpenetration)
+shapiro_test(ParsiDF$AverageInterpenetration)
+ggqqplot(ParsiDF$MaxInterpenetration)
+ggqqplot(ParsiDF$AverageInterpenetration)
+
+
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(MaxInterpenetration) 
+
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(AverageInterpenetration)  
+
+
+#After Conversion of the performance variables into logs (Normal Distribution)
+ParsiDF$MaxInterpenetration <- log(ParsiDF$MaxInterpenetration)
+
+ParsiDF$AverageInterpenetration <- log(ParsiDF$AverageInterpenetration)
+
+shapiro_test(ParsiDF$MaxInterpenetration)
+shapiro_test(ParsiDF$AverageInterpenetration)
+ggqqplot(ParsiDF$MaxInterpenetration)
+ggqqplot(ParsiDF$AverageInterpenetration)
+
+#Let's check the assumption for each interpenetration feedback and shade condition
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(MaxInterpenetration) 
+
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(AverageInterpenetration) 
+
+hist(ParsiDF$MaxInterpenetration,main = paste("Histogram of Maximum Interpenetration") , xlab = "Maximum Interpenetration")
+
+hist(ParsiDF$AverageInterpenetration, main = paste("Histogram of Average Interpenetration") , xlab = "Average Interpenetration")
+
+```
+
+ 
+
+Let's visualize the data per interpenetration feedback and/or part of the experiment (part 1 & part 2).
+```{r}
+
+ParsiDFplots <- data # A dataframe just for the plots, so we show everything in real numbers and in centimeters!
+ParsiDFplots$ID[ParsiDFplots$ID == 9] <- NA
+ParsiDFplots$ID[ParsiDFplots$ID == 17] <- NA
+ParsiDFplots$ID[ParsiDFplots$ID == 20] <- NA
+ParsiDFplots <- na.omit(ParsiDFplots)
+ParsiDFplots <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDFplots, mean)
+
+ParsiDFplots$AverageInterpenetration <-100 * ParsiDFplots$AverageInterpenetration #Converting meters to centimeters
+ParsiDFplots$MaxInterpenetration <- 100 * ParsiDFplots$MaxInterpenetration #Converting meters to centimeters
+
+p1 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback", #Indepedent Variable
+  y = "MaxInterpenetration", # Depedent Variable
+  grouping.var = "Part", # 2nd IV 
+  type = "p", # parametric test i.e., p values
+  pairwise.comparisons = FALSE, #compute pairwise comparisons
+  pairwise.display = "significant", # show only the significant ones
+  p.adjust.method = "bonferroni", # correction of p-value
+  effsize.type = "unbiased", # Calculates the Hedge's g for t tests and the partial Omega for ANOVA
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback", #label of X axis
+  ylab = "Maximum Interpenetration", #label of y axis
+  sample.size.label = FALSE,
+  var.equal = TRUE, #Assuming Equal variances
+  mean.plotting = FALSE,
+  mean.ci = TRUE, #display the confidence interval of the mean
+  paired = TRUE, #indicating that we have a within subject design
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+  ) 
+
+p2 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+)
+
+
+# Replicating the above but this time we look on the effect of the type of feedback on the DVs in 1st and 2nd Part of the experiment individually
+p3 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "MaxInterpenetration",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Maximum Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+  ) 
+
+p4 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+# Lets check the effect of shaded condition on DVs
+p5 <- ggstatsplot:: ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Maximum Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+  ) 
+
+p6 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+p7 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Maximum Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black") 
+
+p8 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+  ) 
+p1
+
+p2
+
+p3 
+
+p4
+
+p5 
+
+p6
+
+p7
+
+p8
+
+
+```
+
+Let's check the Two Way Repeated Measures ANOVA
+```{r}
+aMax <- aov_ez("ID", "MaxInterpenetration", ParsiDF,
+             within = c("Part", "InterpenetrationFeedback"),
+             anova_table = list(es = "pes"))
+
+knitr::kable(nice(aMax$anova_table))
+```
+
+```{r}
+aAv <- aov_ez("ID", "AverageInterpenetration", ParsiDF,
+             within = c("Part", "InterpenetrationFeedback"),
+             anova_table = list(es = "pes"))
+
+knitr::kable(nice(aAv$anova_table))
+```
+
+The Effect Sizes of the above ANOVAs: 1) Max Interpenetration 2) Average Interpenetration
+```{r}
+
+effectsize::omega_squared(aMax, partial = TRUE, ci = 0.95)
+
+effectsize::omega_squared(aAv, partial = TRUE, ci = 0.95)
+
+```
+
+
+We can see that every type of feedback as well as the interrelationship with the part of the experiment have a large effect on DVs!!!!!! 
+
+Reference for interpreting Omega Squared
+Small effect: ω2 = 0.01;
+Medium effect: ω2 = 0.06;
+Large effect: ω2 = 0.14.
+
+
+Let's plot the main effects (Interpenetration Feedback OR Part of the experiment).
+```{r}
+# ANOVAs just for the plots
+aMaxPlots <- aov_ez("ID", "MaxInterpenetration", ParsiDFplots,
+             within = c("Part", "InterpenetrationFeedback"),
+             anova_table = list(es = "pes"))
+
+aAvPlots <- aov_ez("ID", "AverageInterpenetration", ParsiDFplots,
+             within = c("Part", "InterpenetrationFeedback"),
+             anova_table = list(es = "pes"))
+
+#plots
+afex_plot(aMaxPlots, x = "InterpenetrationFeedback", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(width = 0.5)) +
+            ylim(0, 3)
+
+afex_plot(aMaxPlots, x = "Part", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(width = 0.5))  +
+            ylim(0, 3)
+
+afex_plot(aAvPlots, x = "InterpenetrationFeedback", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(width = 0.5)) +
+            ylim(0, 2.25)
+
+afex_plot(aAvPlots, x = "Part", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(width = 0.5))  +
+            ylim(0, 2.25)
+```
+
+Let's plot the main interaction effects (Interpenetration Feedback AND Part of the experiment).
+```{r}
+
+afex_plot(aMaxPlots, x = "InterpenetrationFeedback", trace = "Part", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(width = 0.5)) +
+            ylim(0, 3)
+
+afex_plot(aMaxPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(width = 0.5))  +
+            ylim(0, 3)
+
+afex_plot(aAvPlots, x = "InterpenetrationFeedback",  trace = "Part", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(width = 0.5)) +
+            ylim(0, 2.25)
+
+afex_plot(aAvPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+                mapping = c("linetype", "shape", "fill"),
+                data_geom = ggpol:: geom_boxjitter, 
+                data_arg = list(width = 0.5))  +
+            ylim(0, 2.25)
+
+```
+
+Post-hoc Tests
+```{r}
+
+################################# Maximum Interpenetration #######################
+aMaxemm <- emmeans(aMax,~ Part:InterpenetrationFeedback,
+ method="pairwise", interaction=TRUE)
+
+pairs(aMaxemm)
+
+require(esvis)
+EffectSizeMax <- hedg_g(ParsiDF,MaxInterpenetration ~ InterpenetrationFeedback + Part, keep_d = FALSE) #Calculates the hedge's g per pair! 
+
+EffectSizeMax
+
+
+################################# Average Interpenetration #######################
+aAvemm <- emmeans(aAv,~ Part:InterpenetrationFeedback,
+ method="pairwise", interaction= TRUE)
+
+pairs(aAvemm)
+EffectSizeAv <- hedg_g(ParsiDF,AverageInterpenetration ~ InterpenetrationFeedback + Part, keep_d = FALSE)
+EffectSizeAv
+
+
+
+############ Change in the Performance (Part 1 vs Part2) per Interpenetration Feedback #############
+
+contrast(emmeans(aMax,~ Part:InterpenetrationFeedback), 
+         method="pairwise", interaction=TRUE)
+
+contrast(emmeans(aAv,~ Part:InterpenetrationFeedback), 
+         method="pairwise", interaction=TRUE)
+
+```
+
+Hedge's G Interpretation:
+
+Small effect (cannot be discerned by the naked eye) = 0.2
+
+Medium Effect = 0.5
+
+Large Effect (can be seen by the naked eye) = 0.8
+
+
+
+
+
+
+Regarding the change of the performance for each type of interpenetration feedback between part 1 and part 2 of the experiment! 
+
+we can see that for MAX INTERPENETRATION the significant comparisons are: 
+                                                     
+1) Part.1 - Part.2 Electrotactile - NoFeedback  p value =  0.0011
+
+2) Part.1 - Part.2 Electrotactile - Visual    p value =  0.0017 
+
+This means that the improvement of the performance from part 1 to part 2 regarding the maximum interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! 
+The rest of the comparisons were insignificant!
+
+
+
+
+
+For the AVERAGE INTERPENETRATION the significant comparisons are: 
+                                                    
+1) Part.1 - Part.2 Both - NoFeedback  p value =  0.0269
+
+2) Part.1 - Part.2 Both - Visual   p value =  0.0452 
+
+3) Part.1 - Part.2 Electrotactile - NoFeedback  p value =  0.0008 
+ 
+4) Part.1 - Part.2 Electrotactile - Visual  p value = 0.0016
+
+This means that the improvement of the performance from part 1 to part 2 regarding the average interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! 
+
+Also, that the improvement of the performance from part 1 to part 2 regarding the average interpenetration was significantly greater for the "Combined (i.e., Both) Feedback" compared to the "No Feedback" and "Visual Feedback" respectively!
+The rest of the comparisons were insignificant!
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
