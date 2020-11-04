@@ -1,11 +1,11 @@
 ---
 title: "Contact Experiment Data Analysis"
 output:
-  html_document:
-    df_print: paged
+  html_notebook: default
   pdf_document: default
   word_document: default
-  html_notebook: default
+  html_document:
+    df_print: paged
 ---
 
 First Step is to load the necessary package, If you dont have them just install them. For jjstatsplot you need to install it remotely.
@@ -466,9 +466,9 @@ Post-hoc Tests
 
 ################################# Maximum Interpenetration #######################
 aMaxemm <- emmeans(aMax,~ Part:InterpenetrationFeedback,
- method="pairwise", interaction=TRUE)
+ method="pairwise", interaction=TRUE, adjust = "bonf")
 
-pairs(aMaxemm)
+pairs(aMaxemm, adjust = "bonf")
 
 require(esvis)
 EffectSizeMax <- hedg_g(ParsiDF,MaxInterpenetration ~ InterpenetrationFeedback + Part, keep_d = FALSE) #Calculates the hedge's g per pair! 
@@ -478,9 +478,9 @@ EffectSizeMax
 
 ################################# Average Interpenetration #######################
 aAvemm <- emmeans(aAv,~ Part:InterpenetrationFeedback,
- method="pairwise", interaction= TRUE)
+ method="pairwise", interaction= TRUE, adjust = "bonf")
 
-pairs(aAvemm)
+
 EffectSizeAv <- hedg_g(ParsiDF,AverageInterpenetration ~ InterpenetrationFeedback + Part, keep_d = FALSE)
 EffectSizeAv
 
@@ -489,21 +489,39 @@ EffectSizeAv
 ############ Change in the Performance (Part 1 vs Part2) per Interpenetration Feedback #############
 
 contrast(emmeans(aMax,~ Part:InterpenetrationFeedback), 
-         method="pairwise", interaction=TRUE)
+         method="pairwise", interaction=TRUE, adjust = "bonf")
 
 contrast(emmeans(aAv,~ Part:InterpenetrationFeedback), 
-         method="pairwise", interaction=TRUE)
+         method="pairwise", interaction=TRUE, adjust = "bonf")
 
 ```
 
-Hedge's G Interpretation:
+Significant Comparisons:
+Part.1 Both - Part.2 Both                      p = 0.0039 Hedge's g = 0.61676553
+Part.1 Both - Part.1 Electrotactile            p = 0.0014 Hedge's g = -0.72831779
+Part.1 Both - Part.1 NoFeedback                p <.0001   Hedge's g = -1.16801037
+Part.2 Both - Part.2 NoFeedback                p <.0001   Hedge's g = -1.79394003
+
+
+Part.1 Electrotactile - Part.2 Electrotactile  p <.0001   Hedge's g = 0.81636215
+Part.1 Electrotactile - Part.1 Visual          p = 0.0100  Hedge's g = 0.58901263
+Part.2 Electrotactile - Part.2 NoFeedback      p <.0001    Hedge's g = -1.11877925
+
+Part.1 NoFeedback - Part.1 Visual              p <.0001    Hedge's g = 0.98702238
+Part.2 NoFeedback - Part.2 Visual              p <.0001    Hedge's g = 1.26405828
+
+
+
+
+
+
+Hedge's G Interpretation (Note: + or - just shows the direction!):
 
 Small effect (cannot be discerned by the naked eye) = 0.2
 
 Medium Effect = 0.5
 
 Large Effect (can be seen by the naked eye) = 0.8
-
 
 
 
@@ -516,6 +534,8 @@ we can see that for MAX INTERPENETRATION the significant comparisons are:
 1) Part.1 - Part.2 Electrotactile - NoFeedback  p value =  0.0011
 
 2) Part.1 - Part.2 Electrotactile - Visual    p value =  0.0017 
+
+
 
 This means that the improvement of the performance from part 1 to part 2 regarding the maximum interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! 
 The rest of the comparisons were insignificant!
