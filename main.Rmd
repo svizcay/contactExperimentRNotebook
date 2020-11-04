@@ -38,7 +38,7 @@ Import and merge all the csv files (x.csv where x = ID) of the folder. Note, tha
 data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
                        pattern = "*.csv", full.names = TRUE) %>% 
   lapply(read_csv) %>%                                            # Store all files in list
-  bind_rows                                                       # Combine data sets into one data set 
+  bind_rows                                                       # Combine data sets into a single data set 
 data 
 ```
 
@@ -1267,18 +1267,27 @@ Now lets do all again but this time without the IDs which produced the Extreme V
 
 ParsiDF <- NewData
 
+ParsiDF$Part <- as.factor(ParsiDF$Block < 4)
+levels(ParsiDF$Part)
+
+ParsiDF$Part <- factor(ParsiDF$Part,levels = c("TRUE","FALSE"),
+                  labels = c("Part 1","Part 2"))
+
+ParsiDF$Extreme1 <- is_extreme(ParsiDF$MaxInterpenetration)
+
+ParsiDF$Extreme2 <- is_extreme(ParsiDF$AverageInterpenetration)
+#ParsiDF$Extreme1[ParsiDF$Extreme1 == TRUE]  <- NA
+#ParsiDF$Extreme2[ParsiDF$Extreme2 == TRUE]  <- NA
+
 ParsiDF$ID[ParsiDF$ID == 9] <- NA
 ParsiDF$ID[ParsiDF$ID == 17] <- NA
 ParsiDF$ID[ParsiDF$ID == 20] <- NA
 
 ParsiDF <- na.omit(ParsiDF)
 
-ParsiDF$Part <- as.factor(ParsiDF$Block < 4)
+#ParsiDF$Part <- as.factor(ParsiDF$Block < 4)
 
-levels(ParsiDF$Part)
 
-ParsiDF$Part <- factor(ParsiDF$Part,levels = c("TRUE","FALSE"),
-                  labels = c("Part 1","Part 2"))
 
 ParsiDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDF, mean)
 
@@ -1338,7 +1347,6 @@ p1 <- ggstatsplot::ggbetweenstats(
   ylab = "Maximum Interpenetration", #label of y axis
   var.equal = TRUE, #Assuming Equal variances
   mean.ci = TRUE, #display the confidence interval of the mean
-  notch = TRUE, #Compare the medians i.e., IQR with 95% confidence interval
   paired = TRUE #indicating that we have a within subject design
   ) 
 
@@ -1356,7 +1364,6 @@ p2 <- ggstatsplot::ggbetweenstats(
   ylab = "Average Interpenetration",
   var.equal = TRUE,
   mean.ci = TRUE,
-  notch = TRUE,
   paired = TRUE
 )
 
@@ -1377,7 +1384,6 @@ p3 <- ggstatsplot::grouped_ggbetweenstats(
   sub.text = "Explicit Visual Representation" ,
   var.equal = TRUE,
   mean.ci = TRUE,
-  notch = TRUE,
   paired = TRUE
   ) 
 
@@ -1395,7 +1401,6 @@ p4 <- ggstatsplot::grouped_ggbetweenstats(
   ylab = "Average Interpenetration",
   var.equal = TRUE,
   mean.ci = TRUE,
-  notch = TRUE,
   paired = TRUE
 ) 
 
@@ -1415,7 +1420,6 @@ p5 <- ggstatsplot:: ggbetweenstats(
   sub.text = "Explicit Visual Representation" ,
   var.equal = TRUE,
   mean.ci = TRUE,
-  notch = TRUE,
   paired = TRUE
   ) 
 
@@ -1433,7 +1437,6 @@ p6 <- ggstatsplot::ggbetweenstats(
   ylab = "Average Interpenetration",
   var.equal = TRUE,
   mean.ci = TRUE,
-  notch = TRUE,
   paired = TRUE
 ) 
 
@@ -1452,7 +1455,6 @@ p7 <- ggstatsplot::grouped_ggbetweenstats(
   sub.text = "Explicit Visual Representation" ,
   var.equal = TRUE,
   mean.ci = TRUE,
-  notch = TRUE,
   paired = TRUE
   ) 
 
@@ -1470,7 +1472,6 @@ p8 <- ggstatsplot::grouped_ggbetweenstats(
   ylab = "Average Interpenetration",
   var.equal = TRUE,
   mean.ci = TRUE,
-  notch = TRUE,
   paired = TRUE
 ) 
 p1
@@ -1585,10 +1586,10 @@ Let's check the post hoc tests (Whole experiment)
 ```{r}
 
 ParsiMax <- pairwise.t.test(ParsiDF$MaxInterpenetration, ParsiDF$InterpenetrationFeedback, p.adjust.method = "bonferroni",
-        paired = FALSE, alternative = "two.sided")
+        paired = TRUE, alternative = "two.sided")
 
 ParsiAv <- pairwise.t.test(ParsiDF$AverageInterpenetration, ParsiDF$InterpenetrationFeedback, p.adjust.method = "bonferroni",
-        paired = FALSE, alternative = "two.sided")
+        paired = TRUE, alternative = "two.sided")
 
 ParsiMax
 
@@ -1749,4 +1750,271 @@ Hedge's G Interpretation:
 Small effect (cannot be discerned by the naked eye) = 0.2
 Medium Effect = 0.5
 Large Effect (can be seen by the naked eye) = 0.8
+
+
+
+
+
+
+
+Let's Check the intesities of the electrotactile feedback
+
+```{r}
+
+library(readr)
+
+intensities <- read_csv("C:/repos/contactExperimentRNotebook/intensities.csv")
+
+pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+```
+
+OK, for every DV (i.e., Sensatio, Pain , and ActualValue)  we have the same results 
+
+Significant differences between 
+
+Final and Initial !!!!!! 
+
+Middle and Initial  !!!!!!
+
+
+Non-Significant differences between
+
+Middle and Final calibration
+
+
+I interpret them as follows: During the 1st part (i.e., until the middle calibration ) the individuals get familiarized with the electrotactile feedback. Then, the variation drops significantly! So, the most reliable calibration appears the middle one (considering that the final doesnt differ, so it seems redundant). Importantly, these results utterly support the familiarization hypothesis regarding the results of the ANOVAs and 
+Comparisons between the feedback types, as well as it explains why the electrotactile and both have greater effect size on the 2nd part!!!
+
+
+
+
+Let's check the effect size now.
+
+```{r}
+
+MidVSInitial <- filter(intensities, Calibration != "final")
+
+FinalVSInitial <- filter(intensities, Calibration != "middle")
+
+?hedges_g()
+effectsize::hedges_g("Sensation", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Pain", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("ActualValue", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Sensation", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Pain", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("ActualValue", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+
+
+#Check if there is a correlation between calibration and the scores
+ParsiDF$Calibration <- intensities$Calibration
+view(intensities)
+
+
+
+
+correlation::cor_test()
+?cor_to_ci()
+cor_test()
+?cor_te
+```
+
+the + or - is just the direction of the SDs change proportionally to how the comparison is called (e..g, Final vs Initial or Initial vs Final) so just ignore it. 
+The important is the value of hedges g. 
+We have Large (Very large in some) Effect in every comparison.
+
+Hedge's G Interpretation:
+Small effect (cannot be discerned by the naked eye) = 0.2
+Medium Effect = 0.5
+Large Effect (can be seen by the naked eye) = 0.8
+
+
+
+
+Now let's check the questionnaires' results
+For Questionnaires is better to compare the medians (i.e., non-parametric tests) because the responses are not real numbers, the responses are ordinal data which may be better interpreted as ranks.
+```{r}
+
+quest <- read_csv("C:/repos/contactExperimentRNotebook/Questionnaires.csv")
+
+#?pairwise_wilcox_test()
+#?wilcox_effsize()
+#?wilcox_test()
+?wilcox.test()
+
+#Usefulness
+wilcox.test(quest$VisualUseful, quest$ElectrotactileUseful, 
+                           alternative = "two.sided", 
+                           paired = TRUE,
+                           exact = TRUE, 
+                           correct = TRUE, 
+                           conf.int = TRUE, 
+                           data = quest) 
+#Resemblance
+wilcox.test(quest$VisualResembling, quest$ElectrotactileResembling, 
+                           alternative = "two.sided", 
+                           paired = TRUE,
+                           exact = TRUE, 
+                           correct = TRUE, 
+                           conf.int = TRUE, 
+                           data = quest) 
+#Coherence 
+wilcox.test(quest$VisualCoherent, quest$ElectricalCoherent, 
+                           alternative = "two.sided", 
+                           paired = TRUE,
+                           exact = TRUE, 
+                           correct = TRUE, 
+                           conf.int = TRUE, 
+                           data = quest) 
+
+
+
+
+
+
+```
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
 
