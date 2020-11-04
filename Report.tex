@@ -1,0 +1,1347 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Contact Experiment Data Analysis},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Contact Experiment Data Analysis}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+First Step is to load the necessary package, If you dont have them just
+install them. For jjstatsplot you need to install it remotely. Just
+remove the dash and press enter. Then Press 3 (none package to be
+updated). ?group\_by()
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#remotes::install_github("sbalci/jjstatsplot") #Press 3 !!!!! i.e., installing/Updating none package! }
+\KeywordTok{library}\NormalTok{(jmv)}
+\KeywordTok{library}\NormalTok{(datasets)}
+\KeywordTok{library}\NormalTok{(plyr)}
+\KeywordTok{library}\NormalTok{(readr)}
+\KeywordTok{library}\NormalTok{(dataframes2xls)}
+\KeywordTok{library}\NormalTok{(data.table)}
+\KeywordTok{library}\NormalTok{(plyr)}
+\KeywordTok{library}\NormalTok{(ggstatsplot)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'broom.mixed':
+##   method      from 
+##   tidy.gamlss broom
+\end{verbatim}
+
+\begin{verbatim}
+## Registered S3 methods overwritten by 'lme4':
+##   method                          from
+##   cooks.distance.influence.merMod car 
+##   influence.merMod                car 
+##   dfbeta.influence.merMod         car 
+##   dfbetas.influence.merMod        car
+\end{verbatim}
+
+\begin{verbatim}
+## In case you would like cite this package, cite it as:
+##      Patil, I. (2018). ggstatsplot: "ggplot2" Based Plots with Statistical Details. CRAN.
+##      Retrieved from https://cran.r-project.org/web/packages/ggstatsplot/index.html
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(jjstatsplot)}
+\KeywordTok{library}\NormalTok{(lme4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: Matrix
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(lmerTest)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'lmerTest'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:lme4':
+## 
+##     lmer
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:stats':
+## 
+##     step
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(rstatix)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'rstatix'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:plyr':
+## 
+##     desc, mutate
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:stats':
+## 
+##     filter
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(coin)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: survival
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'coin'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:rstatix':
+## 
+##     chisq_test, friedman_test, kruskal_test, sign_test, wilcox_test
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ARTool)}
+\KeywordTok{library}\NormalTok{(ggpubr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'ggpubr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:plyr':
+## 
+##     mutate
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## Found more than one class "atomicVector" in cache; using the first, from namespace 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## Also defined by 'Rmpfr'
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+\end{verbatim}
+
+\begin{verbatim}
+## v tibble  3.0.4     v dplyr   1.0.2
+## v tidyr   1.1.2     v stringr 1.4.0
+## v purrr   0.3.4     v forcats 0.5.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::arrange()   masks plyr::arrange()
+## x dplyr::between()   masks data.table::between()
+## x purrr::compact()   masks plyr::compact()
+## x dplyr::count()     masks plyr::count()
+## x tidyr::expand()    masks Matrix::expand()
+## x dplyr::failwith()  masks plyr::failwith()
+## x dplyr::filter()    masks rstatix::filter(), stats::filter()
+## x dplyr::first()     masks data.table::first()
+## x dplyr::id()        masks plyr::id()
+## x dplyr::lag()       masks stats::lag()
+## x dplyr::last()      masks data.table::last()
+## x dplyr::mutate()    masks ggpubr::mutate(), rstatix::mutate(), plyr::mutate()
+## x tidyr::pack()      masks Matrix::pack()
+## x dplyr::rename()    masks plyr::rename()
+## x dplyr::summarise() masks plyr::summarise()
+## x dplyr::summarize() masks plyr::summarize()
+## x purrr::transpose() masks data.table::transpose()
+## x tidyr::unpack()    masks Matrix::unpack()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"afex"}\NormalTok{)     }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## ************
+## Welcome to afex. For support visit: http://afex.singmann.science/
+\end{verbatim}
+
+\begin{verbatim}
+## - Functions for ANOVAs: aov_car(), aov_ez(), and aov_4()
+## - Methods for calculating p-values with mixed(): 'KR', 'S', 'LRT', and 'PB'
+## - 'afex_aov' and 'mixed' objects can be passed to emmeans() for follow-up tests
+## - NEWS: library('emmeans') now needs to be called explicitly!
+## - Get and set global package options with: afex_options()
+## - Set orthogonal sum-to-zero contrasts globally: set_sum_contrasts()
+## - For example analyses see: browseVignettes("afex")
+## ************
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'afex'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:lme4':
+## 
+##     lmer
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"emmeans"}\NormalTok{)  }
+\KeywordTok{library}\NormalTok{(}\StringTok{"multcomp"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: mvtnorm
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: TH.data
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: MASS
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'MASS'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:dplyr':
+## 
+##     select
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:rstatix':
+## 
+##     select
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'TH.data'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:MASS':
+## 
+##     geyser
+\end{verbatim}
+
+Import and merge all the csv files (x.csv where x = ID) of the folder.
+Note, that the ID is has already been added as column
+
+Discard first X trials per interpenetration feedback condition and then
+create a summary table for each participant. You need to define
+\textbf{nrTrialsPerBlockToRemove}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data}\OperatorTok{$}\NormalTok{Part <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(data}\OperatorTok{$}\NormalTok{Block }\OperatorTok{<}\StringTok{ }\DecValTok{4}\NormalTok{)}
+\KeywordTok{levels}\NormalTok{(data}\OperatorTok{$}\NormalTok{Part)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "FALSE" "TRUE"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data}\OperatorTok{$}\NormalTok{Part <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(data}\OperatorTok{$}\NormalTok{Part,}\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{"TRUE"}\NormalTok{,}\StringTok{"FALSE"}\NormalTok{),}
+                  \DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Part 1"}\NormalTok{,}\StringTok{"Part 2"}\NormalTok{))}
+
+\NormalTok{nrTrialsPerBlockToRemove <-}\StringTok{ }\DecValTok{1}
+\CommentTok{#trialsToRemove <- seq(from = 1, to = nrTrialsPerBlockToRemove)}
+
+\NormalTok{  data <-}\StringTok{  }\NormalTok{data }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{group_by}\NormalTok{(ID, Part, InterpenetrationFeedback, FullyShaded) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# I have added here the fully shaded }
+\StringTok{    }\KeywordTok{slice}\NormalTok{(nrTrialsPerBlockToRemove}\OperatorTok{+}\DecValTok{1}\OperatorTok{:}\KeywordTok{n}\NormalTok{())}
+  \CommentTok{# to double check we are discarding the right rows}
+  \CommentTok{#print(data[[i]]$Trial)}
+
+ \CommentTok{# This df will be used to create the subsets for 1st part and 2nd part of the experiment. }
+  
+\NormalTok{data}\OperatorTok{$}\NormalTok{InterpenetrationFeedback  <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(data}\OperatorTok{$}\NormalTok{InterpenetrationFeedback)}
+\NormalTok{data}\OperatorTok{$}\NormalTok{FullyShaded <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(data}\OperatorTok{$}\NormalTok{FullyShaded)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ParsiDF <-}\StringTok{ }\NormalTok{data}
+
+
+\CommentTok{# Exclude the IDs which produced the extreme values (i.e., = or > 3 coefficients from the mean)}
+\NormalTok{ParsiDF}\OperatorTok{$}\NormalTok{ID[ParsiDF}\OperatorTok{$}\NormalTok{ID }\OperatorTok{==}\StringTok{ }\DecValTok{9}\NormalTok{] <-}\StringTok{ }\OtherTok{NA} 
+\NormalTok{ParsiDF}\OperatorTok{$}\NormalTok{ID[ParsiDF}\OperatorTok{$}\NormalTok{ID }\OperatorTok{==}\StringTok{ }\DecValTok{17}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{ParsiDF}\OperatorTok{$}\NormalTok{ID[ParsiDF}\OperatorTok{$}\NormalTok{ID }\OperatorTok{==}\StringTok{ }\DecValTok{20}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+
+\NormalTok{ParsiDF <-}\StringTok{ }\KeywordTok{na.omit}\NormalTok{(ParsiDF)}
+
+\NormalTok{ParsiDF <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{(. }\OperatorTok{~}\StringTok{ }\NormalTok{ID }\OperatorTok{+}\StringTok{ }\NormalTok{Age }\OperatorTok{+}\StringTok{ }\NormalTok{Gender }\OperatorTok{+}\StringTok{ }\NormalTok{InterpenetrationFeedback }\OperatorTok{+}\StringTok{ }\NormalTok{Part, ParsiDF, mean)}
+
+\CommentTok{#Before Conversion to logarithms (showing the abnormal distribution)}
+\KeywordTok{shapiro_test}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##   variable                    statistic     p.value
+##   <chr>                           <dbl>       <dbl>
+## 1 ParsiDF$MaxInterpenetration     0.937 0.000000946
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro_test}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{AverageInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##   variable                        statistic     p.value
+##   <chr>                               <dbl>       <dbl>
+## 1 ParsiDF$AverageInterpenetration     0.936 0.000000844
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggqqplot}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggqqplot}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{AverageInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ParsiDF }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(InterpenetrationFeedback, Part) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{shapiro_test}\NormalTok{(MaxInterpenetration) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8 x 5
+##   InterpenetrationFeedback Part   variable            statistic       p
+##   <fct>                    <fct>  <chr>                   <dbl>   <dbl>
+## 1 Both                     Part 1 MaxInterpenetration     0.946 0.290  
+## 2 Both                     Part 2 MaxInterpenetration     0.834 0.00225
+## 3 Electrotactile           Part 1 MaxInterpenetration     0.967 0.677  
+## 4 Electrotactile           Part 2 MaxInterpenetration     0.859 0.00611
+## 5 NoFeedback               Part 1 MaxInterpenetration     0.969 0.720  
+## 6 NoFeedback               Part 2 MaxInterpenetration     0.977 0.872  
+## 7 Visual                   Part 1 MaxInterpenetration     0.860 0.00622
+## 8 Visual                   Part 2 MaxInterpenetration     0.898 0.0327
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ParsiDF }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(InterpenetrationFeedback, Part) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{shapiro_test}\NormalTok{(AverageInterpenetration)  }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8 x 5
+##   InterpenetrationFeedback Part   variable                statistic       p
+##   <fct>                    <fct>  <chr>                       <dbl>   <dbl>
+## 1 Both                     Part 1 AverageInterpenetration     0.947 0.301  
+## 2 Both                     Part 2 AverageInterpenetration     0.827 0.00175
+## 3 Electrotactile           Part 1 AverageInterpenetration     0.964 0.592  
+## 4 Electrotactile           Part 2 AverageInterpenetration     0.877 0.0128 
+## 5 NoFeedback               Part 1 AverageInterpenetration     0.964 0.598  
+## 6 NoFeedback               Part 2 AverageInterpenetration     0.955 0.420  
+## 7 Visual                   Part 1 AverageInterpenetration     0.851 0.00445
+## 8 Visual                   Part 2 AverageInterpenetration     0.914 0.0655
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#After Conversion of the performance variables into logs (Normal Distribution)}
+\NormalTok{ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration <-}\StringTok{ }\KeywordTok{log}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration)}
+
+\NormalTok{ParsiDF}\OperatorTok{$}\NormalTok{AverageInterpenetration <-}\StringTok{ }\KeywordTok{log}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{AverageInterpenetration)}
+
+\KeywordTok{shapiro_test}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##   variable                    statistic p.value
+##   <chr>                           <dbl>   <dbl>
+## 1 ParsiDF$MaxInterpenetration     0.988   0.149
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro_test}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{AverageInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##   variable                        statistic p.value
+##   <chr>                               <dbl>   <dbl>
+## 1 ParsiDF$AverageInterpenetration     0.986  0.0873
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggqqplot}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-4-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggqqplot}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{AverageInterpenetration)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-4-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Let's check the assumption for each interpenetration feedback and shade condition}
+\NormalTok{ParsiDF }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(InterpenetrationFeedback, Part) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{shapiro_test}\NormalTok{(MaxInterpenetration) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8 x 5
+##   InterpenetrationFeedback Part   variable            statistic     p
+##   <fct>                    <fct>  <chr>                   <dbl> <dbl>
+## 1 Both                     Part 1 MaxInterpenetration     0.987 0.989
+## 2 Both                     Part 2 MaxInterpenetration     0.966 0.646
+## 3 Electrotactile           Part 1 MaxInterpenetration     0.931 0.143
+## 4 Electrotactile           Part 2 MaxInterpenetration     0.975 0.831
+## 5 NoFeedback               Part 1 MaxInterpenetration     0.958 0.468
+## 6 NoFeedback               Part 2 MaxInterpenetration     0.951 0.352
+## 7 Visual                   Part 1 MaxInterpenetration     0.963 0.582
+## 8 Visual                   Part 2 MaxInterpenetration     0.976 0.851
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ParsiDF }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(InterpenetrationFeedback, Part) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{shapiro_test}\NormalTok{(AverageInterpenetration) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8 x 5
+##   InterpenetrationFeedback Part   variable                statistic     p
+##   <fct>                    <fct>  <chr>                       <dbl> <dbl>
+## 1 Both                     Part 1 AverageInterpenetration     0.976 0.854
+## 2 Both                     Part 2 AverageInterpenetration     0.970 0.740
+## 3 Electrotactile           Part 1 AverageInterpenetration     0.954 0.396
+## 4 Electrotactile           Part 2 AverageInterpenetration     0.979 0.906
+## 5 NoFeedback               Part 1 AverageInterpenetration     0.956 0.434
+## 6 NoFeedback               Part 2 AverageInterpenetration     0.977 0.873
+## 7 Visual                   Part 1 AverageInterpenetration     0.955 0.428
+## 8 Visual                   Part 2 AverageInterpenetration     0.964 0.600
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hist}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration,}\DataTypeTok{main =} \KeywordTok{paste}\NormalTok{(}\StringTok{"Histogram of Maximum Interpenetration"}\NormalTok{) , }\DataTypeTok{xlab =} \StringTok{"Maximum Interpenetration"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-4-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hist}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{AverageInterpenetration, }\DataTypeTok{main =} \KeywordTok{paste}\NormalTok{(}\StringTok{"Histogram of Average Interpenetration"}\NormalTok{) , }\DataTypeTok{xlab =} \StringTok{"Average Interpenetration"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-4-6.pdf}
+
+Let's visualize the data per interpenetration feedback and/or part of
+the experiment (part 1 \& part 2).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ParsiDFplots <-}\StringTok{ }\NormalTok{data }\CommentTok{# A dataframe just for the plots, so we show everything in real numbers and in centimeters!}
+\NormalTok{ParsiDFplots}\OperatorTok{$}\NormalTok{ID[ParsiDFplots}\OperatorTok{$}\NormalTok{ID }\OperatorTok{==}\StringTok{ }\DecValTok{9}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{ParsiDFplots}\OperatorTok{$}\NormalTok{ID[ParsiDFplots}\OperatorTok{$}\NormalTok{ID }\OperatorTok{==}\StringTok{ }\DecValTok{17}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{ParsiDFplots}\OperatorTok{$}\NormalTok{ID[ParsiDFplots}\OperatorTok{$}\NormalTok{ID }\OperatorTok{==}\StringTok{ }\DecValTok{20}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{ParsiDFplots <-}\StringTok{ }\KeywordTok{na.omit}\NormalTok{(ParsiDFplots)}
+\NormalTok{ParsiDFplots <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{(. }\OperatorTok{~}\StringTok{ }\NormalTok{ID }\OperatorTok{+}\StringTok{ }\NormalTok{Age }\OperatorTok{+}\StringTok{ }\NormalTok{Gender }\OperatorTok{+}\StringTok{ }\NormalTok{InterpenetrationFeedback }\OperatorTok{+}\StringTok{ }\NormalTok{Part, ParsiDFplots, mean)}
+
+\NormalTok{ParsiDFplots}\OperatorTok{$}\NormalTok{AverageInterpenetration <-}\DecValTok{100} \OperatorTok{*}\StringTok{ }\NormalTok{ParsiDFplots}\OperatorTok{$}\NormalTok{AverageInterpenetration }\CommentTok{#Converting meters to centimeters}
+\NormalTok{ParsiDFplots}\OperatorTok{$}\NormalTok{MaxInterpenetration <-}\StringTok{ }\DecValTok{100} \OperatorTok{*}\StringTok{ }\NormalTok{ParsiDFplots}\OperatorTok{$}\NormalTok{MaxInterpenetration }\CommentTok{#Converting meters to centimeters}
+
+\NormalTok{p1 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{, }\CommentTok{#Indepedent Variable}
+  \DataTypeTok{y =} \StringTok{"MaxInterpenetration"}\NormalTok{, }\CommentTok{# Depedent Variable}
+  \DataTypeTok{grouping.var =} \StringTok{"Part"}\NormalTok{, }\CommentTok{# 2nd IV }
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{, }\CommentTok{# parametric test i.e., p values}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{, }\CommentTok{#compute pairwise comparisons}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{, }\CommentTok{# show only the significant ones}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\CommentTok{# correction of p-value}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{, }\CommentTok{# Calculates the Hedge's g for t tests and the partial Omega for ANOVA}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{, }\CommentTok{#label of X axis}
+  \DataTypeTok{ylab =} \StringTok{"Maximum Interpenetration"}\NormalTok{, }\CommentTok{#label of y axis}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{, }\CommentTok{#Assuming Equal variances}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{, }\CommentTok{#display the confidence interval of the mean}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\CommentTok{#indicating that we have a within subject design}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  ) }
+
+\NormalTok{p2 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"AverageInterpenetration"}\NormalTok{,}
+  \DataTypeTok{grouping.var =} \StringTok{"Part"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Average Interpenetration"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{)}
+
+
+\CommentTok{# Replicating the above but this time we look on the effect of the type of feedback on the DVs in 1st and 2nd Part of the experiment individually}
+\NormalTok{p3 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{grouped_ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"MaxInterpenetration"}\NormalTok{,}
+  \DataTypeTok{grouping.var =} \StringTok{"Part"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Maximum Interpenetration"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  ) }
+
+\NormalTok{p4 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{grouped_ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"AverageInterpenetration"}\NormalTok{,}
+  \DataTypeTok{grouping.var =} \StringTok{"Part"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Average Interpenetration"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{) }
+
+\CommentTok{# Lets check the effect of shaded condition on DVs}
+\NormalTok{p5 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\StringTok{ }\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"Part"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"MaxInterpenetration"}\NormalTok{,}
+  \DataTypeTok{grouping.var =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Order"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Maximum Interpenetration"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  ) }
+
+\NormalTok{p6 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"Part"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"AverageInterpenetration"}\NormalTok{,}
+  \DataTypeTok{grouping.var =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Order"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Average Interpenetration"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{) }
+
+\NormalTok{p7 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{grouped_ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"Part"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"MaxInterpenetration"}\NormalTok{,}
+  \DataTypeTok{grouping.var =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Order"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Maximum Interpenetration"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}\NormalTok{) }
+
+\NormalTok{p8 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{grouped_ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ ParsiDFplots,}
+  \DataTypeTok{x =} \StringTok{"Part"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"AverageInterpenetration"}\NormalTok{,}
+  \DataTypeTok{grouping.var =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Order"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Average Interpenetration"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Interpenetration Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{caption.text =} \StringTok{"Note: Interpenetration distance is displayed in cm."}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  ) }
+\NormalTok{p1}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p2}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p3 }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p4}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p5 }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p6}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p7}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-7.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p8}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-5-8.pdf}
+
+Let's check the Two Way Repeated Measures ANOVA
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{aMax <-}\StringTok{ }\KeywordTok{aov_ez}\NormalTok{(}\StringTok{"ID"}\NormalTok{, }\StringTok{"MaxInterpenetration"}\NormalTok{, ParsiDF,}
+             \DataTypeTok{within =} \KeywordTok{c}\NormalTok{(}\StringTok{"Part"}\NormalTok{, }\StringTok{"InterpenetrationFeedback"}\NormalTok{),}
+             \DataTypeTok{anova_table =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{es =} \StringTok{"pes"}\NormalTok{))}
+
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(}\KeywordTok{nice}\NormalTok{(aMax}\OperatorTok{$}\NormalTok{anova_table))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}llllll@{}}
+\toprule
+Effect & df & MSE & F & pes & p.value\tabularnewline
+\midrule
+\endhead
+Part & 1, 20 & 0.06 & 29.43 *** & .595 & \textless.001\tabularnewline
+InterpenetrationFeedback & 1.88, 37.52 & 0.12 & 28.36 *** & .586 &
+\textless.001\tabularnewline
+Part:InterpenetrationFeedback & 2.06, 41.24 & 0.04 & 5.16 ** & .205 &
+.009\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{aAv <-}\StringTok{ }\KeywordTok{aov_ez}\NormalTok{(}\StringTok{"ID"}\NormalTok{, }\StringTok{"AverageInterpenetration"}\NormalTok{, ParsiDF,}
+             \DataTypeTok{within =} \KeywordTok{c}\NormalTok{(}\StringTok{"Part"}\NormalTok{, }\StringTok{"InterpenetrationFeedback"}\NormalTok{),}
+             \DataTypeTok{anova_table =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{es =} \StringTok{"pes"}\NormalTok{))}
+
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(}\KeywordTok{nice}\NormalTok{(aAv}\OperatorTok{$}\NormalTok{anova_table))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}llllll@{}}
+\toprule
+Effect & df & MSE & F & pes & p.value\tabularnewline
+\midrule
+\endhead
+Part & 1, 20 & 0.07 & 31.74 *** & .613 & \textless.001\tabularnewline
+InterpenetrationFeedback & 1.97, 39.31 & 0.12 & 25.89 *** & .564 &
+\textless.001\tabularnewline
+Part:InterpenetrationFeedback & 2.11, 42.21 & 0.04 & 5.72 ** & .222 &
+.006\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{omega_squared}\NormalTok{(aMax, }\DataTypeTok{partial =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{ci =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Parameter                     | Omega2 (partial) |        95% CI
+## ----------------------------------------------------------------
+## Part                          |             0.56 | [ 0.24, 0.74]
+## InterpenetrationFeedback      |             0.56 | [ 0.38, 0.68]
+## Part:InterpenetrationFeedback |             0.16 | [-0.02, 0.32]
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{omega_squared}\NormalTok{(aAv, }\DataTypeTok{partial =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{ci =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Parameter                     | Omega2 (partial) |        95% CI
+## ----------------------------------------------------------------
+## Part                          |             0.58 | [ 0.26, 0.75]
+## InterpenetrationFeedback      |             0.54 | [ 0.35, 0.66]
+## Part:InterpenetrationFeedback |             0.18 | [-0.01, 0.34]
+\end{verbatim}
+
+We can see that every type of feedback as well as the interrelationship
+with the part of the experiment have a large effect on DVs!!!!!!
+
+Reference for interpreting Omega Squared Small effect: ω2 = 0.01; Medium
+effect: ω2 = 0.06; Large effect: ω2 = 0.14.
+
+Let's plot the main effects (Interpenetration Feedback OR Part of the
+experiment).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# ANOVAs just for the plots}
+\NormalTok{aMaxPlots <-}\StringTok{ }\KeywordTok{aov_ez}\NormalTok{(}\StringTok{"ID"}\NormalTok{, }\StringTok{"MaxInterpenetration"}\NormalTok{, ParsiDFplots,}
+             \DataTypeTok{within =} \KeywordTok{c}\NormalTok{(}\StringTok{"Part"}\NormalTok{, }\StringTok{"InterpenetrationFeedback"}\NormalTok{),}
+             \DataTypeTok{anova_table =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{es =} \StringTok{"pes"}\NormalTok{))}
+
+\NormalTok{aAvPlots <-}\StringTok{ }\KeywordTok{aov_ez}\NormalTok{(}\StringTok{"ID"}\NormalTok{, }\StringTok{"AverageInterpenetration"}\NormalTok{, ParsiDFplots,}
+             \DataTypeTok{within =} \KeywordTok{c}\NormalTok{(}\StringTok{"Part"}\NormalTok{, }\StringTok{"InterpenetrationFeedback"}\NormalTok{),}
+             \DataTypeTok{anova_table =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{es =} \StringTok{"pes"}\NormalTok{))}
+
+\CommentTok{#plots}
+\KeywordTok{afex_plot}\NormalTok{(aMaxPlots, }\DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NOTE: Results may be misleading due to involvement in interactions
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{afex_plot}\NormalTok{(aMaxPlots, }\DataTypeTok{x =} \StringTok{"Part"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{))  }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NOTE: Results may be misleading due to involvement in interactions
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-9-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{afex_plot}\NormalTok{(aAvPlots, }\DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{2.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NOTE: Results may be misleading due to involvement in interactions
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-9-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{afex_plot}\NormalTok{(aAvPlots, }\DataTypeTok{x =} \StringTok{"Part"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{))  }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{2.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NOTE: Results may be misleading due to involvement in interactions
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-9-4.pdf}
+
+Let's plot the main interaction effects (Interpenetration Feedback AND
+Part of the experiment).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{afex_plot}\NormalTok{(aMaxPlots, }\DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{, }\DataTypeTok{trace =} \StringTok{"Part"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_box_jitter).
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{afex_plot}\NormalTok{(aMaxPlots, }\DataTypeTok{x =} \StringTok{"Part"}\NormalTok{, }\DataTypeTok{trace =} \StringTok{"InterpenetrationFeedback"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{))  }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_box_jitter).
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-10-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{afex_plot}\NormalTok{(aAvPlots, }\DataTypeTok{x =} \StringTok{"InterpenetrationFeedback"}\NormalTok{,  }\DataTypeTok{trace =} \StringTok{"Part"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{2.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing non-finite values (stat_box_jitter).
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-10-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{afex_plot}\NormalTok{(aAvPlots, }\DataTypeTok{x =} \StringTok{"Part"}\NormalTok{, }\DataTypeTok{trace =} \StringTok{"InterpenetrationFeedback"}\NormalTok{, }\DataTypeTok{error =} \StringTok{"within"}\NormalTok{, }
+                \DataTypeTok{mapping =} \KeywordTok{c}\NormalTok{(}\StringTok{"linetype"}\NormalTok{, }\StringTok{"shape"}\NormalTok{, }\StringTok{"fill"}\NormalTok{),}
+                \DataTypeTok{data_geom =}\NormalTok{ ggpol}\OperatorTok{::}\StringTok{ }\NormalTok{geom_boxjitter, }
+                \DataTypeTok{data_arg =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.5}\NormalTok{))  }\OperatorTok{+}
+\StringTok{            }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{2.25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing non-finite values (stat_box_jitter).
+\end{verbatim}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-10-4.pdf}
+
+Post-hoc Tests
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\StringTok{"}
+\StringTok{# Main Effects}
+\StringTok{lsmMaxFeedback <- lsmeans(aMax,~ InterpenetrationFeedback)}
+\StringTok{contrast(lsmMax, method=pairwise, interaction = TRUE)}
+
+\StringTok{lsmMaxPart <- lsmeans(aMax,~ Part)}
+\StringTok{contrast(lsmMax, method=pairwise, interaction = TRUE)}
+
+\StringTok{lsmMaxIntEff <- lsmeans(aMax,~ InterpenetrationFeedback:Part)}
+\StringTok{contrast(lsmMax, method=pairwise, interaction = TRUE)}
+
+\StringTok{lsmAvFeedback <- lsmeans(aAv,~ InterpenetrationFeedback)}
+\StringTok{contrast(lsmAvIntEff, method=pairwise, interaction = TRUE)}
+
+\StringTok{lsmAvPart <- lsmeans(aAv,~ Part)}
+\StringTok{contrast(lsmAvIntEff, method=pairwise, interaction = TRUE)}
+
+\StringTok{lsmAvIntEff <- lsmeans(aAv,~ InterpenetrationFeedback:Part)}
+\StringTok{contrast(lsmAvIntEff, method=pairwise, interaction = TRUE)}
+\StringTok{"}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "\n# Main Effects\nlsmMaxFeedback <- lsmeans(aMax,~ InterpenetrationFeedback)\ncontrast(lsmMax, method=pairwise, interaction = TRUE)\n\nlsmMaxPart <- lsmeans(aMax,~ Part)\ncontrast(lsmMax, method=pairwise, interaction = TRUE)\n\nlsmMaxIntEff <- lsmeans(aMax,~ InterpenetrationFeedback:Part)\ncontrast(lsmMax, method=pairwise, interaction = TRUE)\n\nlsmAvFeedback <- lsmeans(aAv,~ InterpenetrationFeedback)\ncontrast(lsmAvIntEff, method=pairwise, interaction = TRUE)\n\nlsmAvPart <- lsmeans(aAv,~ Part)\ncontrast(lsmAvIntEff, method=pairwise, interaction = TRUE)\n\nlsmAvIntEff <- lsmeans(aAv,~ InterpenetrationFeedback:Part)\ncontrast(lsmAvIntEff, method=pairwise, interaction = TRUE)\n"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#lsmMaxIntEff <- lsmeans(aMax,~ InterpenetrationFeedback:Part)}
+\CommentTok{#contrast(lsmMaxIntEff, method= "pairwise", interaction = TRUE)}
+
+\CommentTok{#lsmAvIntEff <- lsmeans(aAv,~ InterpenetrationFeedback:Part)}
+\CommentTok{#contrast(lsmAvIntEff, method= "pairwise", interaction = TRUE)}
+
+\CommentTok{#?lsmeans()}
+\CommentTok{# Only Interaction Effects}
+
+\KeywordTok{contrast}\NormalTok{(}\KeywordTok{emmeans}\NormalTok{(aMax,}\OperatorTok{~}\StringTok{ }\NormalTok{Part}\OperatorTok{:}\NormalTok{InterpenetrationFeedback), }
+         \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  Part_pairwise   InterpenetrationFeedback_pairwise estimate     SE df t.ratio
+##  Part.1 - Part.2 Both - Electrotactile              -0.1201 0.0718 60 -1.672 
+##  Part.1 - Part.2 Both - NoFeedback                   0.1262 0.0718 60  1.757 
+##  Part.1 - Part.2 Both - Visual                       0.1153 0.0718 60  1.605 
+##  Part.1 - Part.2 Electrotactile - NoFeedback         0.2463 0.0718 60  3.429 
+##  Part.1 - Part.2 Electrotactile - Visual             0.2354 0.0718 60  3.277 
+##  Part.1 - Part.2 NoFeedback - Visual                -0.0109 0.0718 60 -0.152 
+##  p.value
+##  0.0997 
+##  0.0841 
+##  0.1137 
+##  0.0011 
+##  0.0017 
+##  0.8800
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{contrast}\NormalTok{(}\KeywordTok{emmeans}\NormalTok{(aAv,}\OperatorTok{~}\StringTok{ }\NormalTok{Part}\OperatorTok{:}\NormalTok{InterpenetrationFeedback), }
+         \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  Part_pairwise   InterpenetrationFeedback_pairwise estimate     SE df t.ratio
+##  Part.1 - Part.2 Both - Electrotactile              -0.0928 0.0738 60 -1.258 
+##  Part.1 - Part.2 Both - NoFeedback                   0.1674 0.0738 60  2.268 
+##  Part.1 - Part.2 Both - Visual                       0.1509 0.0738 60  2.046 
+##  Part.1 - Part.2 Electrotactile - NoFeedback         0.2602 0.0738 60  3.527 
+##  Part.1 - Part.2 Electrotactile - Visual             0.2437 0.0738 60  3.304 
+##  Part.1 - Part.2 NoFeedback - Visual                -0.0164 0.0738 60 -0.223 
+##  p.value
+##  0.2132 
+##  0.0269 
+##  0.0452 
+##  0.0008 
+##  0.0016 
+##  0.8243
+\end{verbatim}
+
+The above compares the effect size of the chance of the types of
+interpenetration feedback between part 1 and part 2 of the experiment!
+
+we can see that for MAX INTERPENETRATION the significant comparisons
+are: Estimate SE df t.ratio p.value 1) Part.1 - Part.2 Electrotactile -
+NoFeedback 0.2463 0.0718 60 3.429 0.0011
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Part.1 - Part.2 Electrotactile - Visual 0.2354 0.0718 60 3.277 0.0017
+\end{enumerate}
+
+This means that the improvement of the performance from part 1 to part 2
+regarding the maximum interpenetration was significantly greater for the
+``Electrotactile Feedback'' compared to the ``No Feedback'' and ``Visual
+Feedback'' respectively! The rest of the comparisons were insignificant!
+
+For the AVERAGE INTERPENETRATION the significant comparisons are:
+Estimate SE df t.ratio p.value 1) Part.1 - Part.2 Both - NoFeedback
+0.1674 0.0738 60 2.268 0.0269
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\item
+  Part.1 - Part.2 Both - Visual 0.1509 0.0738 60 2.046 0.0452
+\item
+  Part.1 - Part.2 Electrotactile - NoFeedback 0.2602 0.0738 60 3.527
+  0.0008
+\item
+  Part.1 - Part.2 Electrotactile - Visual 0.2437 0.0738 60 3.304 0.0016
+\end{enumerate}
+
+This means that the improvement of the performance from part 1 to part 2
+regarding the average interpenetration was significantly greater for the
+``Electrotactile Feedback'' compared to the ``No Feedback'' and ``Visual
+Feedback'' respectively!
+
+Also, that the improvement of the performance from part 1 to part 2
+regarding the average interpenetration was significantly greater for the
+``Combined (i.e., Both) Feedback'' compared to the ``No Feedback'' and
+``Visual Feedback'' respectively! The rest of the comparisons were
+insignificant!
+
+\end{document}
