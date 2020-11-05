@@ -43,7 +43,7 @@ library(meta)
 
 
 #Import and merge all the csv files (x.csv where x = ID) of the folder. Note that the ID is has already been added as column 
-```{r, echo=FALSE, results='hide',message=FALSE,cache=FALSE}
+```{r}
 data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
                        pattern = "*.csv", full.names = TRUE) %>% 
   lapply(read_csv) %>%                                            # Store all files in list
