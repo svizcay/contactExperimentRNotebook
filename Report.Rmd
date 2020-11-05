@@ -8,9 +8,8 @@ output:
     df_print: paged
 ---
 
-First Step is to load the necessary package, If you dont have them just install them. For jjstatsplot you need to install it remotely.
-Just remove the dash and press enter. Then Press 3 (none package to be updated). 
-?group_by()
+#First Step is to load the necessary package, If you dont have them just install them. For jjstatsplot you need to install it remotely.
+#Just remove the dash and press enter. Then Press 3 (none package to be updated). 
 
 ```{r}
 #remotes::install_github("sbalci/jjstatsplot") #Press 3 !!!!! i.e., installing/Updating none package! 
@@ -38,11 +37,12 @@ library("multcomp")
 library(tinytex)
 library(rsconnect)
 library(shiny)
+library(meta)
 ```
 
 
 
-Import and merge all the csv files (x.csv where x = ID) of the folder. Note, that the ID is has already been added as column 
+#Import and merge all the csv files (x.csv where x = ID) of the folder. Note that the ID is has already been added as column 
 ```{r, echo=FALSE, results='hide',message=FALSE,cache=FALSE}
 data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
                        pattern = "*.csv", full.names = TRUE) %>% 
@@ -135,7 +135,7 @@ hist(ParsiDF$AverageInterpenetration, main = paste("Histogram of Average Interpe
 
  
 
-Let's visualize the data per interpenetration feedback and/or part of the experiment (part 1 & part 2).
+#Let's visualize the data per interpenetration feedback and/or part of the experiment (part 1 & part 2).
 ```{r}
 
 ParsiDFplots <- data # A dataframe just for the plots, so we show everything in real numbers and in centimeters!
@@ -377,7 +377,7 @@ aAv <- aov_ez("ID", "AverageInterpenetration", ParsiDF,
 knitr::kable(nice(aAv$anova_table))
 ```
 
-The Effect Sizes of the above ANOVAs: 1) Max Interpenetration 2) Average Interpenetration
+#The Effect Sizes of the above ANOVAs: 1) Max Interpenetration 2) Average Interpenetration
 ```{r}
 
 effectsize::omega_squared(aMax, partial = TRUE, ci = 0.95)
@@ -387,12 +387,15 @@ effectsize::omega_squared(aAv, partial = TRUE, ci = 0.95)
 ```
 
 
-We can see that every type of feedback as well as the interrelationship with the part of the experiment have a large effect on DVs!!!!!! 
+#We can see that every type of feedback as well as the interrelationship with the part of the experiment have a large effect on DVs!!!!!! 
 
-Reference for interpreting Omega Squared
-Small effect: ω2 = 0.01;
-Medium effect: ω2 = 0.06;
-Large effect: ω2 = 0.14.
+#Reference for interpreting Omega Squared
+
+#Small effect: ω2 = 0.01;
+
+#Medium effect: ω2 = 0.06;
+
+#Large effect: ω2 = 0.14.
 
 
 Let's plot the main effects (Interpenetration Feedback OR Part of the experiment).
@@ -480,6 +483,7 @@ EffectSizeMax
 aAvemm <- emmeans(aAv,~ Part:InterpenetrationFeedback,
  method="pairwise", interaction= TRUE, adjust = "bonf")
 
+pairs(aAvemm, adjust = "bonf")
 
 EffectSizeAv <- hedg_g(ParsiDF,AverageInterpenetration ~ InterpenetrationFeedback + Part, keep_d = FALSE)
 EffectSizeAv
@@ -494,97 +498,383 @@ contrast(emmeans(aMax,~ Part:InterpenetrationFeedback),
 contrast(emmeans(aAv,~ Part:InterpenetrationFeedback), 
          method="pairwise", interaction=TRUE, adjust = "bonf")
 
+#Calculating the effect sizes of the significant comparisons
+require(esc)
+hedges_g(d = 0.63133007, totaln = 60)
+hedges_g(d = 0.60334460, totaln = 60)
+hedges_g(d = 0.64937334, totaln = 60)
+hedges_g(d = 0.60831571, totaln = 60)
+
 ```
 
-Significant Comparisons:
-Part.1 Both - Part.2 Both                      p = 0.0039 Hedge's g = 0.61676553
-Part.1 Both - Part.1 Electrotactile            p = 0.0014 Hedge's g = -0.72831779
-Part.1 Both - Part.1 NoFeedback                p <.0001   Hedge's g = -1.16801037
-Part.2 Both - Part.2 NoFeedback                p <.0001   Hedge's g = -1.79394003
+#### For Maximum Interpenetration
+
+#### Significant Comparisons:
+
+#Part.1 Both - Part.2 Both                      p = 0.0039  Hedge's g =  0.61676553
+
+#Part.1 Both - Part.1 Electrotactile            p = 0.0014  Hedge's g = -0.72831779
+
+#Part.1 Both - Part.1 NoFeedback                p <.0001    Hedge's g = -1.16801037
+
+#Part.2 Both - Part.2 NoFeedback                p <.0001    Hedge's g = -1.79394003
 
 
-Part.1 Electrotactile - Part.2 Electrotactile  p <.0001   Hedge's g = 0.81636215
-Part.1 Electrotactile - Part.1 Visual          p = 0.0100  Hedge's g = 0.58901263
-Part.2 Electrotactile - Part.2 NoFeedback      p <.0001    Hedge's g = -1.11877925
+#Part.1 Electrotactile - Part.2 Electrotactile  p <.0001    Hedge's g =  0.81636215
 
-Part.1 NoFeedback - Part.1 Visual              p <.0001    Hedge's g = 0.98702238
-Part.2 NoFeedback - Part.2 Visual              p <.0001    Hedge's g = 1.26405828
+#Part.1 Electrotactile - Part.1 Visual          p = 0.0100  Hedge's g =  0.58901263
 
+#Part.2 Electrotactile - Part.2 NoFeedback      p <.0001    Hedge's g = -1.11877925
 
+#Part.1 NoFeedback - Part.1 Visual              p <.0001    Hedge's g =  0.98702238
 
-
-
-
-Hedge's G Interpretation (Note: + or - just shows the direction!):
-
-Small effect (cannot be discerned by the naked eye) = 0.2
-
-Medium Effect = 0.5
-
-Large Effect (can be seen by the naked eye) = 0.8
+#Part.2 NoFeedback - Part.2 Visual              p <.0001    Hedge's g =  1.26405828
 
 
 
+#Hedge's G Interpretation (Note: + or - just shows the direction!):
 
+#Small effect (cannot be discerned by the naked eye) = 0.2
 
-Regarding the change of the performance for each type of interpenetration feedback between part 1 and part 2 of the experiment! 
+#Medium Effect = 0.5
 
-we can see that for MAX INTERPENETRATION the significant comparisons are: 
-                                                     
-1) Part.1 - Part.2 Electrotactile - NoFeedback  p value =  0.0011
-
-2) Part.1 - Part.2 Electrotactile - Visual    p value =  0.0017 
-
-
-
-This means that the improvement of the performance from part 1 to part 2 regarding the maximum interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! 
-The rest of the comparisons were insignificant!
+#Large Effect (can be seen by the naked eye) = 0.8
 
 
 
+#### For Average Interpenetration
+
+#### Significant Comparisons:
+
+#Part.1 Both - Part.2 Both                     p = 0.0004   Hedge's g =  0.688559174
+
+#Part.1 Both - Part.1 Electrotactile           p = 0.0024   Hedge's g = -0.673535198
+
+#Part.1 Both - Part.1 NoFeedback               p <  .0001   Hedge's g = -1.102751598
+
+#Part.2 Both - Part.2 NoFeedback               p <  .0001   Hedge's g = -1.688918621
 
 
-For the AVERAGE INTERPENETRATION the significant comparisons are: 
-                                                    
-1) Part.1 - Part.2 Both - NoFeedback  p value =  0.0269
+#Part.1 Electrotactile - Part.2 Electrotactile p <  .0001   Hedge's g =  0.855157215
 
-2) Part.1 - Part.2 Both - Visual   p value =  0.0452 
+#Part.1 Electrotactile - Part.1 Visual         p = 0.0258   Hedge's g =  0.524527360
 
-3) Part.1 - Part.2 Electrotactile - NoFeedback  p value =  0.0008 
+#Part.2 Electrotactile - Part.2 NoFeedback     p <  .0001   Hedge's g = -1.095756543
  
-4) Part.1 - Part.2 Electrotactile - Visual  p value = 0.0016
+ 
+#Part.1 NoFeedback - Part.1 Visual             p <  .0001   Hedge's g =  0.901187692
 
-This means that the improvement of the performance from part 1 to part 2 regarding the average interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! 
+#Part.2 NoFeedback - Part.2 Visual             p <  .0001   Hedge's g =  1.096379269
 
-Also, that the improvement of the performance from part 1 to part 2 regarding the average interpenetration was significantly greater for the "Combined (i.e., Both) Feedback" compared to the "No Feedback" and "Visual Feedback" respectively!
-The rest of the comparisons were insignificant!
 
+#Key Findings: 
+
+#Electrotactile in Part 1 has significant differences against Visual and combined feedback (moderate effects), while is not significant different from No Feedback.
+
+#However, in part 2, Electrotactile is significant different from No Feedback, while it does not show significant differences against Visual and Combined feedback.
+
+#Both (i.e., combined) and Visual feedback are significantly different against No Feedback in part 1 and part 2.
+
+#Notably, ONLY Both (combined) and Electrotactile feedback show a significant improvement from part 1 to part 2.
+
+#This explains why the comparison between combined feedback against No Feedback has far greater effect size in part 2. 
+
+#Importantly, this explains why the Electrotactile feedback becomes significantly different against No Feedback in part 2, as well as the absence of differences against Visual and Combined.
+
+#Since the Visual and No feedback do not improve in part 2 (i.e, no differences between part 1 and part 2), we may infer that the practice/order effect does not affect significantly the performance.
+
+#Also, since the Visual feedback do not improve in part 2, then we may infer that the significant improvement that we observe for combined feedback in part 2 (i.e., part 1 vs part  2) is predominantly attributed to the improvement of the electrotactile feedback.
+
+#Hence, either the calibration of, or the familiarization with, or both, concerning the electrotactile feedback, is the reason that we observe these effects of electrotactile and combined feedback in part 2. 
+
+
+
+##### Regarding the change of the performance for each type of interpenetration feedback between part 1 and part 2 of the experiment! 
+
+#### we can see that for MAX INTERPENETRATION the significant comparisons are: 
+                                                     
+#1) Part.1 - Part.2 Electrotactile - NoFeedback        p = 0.0066  Hedge's g = 0.623131
+
+#2) Part.1 - Part.2 Electrotactile - Visual            p = 0.0105  Hedge's g = 0.595509  
+
+#This means that the improvement of the performance from part 1 to part 2 regarding the maximum interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! (Medium to Large effects)
+
+#The rest of the comparisons were insignificant!
+
+
+#Hedge's G Interpretation (Note: + or - just shows the direction!):
+
+#Small effect (cannot be discerned by the naked eye) = 0.2
+
+#Medium Effect = 0.5
+
+#Large Effect (can be seen by the naked eye) = 0.8
+
+
+#For the AVERAGE INTERPENETRATION the significant comparisons are: 
+                                                    
+#1) Part.1 - Part.2 Electrotactile - NoFeedback       p = 0.0049  Hedge's g = 0.6409399    
+ 
+#2) Part.1 - Part.2 Electrotactile - Visual           p = 0.0097  Hedge's g = 0.6004155
+
+#This means that the improvement of the performance from part 1 to part 2 regarding the average interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! (Medium to Large effects)
+
+#The rest of the comparisons were insignificant!
+
+
+
+
+
+
+
+
+
+
+########################### Intensities of the Electrotactile Feedback ###########################
 ```{r}
 
+library(readr)
+
+intensities <- read_csv("C:/repos/contactExperimentRNotebook/intensities.csv")
+
+pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
 
 ```
 
+#OK, for every DV (i.e., Sensation, Pain , and Actual Value)  we have the same results 
 
+#Significant differences between 
+
+#Final and Initial !!!!!! 
+
+#Middle and Initial  !!!!!!
+
+
+#Non-Significant differences between
+
+#Middle and Final calibration
+
+
+#I interpret them as follows: During the 1st part (i.e., until the middle calibration ) the individuals get familiarized with the electrotactile feedback. Then, the variation drops significantly! So, the most reliable calibration appears the middle one (considering that the final doesnt differ, so it seems redundant). Importantly, these results utterly support the familiarization hypothesis regarding the results of the ANOVAs and Comparisons between the feedback types, as well as it explains why the electrotactile and both have greater effect size on the 2nd part!!!
+
+
+
+#Let's check the effect sizes of the significant comparisons (i.e, Final vs Initial, Midlle vs Initial) now.
 ```{r}
 
+MidVSInitial <- filter(intensities, Calibration != "final")
 
+FinalVSInitial <- filter(intensities, Calibration != "middle")
+
+effectsize::hedges_g("Sensation", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Pain", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("ActualValue", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Sensation", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Pain", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("ActualValue", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
 
 ```
 
+#The + or - is just the direction of the SDs change proportionally to how the comparison is called (e..g, Final vs Initial or Initial vs Final) so just ignore it. 
 
+#The important is the value of hedges g. 
+
+#We have a Large (or a Very large in some) Effect in every significant comparison.
+
+#Hedge's G Interpretation:
+
+#Small effect (cannot be discerned by the naked eye) = 0.2
+
+#Medium Effect = 0.5
+
+#Large Effect (can be seen by the naked eye) = 0.8
+
+Let's visualize the comparisons
 ```{r}
 
+intensities$Calibration <- as.ordered(intensities$Calibration)
+levels(intensities$Calibration)
 
+intensities$Calibration <- factor(intensities$Calibration,levels = c("initial","middle", "final"),
+                  labels = c("initial","middle", "final"))
+ordered(intensities$Calibration)
 
+p9 <- ggstatsplot::ggbetweenstats(
+  data = intensities,
+  x = "Calibration",
+  y = "Sensation",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Calibration",
+  ylab = "Sensation Threshold",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Sensation Threshold Per Calibration Stage Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p9
+
+p10 <- ggstatsplot::ggbetweenstats(
+  data = intensities,
+  x = "Calibration",
+  y = "Pain",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Calibration",
+  ylab = "Pain Threshold",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Pain Threshold Per Calibration Stage Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p10
+
+p11 <- ggstatsplot::ggbetweenstats(
+  data = intensities,
+  x = "Calibration",
+  y = "ActualValue",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Calibration",
+  ylab = "Actual Size",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Actual Value Per Calibration Stage Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p11
 ```
 
 
+Checking if the results on the performance may be due to ineffective initial calibration and not due to familiriazation with electrotactile feedback.
 ```{r}
+require(data.table)
+setDT(intensities)
+
+intensities_wide <- dcast(intensities,ParticipantID ~ Calibration, value.var=c("Sensation", "Pain","ActualValue"))
+
+intensities_wide$DiffSensation <- intensities_wide$Sensation_middle - intensities_wide$Sensation_initial
+
+intensities_wide$DiffPain <- intensities_wide$Pain_middle - intensities_wide$Pain_initial
+
+intensities_wide$DiffActual <- intensities_wide$ActualValue_middle - intensities_wide$ActualValue_initial
 
 
+
+identify_outliers(intensities_wide, variable = "DiffSensation", coef = 1.5)
+
+identify_outliers(intensities_wide, variable = "DiffPain", coef = 1.5)
+
+identify_outliers(intensities_wide, variable = "DiffActual", coef = 1.5)
+
+require(psych)
+describe.by(intensities_wide$DiffSensation)
+describe.by(intensities_wide$DiffPain)
+describe.by(intensities_wide$DiffActual)
+
+#IDs 12 and 19 seem suspicious, however the rest are seem ok
+#lets exclude them and rerun the analyses
+
+intensities$ParticipantID[intensities$ParticipantID == 19] <- NA
+intensities$ParticipantID[intensities$ParticipantID == 12] <- NA
+
+intensities <- na.omit(intensities)
+
+pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+#OK, we have similar results, lets go a wee bit farther
+# I will also exclude the IDs which were not included in the performance analyses. 
+
+intensities$ParticipantID[intensities$ParticipantID == 9] <- NA
+intensities$ParticipantID[intensities$ParticipantID == 17] <- NA
+intensities$ParticipantID[intensities$ParticipantID == 20] <- NA
+intensities <- na.omit(intensities)
+
+pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
 ```
 
+#OK, we have similar results again. So, it doesn't seem that for the lower performance in the 1st part the reason was an inappropriate calibration. On the other hand, a familiarization with the electrotactile feedback seems to explain better the difference in the performance between part 1 and part 2. To clarify, by familiarization I mean the acceptance of the electrotactile feedback (e.g., it doesnt startle or frighten the user) as well as the cognitive association (in psychological terms: conditioning, or in game terms: game mechanics) between an X event (e.g., when I feel that) and Y action (e.g., then I stop or I adjust the position of my hand).
 
+
+
+
+
+############################### Questionnaires #####################################################
+
+#Now let's check the questionnaires' results
+
+#For Questionnaires is better to compare the medians (i.e., non-parametric tests) because the responses are not real numbers, the responses are ordinal data which may be better interpreted as ranks.
+
+```{r}
+quest <- read_csv("C:/repos/contactExperimentRNotebook/Questionnaires.csv")
+
+#Usefulness
+wilcox.test(quest$VisualUseful, quest$ElectrotactileUseful, 
+                           alternative = "two.sided", 
+                           paired = TRUE,
+                           exact = FALSE, 
+                           correct = FALSE, 
+                           conf.int = TRUE, 
+                           data = quest) 
+#Resemblance
+wilcox.test(quest$VisualResembling, quest$ElectrotactileResembling, 
+                           alternative = "two.sided", 
+                           paired = TRUE,
+                           exact = FALSE, 
+                           correct = FALSE, 
+                           conf.int = TRUE, 
+                           data = quest) 
+#Coherence 
+wilcox.test(quest$VisualCoherent, quest$ElectricalCoherent, 
+                           alternative = "two.sided", 
+                           paired = TRUE,
+                           exact = FALSE, 
+                           correct = FALSE, 
+                           conf.int = TRUE, 
+                           data = quest) 
+
+#No differences!
 
