@@ -1,9 +1,9 @@
 ---
 title: "Contact Experiment Data Analysis"
 output:
-  html_notebook: default
-  pdf_document: default
   word_document: default
+  pdf_document: default
+  html_notebook: default
   html_document:
     df_print: paged
 ---
@@ -38,6 +38,7 @@ library(tinytex)
 library(rsconnect)
 library(shiny)
 library(meta)
+library(DescTools)
 ```
 
 
@@ -630,7 +631,7 @@ hedges_g(d = 0.60831571, totaln = 60)
 
 
 
-########################### Intensities of the Electrotactile Feedback ###########################
+#################### Intensities of the Electrotactile Feedback ##############
 ```{r}
 
 library(readr)
@@ -766,7 +767,7 @@ p11 <- ggstatsplot::ggbetweenstats(
   effsize.type = "unbiased",
   results.subtitle = FALSE,
   xlab = "Calibration",
-  ylab = "Actual Size",
+  ylab = "Actual Value",
   sample.size.label = FALSE,
   var.equal = TRUE,
   mean.plotting = FALSE,
@@ -842,7 +843,7 @@ pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method =
 
 
 
-############################### Questionnaires #####################################################
+############################### Questionnaires ###############################
 
 #Now let's check the questionnaires' results
 
@@ -850,6 +851,37 @@ pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method =
 
 ```{r}
 quest <- read_csv("C:/repos/contactExperimentRNotebook/Questionnaires.csv")
+
+#Lets check the median and the mode of the responses (These should be reported in a table)
+#TableQuestionnaire <- 
+
+median(quest$VisualUseful)
+Mode(quest$VisualUseful)
+
+median(quest$ElectrotactileUseful)
+Mode(quest$ElectrotactileUseful)
+
+median(quest$VisualCoherent)
+Mode(quest$VisualCoherent)
+
+median(quest$RelyingMoreOn)
+Mode(quest$RelyingMoreOn)
+
+median(quest$ElectricalCoherent)
+Mode(quest$ElectricalCoherent)
+
+median(quest$VisualResembling)
+Mode(quest$VisualResembling)
+
+median(quest$ModalitiesSynchronized)
+Mode(quest$ModalitiesSynchronized)
+
+median(quest$ElectrotactileResembling)
+Mode(quest$ElectrotactileResembling)
+
+median(quest$CombinedResembling)
+Mode(quest$CombinedResembling)
+
 
 #Usefulness
 wilcox.test(quest$VisualUseful, quest$ElectrotactileUseful, 
@@ -859,14 +891,7 @@ wilcox.test(quest$VisualUseful, quest$ElectrotactileUseful,
                            correct = FALSE, 
                            conf.int = TRUE, 
                            data = quest) 
-#Resemblance
-wilcox.test(quest$VisualResembling, quest$ElectrotactileResembling, 
-                           alternative = "two.sided", 
-                           paired = TRUE,
-                           exact = FALSE, 
-                           correct = FALSE, 
-                           conf.int = TRUE, 
-                           data = quest) 
+
 #Coherence 
 wilcox.test(quest$VisualCoherent, quest$ElectricalCoherent, 
                            alternative = "two.sided", 
@@ -876,5 +901,288 @@ wilcox.test(quest$VisualCoherent, quest$ElectricalCoherent,
                            conf.int = TRUE, 
                            data = quest) 
 
-#No differences!
+#Resemblance
+wilcox.test(quest$VisualResembling, quest$ElectrotactileResembling, 
+                           alternative = "two.sided", 
+                           paired = TRUE,
+                           exact = FALSE, 
+                           correct = FALSE, 
+                           conf.int = TRUE, 
+                           data = quest) 
 
+
+#No differences!
+###### Let's check on which type of feedback the users relied upon more
+
+#Includes Visual, Both, Electrotactile. Values: 0 or 1
+Reliance <- read_csv("C:/repos/contactExperimentRNotebook/reliance.csv")
+Reliance$Type <- factor(Reliance$Type, levels = c("Both", "Visual", "Electrotactile"))
+pairwise.wilcox.test(Reliance$Reliance, Reliance$Type, alternative = "greater",p.adjust.method = "bonferroni")
+
+
+#Includes Visual and Electrotactile. Values: 0,1,2,3
+RelianceMore <- read_csv("C:/repos/contactExperimentRNotebook/relianceMore.csv")
+RelianceMore<- dcast(RelianceMore,ID ~ TypeMore, value.var= "RelianceMore")
+wilcox.test(RelianceMore$Electrotactile, RelianceMore$Visual,
+                           alternative = "greater", 
+                           paired = TRUE,
+                           exact = FALSE, 
+                           correct = FALSE, 
+                           conf.int = TRUE, 
+                           data = RelianceMore) 
+###### Let's check which resembled better touching a surface
+Resemble <- read_csv("C:/repos/contactExperimentRNotebook/resemblance3factors.csv")
+pairwise.wilcox.test(Resemble$Resemblance, Resemble$Type, p.adjust.method = "bonferroni")
+
+```
+#Note for the interpertation:
+
+#Median: The median value is the number that is in the middle, with the same amount of numbers below and above.
+
+#Mode: The mode is the most commonly/frequently observed value in a set of data (i.e., the most frequent response)
+
+########## Visual
+
+#Usefulness
+
+#Median:5.5
+
+#Mode: 5
+
+#Interpertation: Useful
+
+#Coherence
+
+#Median:5
+
+#Mode: 5
+
+#Interpertation: Coherent
+
+#Resemblance
+
+#Median:3
+
+#Mode: 3
+
+#Interpertation: Different
+
+########## Electrotactile
+
+#Usefulness
+
+#Median:6
+
+#Mode: 5 (8 Response)
+
+#Interpertation: Useful to Very Useful
+
+#Coherence
+
+#Median:5
+
+#Mode: 5
+
+#Interpertation: Coherent
+
+#Resemblance
+
+#Median: 2.5
+
+#Mode: 1 (8 responses)
+
+#Interpertation: Different to Extremely Different 
+
+
+########## Combined
+
+#Usefulness (Rely more on visual or electrotactile)
+
+#Median:4.5 (i.e., half of the responses indicated > 4 which means 12 preferred the electrotactile since 5-7 corresponds to electrotactile. Note that < 4.5, means that the other 12 responses were for both visual and combined feedback. combined = 4, while visual = 1 - 3)
+
+#Mode: 3 (9 Responses) 
+
+#Interpertation: Ballanced, however it leans towards Electrotactile
+
+
+#Modalities synchronized
+
+#Median:6
+
+#Mode: 7
+
+#Interpertation: Very Coherent to Completely Coherent
+
+#Resemblance
+
+#Median:4
+
+#Mode: 5
+
+#Interpertation: Moderately Similar to Similar 
+
+################### Comparisons
+
+#1) In Terms of Usefulness, Coherence, and resemblance
+
+#There are not significant differences between Combined, Visual, and Electrotatcile feedback, which replicates our findings on the users' performance in part 2, where we did not find any significant differences as well. In combination with the medians and modes for each question (see above), we may infer that electrotactile feedback was equivalent to visual feedback, as well as it received positive evaluations by the users especially in terms of usefulness and coherence. 
+
+#2) Reliance
+
+#Again there were no significant differences amongst Combined, Visual, and Electrotatcile feedback. The only significant difference that was detected was between Electrotactile and Combined feedback (in favor of electrotactile). In general, considering also the medians and modes of the responses on this question (see also the bar chart below), we may infer that the users relied more on a single type of feedback in the combined feedback condition, and this single type of feedback was most of the times the electrotactile feedback (12 users), followed by visual feedback (8 users) and both (4 users). These findings again align with the the results on the performance in part 2. 
+
+# Resemblance Part2
+
+#Regarding the electrotactile feedback, our findings replicate the findings of previous studies which found that the sensation of touching provided by electrotactile feedback substantially deviates from the sensation of touching in real world.  
+
+
+#Now, Let's visualize the data
+```{r}
+
+#Visualization of the responses in terms of Usefulness, Coherence, and Resemblance
+
+visualVSelectro <- read_csv("C:/repos/contactExperimentRNotebook/visualVSelectro.csv")
+?ggbetweenstats()
+p12 <- ggstatsplot::ggbetweenstats(
+  data = visualVSelectro,
+  x = "Type",
+  y = "Usefulnes",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Usefulness",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Usefulness Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p12
+
+p13 <- ggstatsplot::ggbetweenstats(
+  data = visualVSelectro,
+  x = "Type",
+  y = "Resemblance",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Resemblance",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Resemblance Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p13
+
+p14 <- ggstatsplot::ggbetweenstats(
+  data = visualVSelectro,
+  x = "Type",
+  y = "Coherence",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Coherence",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Coherence Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p14
+
+
+Preferences <- read_csv("C:/repos/contactExperimentRNotebook/prefFeed.csv")
+#This will show on which type of feedback the users relied upon more
+ggplot(Preferences) + geom_bar(aes(x = Preferences$Type))
+#This will show on which type of feedback the users relied upon more
+hist(quest$RelyingMoreOn)
+p15 <- ggstatsplot::ggbetweenstats(
+  data = Reliance,
+  x = "Type",
+  y = "Reliance",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Reliance",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Reliance Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p15
+
+
+#This will show which type of feedback resemble better touching a surface
+p16 <- ggstatsplot::ggbetweenstats(
+  data = Resemble,
+  x = "Type",
+  y = "Resemblance",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Resemblance",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Resemblance Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+  )
+p16
+
+```
+
+
+#The rest of info on the electrotactile feedback from the questionnaires
+```{r}
+
+median(quest$ElectricalSensation)
+Mode(quest$ElectricalSensation)
+#Moderate i.e., neither pleasant nor annoying
+hist(quest$ElectricalSensation)
+
+median(quest$ElectricalUpdatePerception)
+Mode(quest$ElectricalUpdatePerception)
+# Often, Very often, All the time! 
+hist(quest$ElectricalUpdatePerception)
+```
+
+#OK so we have a neutral feedback regarding the pleasantness or discomfort of the sensation provided by the electrotactile feedback. which I interpreted as a positive result since we did not recei, especially considering the previous literature.
+
+#Regarding the perceptual update that the user presses harder the surface, the results are really positive, and postulate that the electrotactile feedback may contribute with strengthening the plausibility illusion (i.e., the illusion that the virtual environment responds to your action). However, this should be meticuously investigated in a future study.
