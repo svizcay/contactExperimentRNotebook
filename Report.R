@@ -1,0 +1,1168 @@
+library(jmv)
+library(datasets)
+library(plyr)
+library(readr)
+library(dataframes2xls)
+library(data.table)
+library(plyr)
+library(ggstatsplot)
+library(jjstatsplot)
+library(lme4)
+library(lmerTest)
+library(ggplot2)
+library(rstatix)
+library(coin)
+library(ARTool)
+library(ggpubr)
+library(tidyverse)
+library(dplyr)
+library("afex")     
+library("emmeans")  
+library("multcomp") 
+library(tinytex)
+library(rsconnect)
+library(shiny)
+library(meta)
+library(DescTools)
+
+
+data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
+                  pattern = "*.csv", full.names = TRUE) %>% 
+  lapply(read_csv) %>%                                            # Store all files in list
+  bind_rows                                                       # Combine data sets into a single data set 
+data 
+
+
+
+data$Part <- as.factor(data$Block < 4)
+levels(data$Part)
+
+data$Part <- factor(data$Part,levels = c("TRUE","FALSE"),
+                    labels = c("Part 1","Part 2"))
+
+nrTrialsPerBlockToRemove <- 1
+#trialsToRemove <- seq(from = 1, to = nrTrialsPerBlockToRemove)
+
+data <-  data %>%
+  group_by(ID, Part, InterpenetrationFeedback, FullyShaded) %>% # I have added here the fully shaded 
+  slice(nrTrialsPerBlockToRemove+1:n())
+# to double check we are discarding the right rows
+#print(data[[i]]$Trial)
+
+# This df will be used to create the subsets for 1st part and 2nd part of the experiment. 
+
+data$InterpenetrationFeedback  <- as.factor(data$InterpenetrationFeedback)
+data$FullyShaded <- as.factor(data$FullyShaded)
+
+describe(data)
+ParsiDF <- data
+
+
+# Exclude the IDs which produced the extreme values (i.e., = or > 3 coefficients from the mean)
+ParsiDF$ID[ParsiDF$ID == 9] <- NA 
+ParsiDF$ID[ParsiDF$ID == 17] <- NA
+ParsiDF$ID[ParsiDF$ID == 20] <- NA
+
+ParsiDF <- na.omit(ParsiDF)
+
+
+
+ParsiDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDF, mean)
+descParsi <- describe(ParsiDF)
+#Before Conversion to logarithms (showing the abnormal distribution)
+shapiro_test(ParsiDF$MaxInterpenetration)
+shapiro_test(ParsiDF$AverageInterpenetration)
+ggqqplot(ParsiDF$MaxInterpenetration)
+ggqqplot(ParsiDF$AverageInterpenetration)
+
+?shapiro_test()
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(MaxInterpenetration) 
+
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(AverageInterpenetration)  
+
+
+#After Conversion of the performance variables into logs (Normal Distribution)
+ParsiDF$MaxInterpenetration <- log(ParsiDF$MaxInterpenetration)
+
+ParsiDF$AverageInterpenetration <- log(ParsiDF$AverageInterpenetration)
+
+shapiro_test(ParsiDF$MaxInterpenetration)
+shapiro_test(ParsiDF$AverageInterpenetration)
+ggqqplot(ParsiDF$MaxInterpenetration)
+ggqqplot(ParsiDF$AverageInterpenetration)
+
+#Let's check the assumption for each interpenetration feedback and shade condition
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(MaxInterpenetration) 
+
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(AverageInterpenetration) 
+
+hist(ParsiDF$MaxInterpenetration,main = paste("Histogram of Maximum Interpenetration") , xlab = "Maximum Interpenetration")
+
+hist(ParsiDF$AverageInterpenetration, main = paste("Histogram of Average Interpenetration") , xlab = "Average Interpenetration")
+
+
+
+Descriptive
+describe(Descriptive$Both)
+
+ParsiDFplots <- data # A dataframe just for the plots, so we show everything in real numbers and in centimeters!
+ParsiDFplots$ID[ParsiDFplots$ID == 9] <- NA
+ParsiDFplots$ID[ParsiDFplots$ID == 17] <- NA
+ParsiDFplots$ID[ParsiDFplots$ID == 20] <- NA
+ParsiDFplots <- na.omit(ParsiDFplots)
+ParsiDFplots <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDFplots, mean)
+
+ParsiDFplots$AverageInterpenetration <-100 * ParsiDFplots$AverageInterpenetration #Converting meters to centimeters
+ParsiDFplots$MaxInterpenetration <- 100 * ParsiDFplots$MaxInterpenetration #Converting meters to centimeters
+
+p1 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback", #Indepedent Variable
+  y = "MaxInterpenetration", # Depedent Variable
+  grouping.var = "Part", # 2nd IV 
+  type = "p", # parametric test i.e., p values
+  pairwise.comparisons = FALSE, #compute pairwise comparisons
+  pairwise.display = "significant", # show only the significant ones
+  p.adjust.method = "bonferroni", # correction of p-value
+  effsize.type = "unbiased", # Calculates the Hedge's g for t tests and the partial Omega for ANOVA
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback", #label of X axis
+  ylab = "Maximum Interpenetration", #label of y axis
+  sample.size.label = FALSE,
+  var.equal = TRUE, #Assuming Equal variances
+  mean.plotting = FALSE,
+  mean.ci = TRUE, #display the confidence interval of the mean
+  paired = TRUE, #indicating that we have a within subject design
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+p2 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+)
+
+
+# Replicating the above but this time we look on the effect of the type of feedback on the DVs in 1st and 2nd Part of the experiment individually
+p3 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "MaxInterpenetration",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Maximum Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+p4 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "AverageInterpenetration",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+# Lets check the effect of shaded condition on DVs
+p5 <- ggstatsplot:: ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Maximum Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+p6 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+p7 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "MaxInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Maximum Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black") 
+
+p8 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "AverageInterpenetration",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Average Interpenetration",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+p1
+
+p2
+
+p3 
+
+p4
+
+p5 
+
+p6
+
+p7
+
+p8
+
+
+
+aMax <- aov_ez("ID", "MaxInterpenetration", ParsiDF,
+               within = c("Part", "InterpenetrationFeedback"),
+               anova_table = list(es = "pes"))
+
+knitr::kable(nice(aMax$anova_table))
+
+
+aAv <- aov_ez("ID", "AverageInterpenetration", ParsiDF,
+              within = c("Part", "InterpenetrationFeedback"),
+              anova_table = list(es = "pes"))
+
+knitr::kable(nice(aAv$anova_table))
+
+
+effectsize::omega_squared(aMax, partial = TRUE, ci = 0.95)
+
+effectsize::omega_squared(aAv, partial = TRUE, ci = 0.95)
+
+
+
+
+
+aMaxPlots <- aov_ez("ID", "MaxInterpenetration", ParsiDFplots,
+                    within = c("Part", "InterpenetrationFeedback"),
+                    anova_table = list(es = "pes"))
+
+aAvPlots <- aov_ez("ID", "AverageInterpenetration", ParsiDFplots,
+                   within = c("Part", "InterpenetrationFeedback"),
+                   anova_table = list(es = "pes"))
+
+#plots
+afex_plot(aMaxPlots, x = "InterpenetrationFeedback", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 3)
+
+afex_plot(aMaxPlots, x = "Part", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5))  +
+  ylim(0, 3)
+
+afex_plot(aAvPlots, x = "InterpenetrationFeedback", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 2.25)
+
+afex_plot(aAvPlots, x = "Part", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5))  +
+  ylim(0, 2.25)
+
+
+
+
+
+
+afex_plot(aMaxPlots, x = "InterpenetrationFeedback", trace = "Part", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 3)
+
+afex_plot(aMaxPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5))  +
+  ylim(0, 3)
+
+afex_plot(aAvPlots, x = "InterpenetrationFeedback",  trace = "Part", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 2.25)
+
+afex_plot(aAvPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol:: geom_boxjitter, 
+          data_arg = list(width = 0.5))  +
+  ylim(0, 2.25)
+
+
+
+
+
+
+
+################################# Maximum Interpenetration #######################
+aMaxemm <- emmeans(aMax,~ Part:InterpenetrationFeedback,
+                   method="pairwise", interaction=TRUE, adjust = "bonf")
+
+pairs(aMaxemm, adjust = "bonf")
+
+require(esvis)
+EffectSizeMax <- hedg_g(ParsiDF,MaxInterpenetration ~ InterpenetrationFeedback + Part, keep_d = FALSE) #Calculates the hedge's g per pair! 
+
+EffectSizeMax
+
+
+################################# Average Interpenetration #######################
+aAvemm <- emmeans(aAv,~ Part:InterpenetrationFeedback,
+                  method="pairwise", interaction= TRUE, adjust = "bonf")
+
+pairs(aAvemm, adjust = "bonf")
+
+EffectSizeAv <- hedg_g(ParsiDF,AverageInterpenetration ~ InterpenetrationFeedback + Part, keep_d = FALSE)
+EffectSizeAv
+
+
+
+############ Change in the Performance (Part 1 vs Part2) per Interpenetration Feedback #############
+
+contrast(emmeans(aMax,~ Part:InterpenetrationFeedback), 
+         method="pairwise", interaction=TRUE, adjust = "bonf")
+
+contrast(emmeans(aAv,~ Part:InterpenetrationFeedback), 
+         method="pairwise", interaction=TRUE, adjust = "bonf")
+
+#Calculating the effect sizes of the significant comparisons
+require(esc)
+hedges_g(d = 0.63133007, totaln = 60)
+hedges_g(d = 0.60334460, totaln = 60)
+hedges_g(d = 0.64937334, totaln = 60)
+hedges_g(d = 0.60831571, totaln = 60)
+
+
+
+#### For Maximum Interpenetration
+
+#### Significant Comparisons:
+
+#Part.1 Both - Part.2 Both                      p = 0.0039  Hedge's g =  0.61676553
+
+#Part.1 Both - Part.1 Electrotactile            p = 0.0014  Hedge's g = -0.72831779
+
+#Part.1 Both - Part.1 NoFeedback                p <.0001    Hedge's g = -1.16801037
+
+#Part.2 Both - Part.2 NoFeedback                p <.0001    Hedge's g = -1.79394003
+
+
+#Part.1 Electrotactile - Part.2 Electrotactile  p <.0001    Hedge's g =  0.81636215
+
+#Part.1 Electrotactile - Part.1 Visual          p = 0.0100  Hedge's g =  0.58901263
+
+#Part.2 Electrotactile - Part.2 NoFeedback      p <.0001    Hedge's g = -1.11877925
+
+#Part.1 NoFeedback - Part.1 Visual              p <.0001    Hedge's g =  0.98702238
+
+#Part.2 NoFeedback - Part.2 Visual              p <.0001    Hedge's g =  1.26405828
+
+
+
+#Hedge's G Interpretation (Note: + or - just shows the direction!):
+
+#Small effect (cannot be discerned by the naked eye) = 0.2
+
+#Medium Effect = 0.5
+
+#Large Effect (can be seen by the naked eye) = 0.8
+
+
+
+#### For Average Interpenetration
+
+#### Significant Comparisons:
+
+#Part.1 Both - Part.2 Both                     p = 0.0004   Hedge's g =  0.688559174
+
+#Part.1 Both - Part.1 Electrotactile           p = 0.0024   Hedge's g = -0.673535198
+
+#Part.1 Both - Part.1 NoFeedback               p <  .0001   Hedge's g = -1.102751598
+
+#Part.2 Both - Part.2 NoFeedback               p <  .0001   Hedge's g = -1.688918621
+
+
+#Part.1 Electrotactile - Part.2 Electrotactile p <  .0001   Hedge's g =  0.855157215
+
+#Part.1 Electrotactile - Part.1 Visual         p = 0.0258   Hedge's g =  0.524527360
+
+#Part.2 Electrotactile - Part.2 NoFeedback     p <  .0001   Hedge's g = -1.095756543
+
+
+#Part.1 NoFeedback - Part.1 Visual             p <  .0001   Hedge's g =  0.901187692
+
+#Part.2 NoFeedback - Part.2 Visual             p <  .0001   Hedge's g =  1.096379269
+
+
+#Key Findings: 
+
+#Electrotactile in Part 1 has significant differences against Visual and combined feedback (moderate effects), while is not significant different from No Feedback.
+
+#However, in part 2, Electrotactile is significant different from No Feedback, while it does not show significant differences against Visual and Combined feedback.
+
+#Both (i.e., combined) and Visual feedback are significantly different against No Feedback in part 1 and part 2.
+
+#Notably, ONLY Both (combined) and Electrotactile feedback show a significant improvement from part 1 to part 2.
+
+#This explains why the comparison between combined feedback against No Feedback has far greater effect size in part 2. 
+
+#Importantly, this explains why the Electrotactile feedback becomes significantly different against No Feedback in part 2, as well as the absence of differences against Visual and Combined.
+
+#Since the Visual and No feedback do not improve in part 2 (i.e, no differences between part 1 and part 2), we may infer that the practice/order effect does not affect significantly the performance.
+
+#Also, since the Visual feedback do not improve in part 2, then we may infer that the significant improvement that we observe for combined feedback in part 2 (i.e., part 1 vs part  2) is predominantly attributed to the improvement of the electrotactile feedback.
+
+#Hence, either the calibration of, or the familiarization with, or both, concerning the electrotactile feedback, is the reason that we observe these effects of electrotactile and combined feedback in part 2. 
+
+
+
+##### Regarding the change of the performance for each type of interpenetration feedback between part 1 and part 2 of the experiment! 
+
+#### we can see that for MAX INTERPENETRATION the significant comparisons are: 
+
+#1) Part.1 - Part.2 Electrotactile - NoFeedback        p = 0.0066  Hedge's g = 0.623131
+
+#2) Part.1 - Part.2 Electrotactile - Visual            p = 0.0105  Hedge's g = 0.595509  
+
+#This means that the improvement of the performance from part 1 to part 2 regarding the maximum interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! (Medium to Large effects)
+
+#The rest of the comparisons were insignificant!
+
+
+#Hedge's G Interpretation (Note: + or - just shows the direction!):
+
+#Small effect (cannot be discerned by the naked eye) = 0.2
+
+#Medium Effect = 0.5
+
+#Large Effect (can be seen by the naked eye) = 0.8
+
+
+#For the AVERAGE INTERPENETRATION the significant comparisons are: 
+
+#1) Part.1 - Part.2 Electrotactile - NoFeedback       p = 0.0049  Hedge's g = 0.6409399    
+
+#2) Part.1 - Part.2 Electrotactile - Visual           p = 0.0097  Hedge's g = 0.6004155
+
+#This means that the improvement of the performance from part 1 to part 2 regarding the average interpenetration was significantly greater for the "Electrotactile Feedback" compared to the "No Feedback" and "Visual Feedback" respectively! (Medium to Large effects)
+
+#The rest of the comparisons were insignificant!
+
+
+
+
+
+
+
+
+
+
+
+
+#################### Intensities of the Electrotactile Feedback ##############
+
+
+intensities <- read_csv("C:/repos/contactExperimentRNotebook/intensities.csv")
+
+pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+
+
+
+#OK, for every DV (i.e., Sensation, Pain , and Actual Value)  we have the same results 
+
+#Significant differences between 
+
+#Final and Initial !!!!!! 
+
+#Middle and Initial  !!!!!!
+
+
+#Non-Significant differences between
+
+#Middle and Final calibration
+
+
+#I interpret them as follows: During the 1st part (i.e., until the middle calibration ) the individuals get familiarized with the electrotactile feedback. Then, the variation drops significantly! So, the most reliable calibration appears the middle one (considering that the final doesnt differ, so it seems redundant). Importantly, these results utterly support the familiarization hypothesis regarding the results of the ANOVAs and Comparisons between the feedback types, as well as it explains why the electrotactile and both have greater effect size on the 2nd part!!!
+
+
+
+#Let's check the effect sizes of the significant comparisons (i.e, Final vs Initial, Midlle vs Initial) now.
+
+
+
+MidVSInitial <- filter(intensities, Calibration != "final")
+
+FinalVSInitial <- filter(intensities, Calibration != "middle")
+
+effectsize::hedges_g("Sensation", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Pain", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("ActualValue", "Calibration", data = MidVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Sensation", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("Pain", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+effectsize::hedges_g("ActualValue", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
+
+
+#The + or - is just the direction of the SDs change proportionally to how the comparison is called (e..g, Final vs Initial or Initial vs Final) so just ignore it. 
+
+#The important is the value of hedges g. 
+
+#We have a Large (or a Very large in some) Effect in every significant comparison.
+
+#Hedge's G Interpretation:
+
+#Small effect (cannot be discerned by the naked eye) = 0.2
+
+#Medium Effect = 0.5
+
+#Large Effect (can be seen by the naked eye) = 0.8
+
+
+
+intensities$Calibration <- as.ordered(intensities$Calibration)
+levels(intensities$Calibration)
+
+intensities$Calibration <- factor(intensities$Calibration,levels = c("initial","middle", "final"),
+                                  labels = c("initial","middle", "final"))
+ordered(intensities$Calibration)
+
+p9 <- ggstatsplot::ggbetweenstats(
+  data = intensities,
+  x = "Calibration",
+  y = "Sensation",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Calibration",
+  ylab = "Sensation Threshold",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Sensation Threshold Per Calibration Stage Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p9
+
+p10 <- ggstatsplot::ggbetweenstats(
+  data = intensities,
+  x = "Calibration",
+  y = "Pain",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Calibration",
+  ylab = "Pain Threshold",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Pain Threshold Per Calibration Stage Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p10
+
+p11 <- ggstatsplot::ggbetweenstats(
+  data = intensities,
+  x = "Calibration",
+  y = "ActualValue",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Calibration",
+  ylab = "Actual Value",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Actual Value Per Calibration Stage Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p11
+
+
+
+require(data.table)
+setDT(intensities)
+
+intensities_wide <- dcast(intensities,ParticipantID ~ Calibration, value.var=c("Sensation", "Pain","ActualValue"))
+
+intensities_wide$DiffSensation <- intensities_wide$Sensation_middle - intensities_wide$Sensation_initial
+
+intensities_wide$DiffPain <- intensities_wide$Pain_middle - intensities_wide$Pain_initial
+
+intensities_wide$DiffActual <- intensities_wide$ActualValue_middle - intensities_wide$ActualValue_initial
+
+
+
+identify_outliers(intensities_wide, variable = "DiffSensation", coef = 1.5)
+
+identify_outliers(intensities_wide, variable = "DiffPain", coef = 1.5)
+
+identify_outliers(intensities_wide, variable = "DiffActual", coef = 1.5)
+
+require(psych)
+describe.by(intensities_wide$DiffSensation)
+describe.by(intensities_wide$DiffPain)
+describe.by(intensities_wide$DiffActual)
+
+#IDs 12 and 19 seem suspicious, however the rest are seem ok
+#lets exclude them and rerun the analyses
+
+intensities$ParticipantID[intensities$ParticipantID == 19] <- NA
+intensities$ParticipantID[intensities$ParticipantID == 12] <- NA
+
+intensities <- na.omit(intensities)
+
+pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+#OK, we have similar results, lets go a wee bit farther
+# I will also exclude the IDs which were not included in the performance analyses. 
+
+intensities$ParticipantID[intensities$ParticipantID == 9] <- NA
+intensities$ParticipantID[intensities$ParticipantID == 17] <- NA
+intensities$ParticipantID[intensities$ParticipantID == 20] <- NA
+intensities <- na.omit(intensities)
+
+pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+
+
+
+#OK, we have similar results again. So, it doesn't seem that for the lower performance in the 1st part the reason was an inappropriate calibration. On the other hand, a familiarization with the electrotactile feedback seems to explain better the difference in the performance between part 1 and part 2. To clarify, by familiarization I mean the acceptance of the electrotactile feedback (e.g., it doesnt startle or frighten the user) as well as the cognitive association (in psychological terms: conditioning, or in game terms: game mechanics) between an X event (e.g., when I feel that) and Y action (e.g., then I stop or I adjust the position of my hand).
+
+
+
+############################### Questionnaires ###############################
+
+#Now let's check the questionnaires' results
+
+#For Questionnaires is better to compare the medians (i.e., non-parametric tests) because the responses are not real numbers, the responses are ordinal data which may be better interpreted as ranks.
+
+
+quest <- read_csv("C:/repos/contactExperimentRNotebook/Questionnaires.csv")
+
+#Lets check the median and the mode of the responses (These should be reported in a table)
+#TableQuestionnaire <- 
+
+median(quest$VisualUseful)
+Mode(quest$VisualUseful)
+
+median(quest$ElectrotactileUseful)
+Mode(quest$ElectrotactileUseful)
+
+median(quest$VisualCoherent)
+Mode(quest$VisualCoherent)
+
+median(quest$RelyingMoreOn)
+Mode(quest$RelyingMoreOn)
+
+median(quest$ElectricalCoherent)
+Mode(quest$ElectricalCoherent)
+
+median(quest$VisualResembling)
+Mode(quest$VisualResembling)
+
+median(quest$ModalitiesSynchronized)
+Mode(quest$ModalitiesSynchronized)
+
+median(quest$ElectrotactileResembling)
+Mode(quest$ElectrotactileResembling)
+
+median(quest$CombinedResembling)
+Mode(quest$CombinedResembling)
+
+
+#Usefulness
+wilcox.test(quest$VisualUseful, quest$ElectrotactileUseful, 
+            alternative = "two.sided", 
+            paired = TRUE,
+            exact = FALSE, 
+            correct = FALSE, 
+            conf.int = TRUE, 
+            data = quest) 
+
+#Coherence 
+wilcox.test(quest$VisualCoherent, quest$ElectricalCoherent, 
+            alternative = "two.sided", 
+            paired = TRUE,
+            exact = FALSE, 
+            correct = FALSE, 
+            conf.int = TRUE, 
+            data = quest) 
+
+#Resemblance
+wilcox.test(quest$VisualResembling, quest$ElectrotactileResembling, 
+            alternative = "two.sided", 
+            paired = TRUE,
+            exact = FALSE, 
+            correct = FALSE, 
+            conf.int = TRUE, 
+            data = quest) 
+
+
+#No differences!
+###### Let's check on which type of feedback the users relied upon more
+
+#Includes Visual, Both, Electrotactile. Values: 0 or 1
+Reliance <- read_csv("C:/repos/contactExperimentRNotebook/reliance.csv")
+Reliance$Type <- factor(Reliance$Type, levels = c("Both", "Visual", "Electrotactile"))
+pairwise.wilcox.test(Reliance$Reliance, Reliance$Type, alternative = "greater",p.adjust.method = "bonferroni")
+
+
+#Includes Visual and Electrotactile. Values: 0,1,2,3
+RelianceMore <- read_csv("C:/repos/contactExperimentRNotebook/relianceMore.csv")
+RelianceMore<- dcast(RelianceMore,ID ~ TypeMore, value.var= "RelianceMore")
+wilcox.test(RelianceMore$Electrotactile, RelianceMore$Visual,
+            alternative = "greater", 
+            paired = TRUE,
+            exact = FALSE, 
+            correct = FALSE, 
+            conf.int = TRUE, 
+            data = RelianceMore) 
+###### Let's check which resembled better touching a surface
+Resemble <- read_csv("C:/repos/contactExperimentRNotebook/resemblance3factors.csv")
+pairwise.wilcox.test(Resemble$Resemblance, Resemble$Type, p.adjust.method = "bonferroni")
+
+
+#Note for the interpertation:
+
+#Median: The median value is the number that is in the middle, with the same amount of numbers below and above.
+
+#Mode: The mode is the most commonly/frequently observed value in a set of data (i.e., the most frequent response)
+
+########## Visual
+
+#Usefulness
+
+#Median:5.5
+
+#Mode: 5
+
+#Interpretation: Useful
+
+#Coherence
+
+#Median:5
+
+#Mode: 5
+
+#Interpretation: Coherent
+
+#Resemblance
+
+#Median:3
+
+#Mode: 3
+
+#Interpretation: Different
+
+########## Electrotactile
+
+#Usefulness
+
+#Median:6
+
+#Mode: 5 (8 Response)
+
+#Interpretation: Useful to Very Useful
+
+#Coherence
+
+#Median:5
+
+#Mode: 5
+
+#Interpretation: Coherent
+
+#Resemblance
+
+#Median: 2.5
+
+#Mode: 1 (8 responses)
+
+#Interpretation: Different to Extremely Different 
+
+
+########## Combined
+
+#Usefulness (Rely more on visual or electrotactile)
+
+#Median:4.5 (i.e., half of the responses indicated > 4 which means 12 preferred the electrotactile since 5-7 corresponds to electrotactile. Note that < 4.5, means that the other 12 responses were for both visual and combined feedback. combined = 4, while visual = 1 - 3)
+
+#Mode: 3 (9 Responses) 
+
+#Interpertation: Ballanced, however it leans towards Electrotactile
+
+
+#Modalities synchronized
+
+#Median:6
+
+#Mode: 7
+
+#Interpertation: Very Coherent to Completely Coherent
+#Resemblance
+
+#Median:4
+
+#Mode: 5
+
+
+#Interpertation: Moderately Similar to Similar 
+
+################### Comparisons
+
+#1) In Terms of Usefulness, Coherence, and resemblance
+
+#There are not significant differences between Combined, Visual, and Electrotatcile feedback, which replicates our findings on the users' performance in part 2, where we did not find any significant differences as well. In combination with the medians and modes for each question (see above), we may infer that electrotactile feedback was equivalent to visual feedback, as well as it received positive evaluations by the users especially in terms of usefulness and coherence. 
+
+#2) Reliance
+
+#Again there were no significant differences amongst Combined, Visual, and Electrotatcile feedback. The only significant difference that was detected was between Electrotactile and Combined feedback (in favor of electrotactile). In general, considering also the medians and modes of the responses on this question (see also the bar chart below), we may infer that the users relied more on a single type of feedback in the combined feedback condition, and this single type of feedback was most of the times the electrotactile feedback (12 users), followed by visual feedback (8 users) and both (4 users). These findings again align with the the results on the performance in part 2. 
+
+# Resemblance Part2
+
+#Regarding the electrotactile feedback, 
+#our findings replicate the findings of previous studies which found that the sensation of touching provided by electrotactile feedback substantially deviates from the sensation of touching in real world. 
+
+
+
+
+#Now, Let's visualize the data
+#Visualization of the responses in terms of Usefulness, Coherence, and Resemblance
+
+visualVSelectro <- read_csv("C:/repos/contactExperimentRNotebook/visualVSelectro.csv")
+?ggbetweenstats()
+p12 <- ggstatsplot::ggbetweenstats(
+  data = visualVSelectro,
+  x = "Type",
+  y = "Usefulnes",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Usefulness",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Usefulness Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p12
+
+p13 <- ggstatsplot::ggbetweenstats(
+  data = visualVSelectro,
+  x = "Type",
+  y = "Resemblance",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Resemblance",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Resemblance Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p13
+
+p14 <- ggstatsplot::ggbetweenstats(
+  data = visualVSelectro,
+  x = "Type",
+  y = "Coherence",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Coherence",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Coherence Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p14
+
+
+Preferences <- read_csv("C:/repos/contactExperimentRNotebook/prefFeed.csv")
+#This will show on which type of feedback the users relied upon more
+ggplot(Preferences) + geom_bar(aes(x = Preferences$Type))
+#This will show on which type of feedback the users relied upon more
+hist(quest$RelyingMoreOn)
+p15 <- ggstatsplot::ggbetweenstats(
+  data = Reliance,
+  x = "Type",
+  y = "Reliance",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Reliance",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Reliance Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p15
+
+
+#This will show which type of feedback resemble better touching a surface
+p16 <- ggstatsplot::ggbetweenstats(
+  data = Resemble,
+  x = "Type",
+  y = "Resemblance",
+  type = "np",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Resemblance",
+  sample.size.label = FALSE,
+  var.equal = FALSE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Resemblance Box-Violin Plots",
+  title.color = "black",
+  caption.color = "black"
+)
+p16
+
+
+
+
+median(quest$ElectricalSensation)
+Mode(quest$ElectricalSensation)
+#Moderate i.e., neither pleasant nor annoying
+hist(quest$ElectricalSensation)
+
+median(quest$ElectricalUpdatePerception)
+Mode(quest$ElectricalUpdatePerception)
+# Often, Very often, All the time! 
+hist(quest$ElectricalUpdatePerception)
+
+
+
+#OK so we have a neutral feedback regarding the pleasantness or discomfort of the sensation provided by the electrotactile feedback. which I interpreted as a positive result since we did not recei, especially considering the previous literature.
+
+#Regarding the perceptual update that the user presses harder the surface, the results are really positive, and postulate that the electrotactile feedback may contribute with strengthening the plausibility illusion (i.e., the illusion that the virtual environment responds to your action). However, this should be meticuously investigated in a future study.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########Tables
+
+Descriptive <- describeBy(ParsiDFplots, group = ParsiDFplots$InterpenetrationFeedback)
+
+DescriptivePart <- describeBy(ParsiDFplots, group = ParsiDFplots$Part)
+
+Data_1st <- subset(ParsiDFplots, Part == "Part 1", select = c(ID, InterpenetrationFeedback, MaxInterpenetration, AverageInterpenetration))
+Data_2nd <- subset(ParsiDFplots, Part == "Part 2", select = c(ID, InterpenetrationFeedback, MaxInterpenetration, AverageInterpenetration))
+
+DesPart1 <- describeBy(Data_1st, group = Data_1st$InterpenetrationFeedback)
+DesPart2 <- describeBy(Data_2nd, group = Data_2nd$InterpenetrationFeedback) 
+
+DesIntesities <- describeBy(intensities, group = intensities$Calibration)
+
+
+
