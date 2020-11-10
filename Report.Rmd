@@ -91,8 +91,10 @@ ParsiDF$ID[ParsiDF$ID == 20] <- NA
 
 ParsiDF <- na.omit(ParsiDF)
 
-ParsiDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDF, mean)
 
+
+ParsiDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDF, mean)
+describe(ParsiDF)
 #Before Conversion to logarithms (showing the abnormal distribution)
 shapiro_test(ParsiDF$MaxInterpenetration)
 shapiro_test(ParsiDF$AverageInterpenetration)
@@ -132,6 +134,9 @@ hist(ParsiDF$MaxInterpenetration,main = paste("Histogram of Maximum Interpenetra
 
 hist(ParsiDF$AverageInterpenetration, main = paste("Histogram of Average Interpenetration") , xlab = "Average Interpenetration")
 
+
+Descriptive <- describeBy(ParsiDF, group = ParsiDF$InterpenetrationFeedback)
+Descriptive
 ```
 
  
