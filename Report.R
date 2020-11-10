@@ -24,15 +24,14 @@ library(rsconnect)
 library(shiny)
 library(meta)
 library(DescTools)
+library("dplyr")                                                  # Load dplyr package
+library("plyr")                                                   # Load plyr package
+library("readr")                                                  # Load readr package
 
-
-data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
-                  pattern = "*.csv", full.names = TRUE) %>% 
-  lapply(read_csv) %>%                                            # Store all files in list
-  bind_rows                                                       # Combine data sets into a single data set 
-data 
-
-
+data <- lapply(list.files(path = "C:/repos/contactExperimentRNotebook/MergingFolder",     # Identify all csv files in folder
+                    pattern = "*.csv", full.names = TRUE),read_csv)                                         # Store all files in list
+                                                       # Combine data sets into a single data set 
+data <- bind_rows(data)
 
 data$Part <- as.factor(data$Block < 4)
 levels(data$Part)
@@ -122,6 +121,7 @@ ParsiDFplots <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Par
 
 ParsiDFplots$AverageInterpenetration <-100 * ParsiDFplots$AverageInterpenetration #Converting meters to centimeters
 ParsiDFplots$MaxInterpenetration <- 100 * ParsiDFplots$MaxInterpenetration #Converting meters to centimeters
+ParsiDFplots$Precision <- 100 * ParsiDFplots$Precision
 
 p1 <- ggstatsplot::ggbetweenstats(
   data = ParsiDFplots,
@@ -928,6 +928,7 @@ pairwise.wilcox.test(Resemble$Resemblance, Resemble$Type, p.adjust.method = "bon
 
 #Interpretation: Useful to Very Useful
 
+
 #Coherence
 
 #Median:5
@@ -935,6 +936,7 @@ pairwise.wilcox.test(Resemble$Resemblance, Resemble$Type, p.adjust.method = "bon
 #Mode: 5
 
 #Interpretation: Coherent
+
 
 #Resemblance
 
@@ -953,7 +955,7 @@ pairwise.wilcox.test(Resemble$Resemblance, Resemble$Type, p.adjust.method = "bon
 
 #Mode: 3 (9 Responses) 
 
-#Interpertation: Ballanced, however it leans towards Electrotactile
+#Interpretation: Ballanced, however it leans towards Electrotactile
 
 
 #Modalities synchronized
@@ -962,15 +964,16 @@ pairwise.wilcox.test(Resemble$Resemblance, Resemble$Type, p.adjust.method = "bon
 
 #Mode: 7
 
-#Interpertation: Very Coherent to Completely Coherent
+#Interpretation: Very Coherent to Completely Coherent
+
+
 #Resemblance
 
 #Median:4
 
 #Mode: 5
 
-
-#Interpertation: Moderately Similar to Similar 
+#Interpretation: Moderately Similar to Similar 
 
 ################### Comparisons
 
@@ -1132,6 +1135,7 @@ Mode(quest$ElectricalUpdatePerception)
 hist(quest$ElectricalUpdatePerception)
 
 
+describe(quest)
 
 #OK so we have a neutral feedback regarding the pleasantness or discomfort of the sensation provided by the electrotactile feedback. which I interpreted as a positive result since we did not recei, especially considering the previous literature.
 
@@ -1165,4 +1169,195 @@ DesPart2 <- describeBy(Data_2nd, group = Data_2nd$InterpenetrationFeedback)
 DesIntesities <- describeBy(intensities, group = intensities$Calibration)
 
 
+######################## CHECK PRECISION ##########################
 
+ggqqplot(ParsiDF$Precision)
+shapiro_test(ParsiDF$Precision)
+hist(ParsiDF$Precision)
+
+ParsiDF$Precision <- log(ParsiDF$Precision)
+ggqqplot(ParsiDF$Precision)
+shapiro_test(ParsiDF$Precision)
+hist(ParsiDF$Precision)
+
+ParsiDF %>%
+  group_by(InterpenetrationFeedback, Part) %>%
+  shapiro_test(Precision) 
+
+p10 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "Precision",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Precision",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+)
+
+
+# Replicating the above but this time we look on the effect of the type of feedback on the DVs in 1st and 2nd Part of the experiment individually
+
+p11 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "InterpenetrationFeedback",
+  y = "Precision",
+  grouping.var = "Part",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Type of Feedback",
+  ylab = "Precision",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+# Lets check the effect of shaded condition on DVs
+
+p12 <- ggstatsplot::ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "Precision",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Precision",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+
+
+p13 <- ggstatsplot::grouped_ggbetweenstats(
+  data = ParsiDFplots,
+  x = "Part",
+  y = "Precision",
+  grouping.var = "InterpenetrationFeedback",
+  type = "p",
+  pairwise.comparisons = FALSE,
+  pairwise.display = "significant",
+  p.adjust.method = "bonferroni",
+  effsize.type = "unbiased",
+  results.subtitle = FALSE,
+  xlab = "Order",
+  ylab = "Precision",
+  sample.size.label = FALSE,
+  var.equal = TRUE,
+  mean.plotting = FALSE,
+  mean.ci = TRUE,
+  paired = TRUE,
+  title.text = "Interpenetration Box-Violin Plots",
+  caption.text = "Note: Interpenetration distance is displayed in cm.",
+  title.color = "black",
+  caption.color = "black"
+) 
+
+
+
+p10 
+p11
+p12
+p13
+
+
+aPr <- aov_ez("ID", "Precision", ParsiDF,
+               within = c("Part", "InterpenetrationFeedback"),
+               anova_table = list(es = "pes"))
+
+knitr::kable(nice(aPr$anova_table))
+
+effectsize::omega_squared(aPr, partial = TRUE, ci = 0.95)
+
+
+aPrPlots <- aov_ez("ID", "Precision", ParsiDFplots,
+                    within = c("Part", "InterpenetrationFeedback"),
+                    anova_table = list(es = "pes"))
+
+#plots
+afex_plot(aPrPlots, x = "InterpenetrationFeedback", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 0.5)
+
+afex_plot(aPrPlots, x = "Part", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5))  +
+  ylim(0, 0.5)
+
+
+
+
+
+afex_plot(aPrPlots, x = "InterpenetrationFeedback", trace = "Part", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 0.5)
+
+afex_plot(aPrPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.5))  +
+  ylim(0, 0.5)
+
+
+
+aPremm <- emmeans(aPr,~ Part:InterpenetrationFeedback,
+                   method="pairwise", interaction=TRUE, adjust = "bonf")
+
+pairs(aPremm, adjust = "bonf")
+
+require(esvis)
+EffectSizePr <- hedg_g(ParsiDF,Precision ~ InterpenetrationFeedback + Part, keep_d = FALSE) #Calculates the hedge's g per pair! 
+
+EffectSizePr
+
+
+############ Change in the Performance (Part 1 vs Part2) per Interpenetration Feedback #############
+
+contrast(emmeans(aPr,~ Part:InterpenetrationFeedback), 
+         method="pairwise", interaction=TRUE, adjust = "bonf")
+
+#Part.1 - Part.2 Electrotactile - NoFeedback         0.3749 0.127 60  2.954  0.0269 
+#Part.1 - Part.2 Electrotactile - Visual             0.4103 0.127 60  3.233  0.0120
+
+require(esc)
+hedges_g(d = 0.54387548, totaln = 60)
+hedges_g(d = 0.59524355, totaln = 60)
