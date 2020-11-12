@@ -67,6 +67,9 @@ ParsiDF <- na.omit(ParsiDF)
 
 
 ParsiDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDF, mean)
+write_csv(ParsiDF, file = "C:/repos/contactExperimentRNotebook/Clean.csv")
+
+
 descParsi <- describe(ParsiDF)
 #Before Conversion to logarithms (showing the abnormal distribution)
 shapiro_test(ParsiDF$MaxInterpenetration)
@@ -347,75 +350,86 @@ aAv <- aov_ez("ID", "AverageInterpenetration", ParsiDF,
 
 knitr::kable(nice(aAv$anova_table))
 
-
+aMax
+aAv
 effectsize::omega_squared(aMax, partial = TRUE, ci = 0.95)
 
 effectsize::omega_squared(aAv, partial = TRUE, ci = 0.95)
 
 
 
+#utils::example(SSD)
 
+ParsiDFplots$"Maximum Interpenetration" <- ParsiDFplots$MaxInterpenetration
+ParsiDFplots$"Average Interpenetration" <- ParsiDFplots$AverageInterpenetration
+ParsiDFplots$"Index Oscillation" <- ParsiDFplots$Precision
+ParsiDFplots$"Type of Feedback" <- ParsiDFplots$InterpenetrationFeedback
+ParsiDFplots$"Type of Feedback" <- factor(ParsiDFplots$"Type of Feedback", levels = c("NoFeedback", "Electrotactile", "Visual", "Both"),
+       labels = c("None","Electrotactile","Visual", "Combined"))
 
-aMaxPlots <- aov_ez("ID", "MaxInterpenetration", ParsiDFplots,
-                    within = c("Part", "InterpenetrationFeedback"),
+aMaxPlots <- aov_ez("ID","Maximum Interpenetration", data = ParsiDFplots,
+                    within = c("Part","Type of Feedback"), 
                     anova_table = list(es = "pes"))
 
-aAvPlots <- aov_ez("ID", "AverageInterpenetration", ParsiDFplots,
-                   within = c("Part", "InterpenetrationFeedback"),
+aAvPlots <- aov_ez("ID", "Average Interpenetration", ParsiDFplots,
+                   within = c("Part", "Type of Feedback"),
                    anova_table = list(es = "pes"))
 
 #plots
-afex_plot(aMaxPlots, x = "InterpenetrationFeedback", error = "within", 
+afex_plot(aMaxPlots, x = "Type of Feedback", error = "within",dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
+          data_geom = geom_violin, 
           data_arg = list(width = 0.5)) +
   ylim(0, 3)
 
-afex_plot(aMaxPlots, x = "Part", error = "within", 
+afex_plot(aMaxPlots, x = "Part", error = "within",dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(width = 0.5))  +
-  ylim(0, 3)
-
-afex_plot(aAvPlots, x = "InterpenetrationFeedback", error = "within", 
-          mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(width = 0.5)) +
-  ylim(0, 2.25)
-
-afex_plot(aAvPlots, x = "Part", error = "within", 
-          mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(width = 0.5))  +
-  ylim(0, 2.25)
-
-
-
-
-
-
-afex_plot(aMaxPlots, x = "InterpenetrationFeedback", trace = "Part", error = "within", 
-          mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
+          data_geom = geom_violin, 
           data_arg = list(width = 0.5)) +
   ylim(0, 3)
 
-afex_plot(aMaxPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+afex_plot(aMaxPlots, x = "Type of Feedback", trace = "Part", error = "within", dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(width = 0.5))  +
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
   ylim(0, 3)
 
-afex_plot(aAvPlots, x = "InterpenetrationFeedback",  trace = "Part", error = "within", 
+
+
+afex_plot(aMaxPlots, x = "Part", trace = "Type of Feedback", error = "within", dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 3)
+
+
+
+
+
+
+
+afex_plot(aAvPlots, x = "Type of Feedback", error = "within", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = geom_violin, 
           data_arg = list(width = 0.5)) +
   ylim(0, 2.25)
 
-afex_plot(aAvPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+afex_plot(aAvPlots, x = "Part", error = "within", dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol:: geom_boxjitter, 
-          data_arg = list(width = 0.5))  +
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 2.25)
+
+afex_plot(aAvPlots, x = "Type of Feedback",  trace = "Part", error = "within", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 2.25)
+
+afex_plot(aAvPlots, x = "Part", trace = "Type of Feedback", error = "within", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
   ylim(0, 2.25)
 
 
@@ -503,25 +517,23 @@ hedges_g(d = 0.60831571, totaln = 60)
 
 #### Significant Comparisons:
 
-#Part.1 Both - Part.2 Both                     p = 0.0004   Hedge's g =  0.688559174
-
 #Part.1 Both - Part.1 Electrotactile           p = 0.0024   Hedge's g = -0.673535198
-
-#Part.1 Both - Part.1 NoFeedback               p <  .0001   Hedge's g = -1.102751598
-
-#Part.2 Both - Part.2 NoFeedback               p <  .0001   Hedge's g = -1.688918621
-
-
-#Part.1 Electrotactile - Part.2 Electrotactile p <  .0001   Hedge's g =  0.855157215
-
 #Part.1 Electrotactile - Part.1 Visual         p = 0.0258   Hedge's g =  0.524527360
 
-#Part.2 Electrotactile - Part.2 NoFeedback     p <  .0001   Hedge's g = -1.095756543
-
-
+#Part.1 Both - Part.1 NoFeedback               p <  .0001   Hedge's g = -1.102751598
 #Part.1 NoFeedback - Part.1 Visual             p <  .0001   Hedge's g =  0.901187692
 
+
+#Part.2 Both - Part.2 NoFeedback               p <  .0001   Hedge's g = -1.688918621
+#Part.2 Electrotactile - Part.2 NoFeedback     p <  .0001   Hedge's g = -1.095756543
 #Part.2 NoFeedback - Part.2 Visual             p <  .0001   Hedge's g =  1.096379269
+
+#Part.1 Electrotactile - Part.2 Electrotactile p <  .0001   Hedge's g =  0.855157215
+#Part.1 Both - Part.2 Both                     p = 0.0004   Hedge's g =  0.688559174
+
+
+
+
 
 
 #Key Findings: 
@@ -594,6 +606,12 @@ hedges_g(d = 0.60831571, totaln = 60)
 
 intensities <- read_csv("C:/repos/contactExperimentRNotebook/intensities.csv")
 
+intensities$ParticipantID[intensities$ParticipantID == 9] <- NA 
+intensities$ParticipantID[intensities$ParticipantID == 17] <- NA
+intensities$ParticipantID[intensities$ParticipantID == 20] <- NA
+
+intensities <- na.omit(intensities)
+
 pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
 pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
@@ -607,9 +625,6 @@ pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method =
 
 #Significant differences between 
 
-#Final and Initial !!!!!! 
-
-#Middle and Initial  !!!!!!
 
 
 #Non-Significant differences between
@@ -641,6 +656,15 @@ effectsize::hedges_g("Pain", "Calibration", data = FinalVSInitial, correction = 
 
 effectsize::hedges_g("ActualValue", "Calibration", data = FinalVSInitial, correction = TRUE, paired = TRUE,)
 
+#Final and Initial !!!!!! 
+# =.005   0.70 | [0.27, 1.16]
+# <.001   0.83 | [0.38, 1.31]
+# <.001   0.88 | [0.42, 1.37]
+
+#Middle and Initial  !!!!!!
+# <.001  -1.45 | [-2.08, -0.88]
+# <.001  -0.91 | [-1.41, -0.45]
+# <.001  -1.08 | [-1.62, -0.59]
 
 #The + or - is just the direction of the SDs change proportionally to how the comparison is called (e..g, Final vs Initial or Initial vs Final) so just ignore it. 
 
@@ -734,8 +758,47 @@ p11 <- ggstatsplot::ggbetweenstats(
 )
 p11
 
+par(mfrow=c(2,2))
+intensities$ID <- intensities$ParticipantID
+
+aSens <- aov_ez("ID", "Sensation", intensities,
+              within = "Calibration",
+              anova_table = list(es = "pes"))
+
+aSens
+aPain <- aov_ez("ID", "Pain", intensities,
+                within = "Calibration",
+                anova_table = list(es = "pes"))
+
+aActV <- aov_ez("ID", "ActualValue", intensities,
+                within = "Calibration",
+                anova_table = list(es = "pes"))
+
+#plots
+afex1 <- afex_plot(aSens , x = "Calibration", error = "within", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
+  ylim(0,8)
 
 
+afex2 <- afex_plot(aPain , x = "Calibration", error = "within", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 8)
+
+afex3 <- afex_plot(aActV, x = "Calibration", error = "within", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 8)
+
+
+require(cowplot)
+plot_grid(afex1,afex2,afex3, ncol = 1)
+
+##############################################################Extra checks
 require(data.table)
 setDT(intensities)
 
@@ -762,35 +825,34 @@ describe.by(intensities_wide$DiffActual)
 
 #IDs 12 and 19 seem suspicious, however the rest are seem ok
 #lets exclude them and rerun the analyses
+intensitiesClean2 <- intensities
+intensitiesClean2$ParticipantID[intensitiesClean2$ParticipantID == 19] <- NA
+intensitiesClean2$ParticipantID[intensitiesClean2$ParticipantID == 12] <- NA
 
-intensities$ParticipantID[intensities$ParticipantID == 19] <- NA
-intensities$ParticipantID[intensities$ParticipantID == 12] <- NA
+intensitiesClean2 <- na.omit(intensitiesClean2)
 
-intensities <- na.omit(intensities)
+pairwise_t_test(data = intensitiesClean2, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
-pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+pairwise_t_test(data = intensitiesClean2, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
-pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
-
-pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+pairwise_t_test(data = intensitiesClean2, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
 #OK, we have similar results, lets go a wee bit farther
 # I will also exclude the IDs which were not included in the performance analyses. 
 
-intensities$ParticipantID[intensities$ParticipantID == 9] <- NA
-intensities$ParticipantID[intensities$ParticipantID == 17] <- NA
-intensities$ParticipantID[intensities$ParticipantID == 20] <- NA
-intensities <- na.omit(intensities)
+intensitiesClean2$ParticipantID[intensitiesClean2$ParticipantID == 9] <- NA
+intensitiesClean2$ParticipantID[intensitiesClean2$ParticipantID == 17] <- NA
+intensitiesClean2$ParticipantID[intensitiesClean2$ParticipantID == 20] <- NA
+intensitiesClean2 <- na.omit(intensitiesClean2)
 
-pairwise_t_test(data = intensities, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+pairwise_t_test(data = intensitiesClean2, Sensation ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
-pairwise_t_test(data = intensities, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
+pairwise_t_test(data = intensitiesClean2, Pain ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
-pairwise_t_test(data = intensities, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
-
-
+pairwise_t_test(data = intensitiesClean2, ActualValue ~ Calibration, p.adjust.method = "bonferroni", paired = TRUE, alternative = "two.sided", detailed = TRUE)
 
 #OK, we have similar results again. So, it doesn't seem that for the lower performance in the 1st part the reason was an inappropriate calibration. On the other hand, a familiarization with the electrotactile feedback seems to explain better the difference in the performance between part 1 and part 2. To clarify, by familiarization I mean the acceptance of the electrotactile feedback (e.g., it doesnt startle or frighten the user) as well as the cognitive association (in psychological terms: conditioning, or in game terms: game mechanics) between an X event (e.g., when I feel that) and Y action (e.g., then I stop or I adjust the position of my hand).
+
 
 
 
@@ -1160,8 +1222,8 @@ Descriptive <- describeBy(ParsiDFplots, group = ParsiDFplots$InterpenetrationFee
 
 DescriptivePart <- describeBy(ParsiDFplots, group = ParsiDFplots$Part)
 
-Data_1st <- subset(ParsiDFplots, Part == "Part 1", select = c(ID, InterpenetrationFeedback, MaxInterpenetration, AverageInterpenetration))
-Data_2nd <- subset(ParsiDFplots, Part == "Part 2", select = c(ID, InterpenetrationFeedback, MaxInterpenetration, AverageInterpenetration))
+Data_1st <- subset(ParsiDFplots, Part == "Part 1", select = c(ID, InterpenetrationFeedback, MaxInterpenetration, AverageInterpenetration, Precision))
+Data_2nd <- subset(ParsiDFplots, Part == "Part 2", select = c(ID, InterpenetrationFeedback, MaxInterpenetration, AverageInterpenetration, Precision))
 
 DesPart1 <- describeBy(Data_1st, group = Data_1st$InterpenetrationFeedback)
 DesPart2 <- describeBy(Data_2nd, group = Data_2nd$InterpenetrationFeedback) 
@@ -1294,47 +1356,46 @@ p11
 p12
 p13
 
-
 aPr <- aov_ez("ID", "Precision", ParsiDF,
                within = c("Part", "InterpenetrationFeedback"),
                anova_table = list(es = "pes"))
-
+aPr
 knitr::kable(nice(aPr$anova_table))
 
 effectsize::omega_squared(aPr, partial = TRUE, ci = 0.95)
 
 
-aPrPlots <- aov_ez("ID", "Precision", ParsiDFplots,
-                    within = c("Part", "InterpenetrationFeedback"),
+aPrPlots <- aov_ez("ID", "Index Oscillation", ParsiDFplots,
+                    within = c("Part", "Type of Feedback"),
                     anova_table = list(es = "pes"))
 
 #plots
-afex_plot(aPrPlots, x = "InterpenetrationFeedback", error = "within", 
+afex_plot(aPrPlots, x = "Type of Feedback", error = "within", dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
+          data_geom = geom_violin, 
           data_arg = list(width = 0.5)) +
   ylim(0, 0.5)
 
-afex_plot(aPrPlots, x = "Part", error = "within", 
+afex_plot(aPrPlots, x = "Part", error = "within", dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(width = 0.5))  +
-  ylim(0, 0.5)
-
-
-
-
-
-afex_plot(aPrPlots, x = "InterpenetrationFeedback", trace = "Part", error = "within", 
-          mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
+          data_geom = geom_violin, 
           data_arg = list(width = 0.5)) +
   ylim(0, 0.5)
 
-afex_plot(aPrPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
+
+
+
+
+afex_plot(aPrPlots, x = "Type of Feedback", trace = "Part", error = "within",dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(width = 0.5))  +
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
+  ylim(0, 0.5)
+
+afex_plot(aPrPlots, x = "Part", trace = "Type of Feedback", error = "within", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = geom_violin, 
+          data_arg = list(width = 0.5)) +
   ylim(0, 0.5)
 
 
@@ -1349,15 +1410,94 @@ EffectSizePr <- hedg_g(ParsiDF,Precision ~ InterpenetrationFeedback + Part, keep
 
 EffectSizePr
 
+#Part.1 Both - Part.1 NoFeedback               <.001 -1.19
+#Part.1 NoFeedback - Part.1 Visual             <.001  1.06
+
+#Part.1 Both - Part.1 Electrotactile           <.001 -0.90
+#Part.1 Electrotactile - Part.1 Visual         <.001  0.79
+
+#Part.2 Both - Part.2 NoFeedback               <.001 -1.71
+#Part.2 NoFeedback - Part.2 Visual             <.001  1.32
+#Part.2 Electrotactile - Part.2 NoFeedback     <.001  1.07
+
+#Part.1 Electrotactile - Part.2 Electrotactile <.001  0.74
+
+
 
 ############ Change in the Performance (Part 1 vs Part2) per Interpenetration Feedback #############
 
 contrast(emmeans(aPr,~ Part:InterpenetrationFeedback), 
          method="pairwise", interaction=TRUE, adjust = "bonf")
 
-#Part.1 - Part.2 Electrotactile - NoFeedback         0.3749 0.127 60  2.954  0.0269 
-#Part.1 - Part.2 Electrotactile - Visual             0.4103 0.127 60  3.233  0.0120
+#Part.1 - Part.2 Electrotactile - NoFeedback        .027 
+#Part.1 - Part.2 Electrotactile - Visual            .012
 
 require(esc)
 hedges_g(d = 0.54387548, totaln = 60)
 hedges_g(d = 0.59524355, totaln = 60)
+
+
+############### Intensities & Performance #############
+
+intensitiesPerf <- read_csv("C:/repos/contactExperimentRNotebook/CleanWithIntensities.csv")
+
+shapiro_test(intensitiesPerf$MaxInterpenetration)
+shapiro_test(intensitiesPerf$AverageInterpenetration)
+shapiro_test(intensitiesPerf$Precision)
+shapiro_test(intensitiesPerf$Sensation)
+shapiro_test(intensitiesPerf$Pain)
+shapiro_test(intensitiesPerf$ActualValue)
+
+intensitiesPerf$MaxInterpenetration <- log(intensitiesPerf$MaxInterpenetration)
+intensitiesPerf$AverageInterpenetration <- log(intensitiesPerf$AverageInterpenetration)
+intensitiesPerf$Precision <- log(intensitiesPerf$Precision)
+intensitiesPerf$Sensation <- log(intensitiesPerf$Sensation)
+intensitiesPerf$Pain <- log(intensitiesPerf$Pain)
+intensitiesPerf$ActualValue <- log(intensitiesPerf$ActualValue)
+
+shapiro_test(intensitiesPerf$MaxInterpenetration)
+shapiro_test(intensitiesPerf$AverageInterpenetration)
+shapiro_test(intensitiesPerf$Precision)
+shapiro_test(intensitiesPerf$Sensation)
+shapiro_test(intensitiesPerf$Pain)
+shapiro_test(intensitiesPerf$ActualValue)
+
+hist(intensitiesPerf$MaxInterpenetration)
+hist(intensitiesPerf$AverageInterpenetration)
+hist(intensitiesPerf$Precision)
+hist(intensitiesPerf$Sensation)
+hist(intensitiesPerf$Pain)
+hist(intensitiesPerf$ActualValue)
+
+intensitiesPerf %>%
+  group_by(Sensation, Pain, ActualValue) %>%
+  shapiro_test(MaxInterpenetration) 
+
+intensitiesPerf %>%
+  group_by(Sensation, Pain, ActualValue) %>%
+  shapiro_test(AverageInterpenetration) 
+
+intensitiesPerf %>%
+  group_by(Sensation, Pain, ActualValue) %>%
+  shapiro_test(Precision)
+
+intensitiesPerf <- filter(intensitiesPerf, InterpenetrationFeedback != "Visual")
+intensitiesPerf <- filter(intensitiesPerf, InterpenetrationFeedback != "NoFeedback")
+write_csv(intensitiesPerf, file = "C:/repos/contactExperimentRNotebook/intensitiesPerfLog.csv")
+
+
+intensitiesPerfCorrel <- jmv::corrMatrix(
+  data = intensitiesPerf,
+  vars = vars(ActualValue, Pain, Sensation, Precision, MaxInterpenetration, AverageInterpenetration),
+  flag = TRUE,
+  ci = TRUE)
+
+
+intensitiesPerfCorrel
+intensitiesPerfCorrel<- as.data.frame(intensitiesPerfCorrel$matrix)
+write_csv(intensitiesPerfCorrel, file = "C:/repos/contactExperimentRNotebook/intensitiesPerfCorrel.csv")
+
+#No Significant Correlations !!!!!!!
+
+###########################################################
+
