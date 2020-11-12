@@ -404,7 +404,6 @@ effectsize::omega_squared(aAv, partial = TRUE, ci = 0.95)
 
 #Large effect: ω2 = 0.14.
 
-
 Let's plot the main effects (Interpenetration Feedback OR Part of the experiment).
 ```{r}
 # ANOVAs just for the plots
