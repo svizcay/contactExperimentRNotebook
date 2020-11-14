@@ -1483,6 +1483,7 @@ intensitiesPerf %>%
 
 intensitiesPerf <- filter(intensitiesPerf, InterpenetrationFeedback != "Visual")
 intensitiesPerf <- filter(intensitiesPerf, InterpenetrationFeedback != "NoFeedback")
+intensitiesPerf <- filter(intensitiesPerf, InterpenetrationFeedback != "Both")
 write_csv(intensitiesPerf, file = "C:/repos/contactExperimentRNotebook/intensitiesPerfLog.csv")
 
 
