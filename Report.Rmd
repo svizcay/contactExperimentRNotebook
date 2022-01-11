@@ -1,8 +1,8 @@
 ---
 title: "Contact Experiment Data Analysis"
 output:
-  word_document: default
   pdf_document: default
+  word_document: default
   html_notebook: default
   html_document:
     df_print: paged
@@ -13,6 +13,7 @@ output:
 
 ```{r}
 #remotes::install_github("sbalci/jjstatsplot") #Press 3 !!!!! i.e., installing/Updating none package! 
+library(psych)
 library(jmv)
 library(datasets)
 library(plyr)
@@ -95,7 +96,7 @@ ParsiDF <- na.omit(ParsiDF)
 
 
 ParsiDF <- aggregate(. ~ ID + Age + Gender + InterpenetrationFeedback + Part, ParsiDF, mean)
-describe(ParsiDF)
+#describe(ParsiDF)
 #Before Conversion to logarithms (showing the abnormal distribution)
 shapiro_test(ParsiDF$MaxInterpenetration)
 shapiro_test(ParsiDF$AverageInterpenetration)
@@ -418,25 +419,25 @@ aAvPlots <- aov_ez("ID", "AverageInterpenetration", ParsiDFplots,
 #plots
 afex_plot(aMaxPlots, x = "InterpenetrationFeedback", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
+                data_geom = geom_violin , 
                 data_arg = list(width = 0.5)) +
             ylim(0, 3)
 
 afex_plot(aMaxPlots, x = "Part", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
+                data_geom = geom_violin , 
                 data_arg = list(width = 0.5))  +
             ylim(0, 3)
 
 afex_plot(aAvPlots, x = "InterpenetrationFeedback", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
+                data_geom = geom_violin , 
                 data_arg = list(width = 0.5)) +
             ylim(0, 2.25)
 
 afex_plot(aAvPlots, x = "Part", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
+                data_geom = geom_violin , 
                 data_arg = list(width = 0.5))  +
             ylim(0, 2.25)
 ```
@@ -446,25 +447,25 @@ Let's plot the main interaction effects (Interpenetration Feedback AND Part of t
 
 afex_plot(aMaxPlots, x = "InterpenetrationFeedback", trace = "Part", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
+                data_geom = geom_violin, 
                 data_arg = list(width = 0.5)) +
             ylim(0, 3)
 
 afex_plot(aMaxPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
+                data_geom = geom_violin , 
                 data_arg = list(width = 0.5))  +
             ylim(0, 3)
 
 afex_plot(aAvPlots, x = "InterpenetrationFeedback",  trace = "Part", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
+                data_geom = geom_violin , 
                 data_arg = list(width = 0.5)) +
             ylim(0, 2.25)
 
 afex_plot(aAvPlots, x = "Part", trace = "InterpenetrationFeedback", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
-                data_geom = ggpol:: geom_boxjitter, 
+                data_geom = geom_violin, 
                 data_arg = list(width = 0.5))  +
             ylim(0, 2.25)
 
