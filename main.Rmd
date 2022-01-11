@@ -35,7 +35,7 @@ library(dplyr)
 
 Import and merge all the csv files (x.csv where x = ID) of the folder. Note, that the ID is has already been added as column 
 ```{r, echo=FALSE, results='hide',message=FALSE,cache=FALSE}
-data <- list.files(path = "C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder",     # Identify all csv files in folder
+data <- list.files(path = "MergingFolder",     # Identify all csv files in folder
                        pattern = "*.csv", full.names = TRUE) %>% 
   lapply(read_csv) %>%                                            # Store all files in list
   bind_rows                                                       # Combine data sets into a single data set 
@@ -540,6 +540,7 @@ RM2W_Av <- anova_test(
   data = df2_clean, dv = AverageInterpenetration, wid = ID,
   formula = AverageInterpenetration ~ InterpenetrationFeedback + FullyShaded + InterpenetrationFeedback*FullyShaded + (1|ID),
   )
+
  get_anova_table(RM2W_Av)
  
 ```
