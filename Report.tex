@@ -115,15 +115,32 @@
 \begin{document}
 \maketitle
 
-First Step is to load the necessary package, If you dont have them just
-install them. For jjstatsplot you need to install it remotely. Just
-remove the dash and press enter. Then Press 3 (none package to be
-updated). ?group\_by()
+\#First Step is to load the necessary package, If you dont have them
+just install them. For jjstatsplot you need to install it remotely.
+\#Just remove the dash and press enter. Then Press 3 (none package to be
+updated).
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{#remotes::install_github("sbalci/jjstatsplot") #Press 3 !!!!! i.e., installing/Updating none package! }
+\KeywordTok{library}\NormalTok{(psych)}
 \KeywordTok{library}\NormalTok{(jmv)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'jmv'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:psych':
+## 
+##     pca
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(datasets)}
 \KeywordTok{library}\NormalTok{(plyr)}
 \KeywordTok{library}\NormalTok{(readr)}
@@ -192,6 +209,22 @@ updated). ?group\_by()
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(ggplot2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'ggplot2'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:psych':
+## 
+##     %+%, alpha
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(rstatix)}
 \end{Highlighting}
 \end{Shaded}
@@ -366,6 +399,8 @@ updated). ?group\_by()
 
 \begin{verbatim}
 ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x ggplot2::%+%()     masks psych::%+%()
+## x coin::alpha()      masks ggplot2::alpha(), psych::alpha()
 ## x dplyr::arrange()   masks plyr::arrange()
 ## x dplyr::between()   masks data.table::between()
 ## x purrr::compact()   masks plyr::compact()
@@ -467,8 +502,393 @@ updated). ?group\_by()
 ##     geyser
 \end{verbatim}
 
-Import and merge all the csv files (x.csv where x = ID) of the folder.
-Note, that the ID is has already been added as column
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tinytex)}
+\KeywordTok{library}\NormalTok{(rsconnect)}
+\KeywordTok{library}\NormalTok{(shiny)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'shiny'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:rsconnect':
+## 
+##     serverInfo
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(meta)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading 'meta' package (version 4.15-1).
+## Type 'help(meta)' for a brief overview.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(DescTools)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'DescTools'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:data.table':
+## 
+##     %like%
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:psych':
+## 
+##     AUC, ICC, SD
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\#Import and merge all the csv files (x.csv where x = ID) of the folder.
+Note that the ID is has already been added as column
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\KeywordTok{list.files}\NormalTok{(}\DataTypeTok{path =} \StringTok{"C:/Users/pkourtes/Desktop/ContactExperiment/Results/Participants/MergingFolder"}\NormalTok{,     }\CommentTok{# Identify all csv files in folder}
+                       \DataTypeTok{pattern =} \StringTok{"*.csv"}\NormalTok{, }\DataTypeTok{full.names =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{lapply}\NormalTok{(read_csv) }\OperatorTok{%>%}\StringTok{                                            }\CommentTok{# Store all files in list}
+\StringTok{  }\NormalTok{bind_rows                                                       }\CommentTok{# Combine data sets into a single data set }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+## 
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   InterpenetrationFeedback = col_character(),
+##   FullyShaded = col_logical(),
+##   Completed = col_logical(),
+##   Skipped = col_logical(),
+##   Gender = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,304 x 20
+##       ID Block TrialInBlock Trial Interpenetratio~ FullyShaded NrOfAdjustments
+##    <dbl> <dbl>        <dbl> <dbl> <chr>            <lgl>                 <dbl>
+##  1     1     0            0     0 NoFeedback       FALSE                     1
+##  2     1     0            1     1 NoFeedback       TRUE                      0
+##  3     1     0            2     2 NoFeedback       TRUE                      0
+##  4     1     0            3     3 NoFeedback       FALSE                     0
+##  5     1     0            4     4 NoFeedback       TRUE                      0
+##  6     1     0            5     5 NoFeedback       FALSE                     0
+##  7     1     0            6     6 NoFeedback       FALSE                     0
+##  8     1     0            7     7 NoFeedback       FALSE                     0
+##  9     1     0            8     8 NoFeedback       TRUE                      0
+## 10     1     0            9     9 NoFeedback       TRUE                      0
+## # ... with 2,294 more rows, and 13 more variables: InterpenetrationTime <dbl>,
+## #   TrialTime <dbl>, FirstContactTime <dbl>, MaxInterpenetration <dbl>,
+## #   AverageInterpenetration <dbl>, AverageOffsetFromSurface <dbl>,
+## #   ReleaseReactionTime <dbl>, Completed <lgl>, Attempts <dbl>, Skipped <lgl>,
+## #   RespTime <dbl>, Age <dbl>, Gender <chr>
+\end{verbatim}
 
 Discard first X trials per interpenetration feedback condition and then
 create a summary table for each participant. You need to define
@@ -518,8 +938,10 @@ create a summary table for each participant. You need to define
 
 \NormalTok{ParsiDF <-}\StringTok{ }\KeywordTok{na.omit}\NormalTok{(ParsiDF)}
 
-\NormalTok{ParsiDF <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{(. }\OperatorTok{~}\StringTok{ }\NormalTok{ID }\OperatorTok{+}\StringTok{ }\NormalTok{Age }\OperatorTok{+}\StringTok{ }\NormalTok{Gender }\OperatorTok{+}\StringTok{ }\NormalTok{InterpenetrationFeedback }\OperatorTok{+}\StringTok{ }\NormalTok{Part, ParsiDF, mean)}
 
+
+\NormalTok{ParsiDF <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{(. }\OperatorTok{~}\StringTok{ }\NormalTok{ID }\OperatorTok{+}\StringTok{ }\NormalTok{Age }\OperatorTok{+}\StringTok{ }\NormalTok{Gender }\OperatorTok{+}\StringTok{ }\NormalTok{InterpenetrationFeedback }\OperatorTok{+}\StringTok{ }\NormalTok{Part, ParsiDF, mean)}
+\CommentTok{#describe(ParsiDF)}
 \CommentTok{#Before Conversion to logarithms (showing the abnormal distribution)}
 \KeywordTok{shapiro_test}\NormalTok{(ParsiDF}\OperatorTok{$}\NormalTok{MaxInterpenetration)}
 \end{Highlighting}
@@ -713,7 +1135,202 @@ create a summary table for each participant. You need to define
 
 \includegraphics{Report_files/figure-latex/unnamed-chunk-4-6.pdf}
 
-Let's visualize the data per interpenetration feedback and/or part of
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Descriptive <-}\StringTok{ }\KeywordTok{describeBy}\NormalTok{(ParsiDF, }\DataTypeTok{group =}\NormalTok{ ParsiDF}\OperatorTok{$}\NormalTok{InterpenetrationFeedback)}
+\NormalTok{Descriptive}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Descriptive statistics by group 
+## group: Both
+##                           vars  n  mean    sd median trimmed   mad   min   max
+## ID                           1 42 12.10  7.18  12.00   12.00  8.90  1.00 24.00
+## Age                          2 42 25.67  2.76  25.00   25.24  1.48 23.00 33.00
+## Gender*                      3 42  1.76  0.53   2.00    1.76  0.00  1.00  3.00
+## InterpenetrationFeedback*    4 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Part*                        5 42  1.50  0.51   1.50    1.50  0.74  1.00  2.00
+## Block                        6 42  3.43  2.29   3.50    3.41  2.97  0.00  7.00
+## TrialInBlock                 7 42  6.42  0.11   6.50    6.44  0.00  6.10  6.50
+## Trial                        8 42 47.56 27.41  48.40   47.37 35.43  6.10 90.50
+## FullyShaded                  9 42  1.50  0.00   1.50    1.50  0.00  1.50  1.50
+## NrOfAdjustments             10 42  0.05  0.12   0.00    0.02  0.00  0.00  0.50
+## InterpenetrationTime        11 42  3.62  0.23   3.62    3.62  0.18  2.97  4.52
+## TrialTime                   12 42  8.22  2.18   7.66    7.85  0.81  6.57 20.52
+## FirstContactTime            13 42  2.97  1.74   2.56    2.67  0.73  1.55 12.54
+## MaxInterpenetration         14 42 -4.64  0.38  -4.64   -4.64  0.39 -5.42 -3.74
+## AverageInterpenetration     15 42 -4.97  0.43  -4.99   -4.98  0.43 -5.78 -4.04
+## AverageOffsetFromSurface    16 42  0.01  0.00   0.01    0.01  0.00  0.00  0.02
+## ReleaseReactionTime         17 42  0.62  0.21   0.60    0.61  0.14  0.07  1.51
+## Completed                   18 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Attempts                    19 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Skipped                     20 42  0.00  0.00   0.00    0.00  0.00  0.00  0.00
+## RespTime                    21 42  8.19  2.18   7.64    7.83  0.81  6.55 20.50
+##                           range  skew kurtosis   se
+## ID                        23.00  0.10    -1.29 1.11
+## Age                       10.00  1.43     0.84 0.43
+## Gender*                    2.00 -0.18    -0.38 0.08
+## InterpenetrationFeedback*  0.00   NaN      NaN 0.00
+## Part*                      1.00  0.00    -2.05 0.08
+## Block                      7.00  0.01    -1.37 0.35
+## TrialInBlock               0.40 -1.40     1.31 0.02
+## Trial                     84.40  0.01    -1.36 4.23
+## FullyShaded                0.00   NaN      NaN 0.00
+## NrOfAdjustments            0.50  2.38     4.77 0.02
+## InterpenetrationTime       1.55  0.66     4.99 0.04
+## TrialTime                 13.94  4.29    21.28 0.34
+## FirstContactTime          10.98  4.01    19.01 0.27
+## MaxInterpenetration        1.68  0.12    -0.26 0.06
+## AverageInterpenetration    1.74  0.17    -0.66 0.07
+## AverageOffsetFromSurface   0.02  1.17     1.43 0.00
+## ReleaseReactionTime        1.44  1.32     6.23 0.03
+## Completed                  0.00   NaN      NaN 0.00
+## Attempts                   0.00   NaN      NaN 0.00
+## Skipped                    0.00   NaN      NaN 0.00
+## RespTime                  13.94  4.29    21.28 0.34
+## ------------------------------------------------------------ 
+## group: Electrotactile
+##                           vars  n  mean    sd median trimmed   mad   min   max
+## ID                           1 42 12.10  7.18  12.00   12.00  8.90  1.00 24.00
+## Age                          2 42 25.67  2.76  25.00   25.24  1.48 23.00 33.00
+## Gender*                      3 42  1.76  0.53   2.00    1.76  0.00  1.00  3.00
+## InterpenetrationFeedback*    4 42  2.00  0.00   2.00    2.00  0.00  2.00  2.00
+## Part*                        5 42  1.50  0.51   1.50    1.50  0.74  1.00  2.00
+## Block                        6 42  3.48  2.35   3.50    3.47  2.97  0.00  7.00
+## TrialInBlock                 7 42  6.43  0.09   6.50    6.44  0.00  6.20  6.50
+## Trial                        8 42 48.14 28.19  48.40   48.07 35.58  6.30 90.50
+## FullyShaded                  9 42  1.50  0.00   1.50    1.50  0.00  1.50  1.50
+## NrOfAdjustments             10 42  0.02  0.05   0.00    0.01  0.00  0.00  0.20
+## InterpenetrationTime        11 42  3.61  0.15   3.61    3.60  0.11  3.24  4.05
+## TrialTime                   12 42  7.87  1.30   7.51    7.66  0.56  6.33 12.92
+## FirstContactTime            13 42  2.74  1.10   2.46    2.54  0.50  1.49  6.28
+## MaxInterpenetration         14 42 -4.40  0.45  -4.41   -4.39  0.53 -5.35 -3.60
+## AverageInterpenetration     15 42 -4.72  0.47  -4.65   -4.72  0.53 -5.66 -3.80
+## AverageOffsetFromSurface    16 42  0.01  0.00   0.01    0.01  0.00  0.00  0.02
+## ReleaseReactionTime         17 42  0.60  0.15   0.60    0.59  0.11  0.22  1.04
+## Completed                   18 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Attempts                    19 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Skipped                     20 42  0.00  0.00   0.00    0.00  0.00  0.00  0.00
+## RespTime                    21 42  7.85  1.30   7.49    7.63  0.56  6.31 12.90
+##                           range  skew kurtosis   se
+## ID                        23.00  0.10    -1.29 1.11
+## Age                       10.00  1.43     0.84 0.43
+## Gender*                    2.00 -0.18    -0.38 0.08
+## InterpenetrationFeedback*  0.00   NaN      NaN 0.00
+## Part*                      1.00  0.00    -2.05 0.08
+## Block                      7.00  0.01    -1.28 0.36
+## TrialInBlock               0.30 -0.87    -0.56 0.01
+## Trial                     84.20  0.01    -1.28 4.35
+## FullyShaded                0.00   NaN      NaN 0.00
+## NrOfAdjustments            0.20  2.25     4.43 0.01
+## InterpenetrationTime       0.82  0.76     1.62 0.02
+## TrialTime                  6.59  1.89     4.06 0.20
+## FirstContactTime           4.79  1.63     2.16 0.17
+## MaxInterpenetration        1.75 -0.13    -0.91 0.07
+## AverageInterpenetration    1.86 -0.02    -0.94 0.07
+## AverageOffsetFromSurface   0.01  0.62     0.10 0.00
+## ReleaseReactionTime        0.82  0.76     1.84 0.02
+## Completed                  0.00   NaN      NaN 0.00
+## Attempts                   0.00   NaN      NaN 0.00
+## Skipped                    0.00   NaN      NaN 0.00
+## RespTime                   6.59  1.89     4.06 0.20
+## ------------------------------------------------------------ 
+## group: NoFeedback
+##                           vars  n  mean    sd median trimmed   mad   min   max
+## ID                           1 42 12.10  7.18  12.00   12.00  8.90  1.00 24.00
+## Age                          2 42 25.67  2.76  25.00   25.24  1.48 23.00 33.00
+## Gender*                      3 42  1.76  0.53   2.00    1.76  0.00  1.00  3.00
+## InterpenetrationFeedback*    4 42  3.00  0.00   3.00    3.00  0.00  3.00  3.00
+## Part*                        5 42  1.50  0.51   1.50    1.50  0.74  1.00  2.00
+## Block                        6 42  3.57  2.29   3.50    3.59  2.97  0.00  7.00
+## TrialInBlock                 7 42  6.44  0.10   6.50    6.46  0.00  6.10  6.50
+## Trial                        8 42 49.30 27.45  48.30   49.49 35.58  6.40 90.50
+## FullyShaded                  9 42  1.50  0.00   1.50    1.50  0.00  1.50  1.50
+## NrOfAdjustments             10 42  0.02  0.06   0.00    0.01  0.00  0.00  0.30
+## InterpenetrationTime        11 42  3.62  0.14   3.59    3.61  0.13  3.26  3.95
+## TrialTime                   12 42  7.92  1.59   7.58    7.69  1.02  5.99 13.22
+## FirstContactTime            13 42  2.80  1.38   2.49    2.59  1.01  1.22  7.51
+## MaxInterpenetration         14 42 -4.12  0.34  -4.09   -4.10  0.29 -4.93 -3.48
+## AverageInterpenetration     15 42 -4.45  0.33  -4.44   -4.44  0.27 -5.24 -3.85
+## AverageOffsetFromSurface    16 42  0.01  0.00   0.01    0.01  0.00  0.00  0.01
+## ReleaseReactionTime         17 42  0.61  0.16   0.59    0.60  0.13  0.25  1.03
+## Completed                   18 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Attempts                    19 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Skipped                     20 42  0.00  0.00   0.00    0.00  0.00  0.00  0.00
+## RespTime                    21 42  7.90  1.59   7.55    7.66  1.02  5.96 13.19
+##                           range  skew kurtosis   se
+## ID                        23.00  0.10    -1.29 1.11
+## Age                       10.00  1.43     0.84 0.43
+## Gender*                    2.00 -0.18    -0.38 0.08
+## InterpenetrationFeedback*  0.00   NaN      NaN 0.00
+## Part*                      1.00  0.00    -2.05 0.08
+## Block                      7.00 -0.01    -1.37 0.35
+## TrialInBlock               0.40 -1.86     2.99 0.01
+## Trial                     84.10 -0.01    -1.37 4.24
+## FullyShaded                0.00   NaN      NaN 0.00
+## NrOfAdjustments            0.30  2.86     8.42 0.01
+## InterpenetrationTime       0.68  0.23    -0.10 0.02
+## TrialTime                  7.23  1.51     2.04 0.25
+## FirstContactTime           6.29  1.46     1.82 0.21
+## MaxInterpenetration        1.46 -0.38    -0.05 0.05
+## AverageInterpenetration    1.39 -0.23    -0.31 0.05
+## AverageOffsetFromSurface   0.01  1.13     1.36 0.00
+## ReleaseReactionTime        0.78  0.45     0.18 0.02
+## Completed                  0.00   NaN      NaN 0.00
+## Attempts                   0.00   NaN      NaN 0.00
+## Skipped                    0.00   NaN      NaN 0.00
+## RespTime                   7.23  1.51     2.04 0.25
+## ------------------------------------------------------------ 
+## group: Visual
+##                           vars  n  mean    sd median trimmed   mad   min   max
+## ID                           1 42 12.10  7.18  12.00   12.00  8.90  1.00 24.00
+## Age                          2 42 25.67  2.76  25.00   25.24  1.48 23.00 33.00
+## Gender*                      3 42  1.76  0.53   2.00    1.76  0.00  1.00  3.00
+## InterpenetrationFeedback*    4 42  4.00  0.00   4.00    4.00  0.00  4.00  4.00
+## Part*                        5 42  1.50  0.51   1.50    1.50  0.74  1.00  2.00
+## Block                        6 42  3.52  2.35   3.50    3.53  2.97  0.00  7.00
+## TrialInBlock                 7 42  6.42  0.11   6.50    6.44  0.00  6.00  6.50
+## Trial                        8 42 48.70 28.17  48.35   48.76 35.43  6.40 90.50
+## FullyShaded                  9 42  1.50  0.00   1.50    1.50  0.00  1.50  1.50
+## NrOfAdjustments             10 42  0.02  0.05   0.00    0.01  0.00  0.00  0.20
+## InterpenetrationTime        11 42  3.65  0.15   3.62    3.64  0.09  3.35  4.05
+## TrialTime                   12 42  7.97  1.17   7.82    7.80  0.90  6.37 12.04
+## FirstContactTime            13 42  2.84  1.03   2.65    2.69  0.72  1.36  6.56
+## MaxInterpenetration         14 42 -4.54  0.41  -4.62   -4.56  0.42 -5.22 -3.48
+## AverageInterpenetration     15 42 -4.84  0.45  -4.86   -4.87  0.49 -5.55 -3.76
+## AverageOffsetFromSurface    16 42  0.01  0.00   0.01    0.01  0.00  0.00  0.01
+## ReleaseReactionTime         17 42  0.65  0.15   0.61    0.63  0.09  0.42  1.13
+## Completed                   18 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Attempts                    19 42  1.00  0.00   1.00    1.00  0.00  1.00  1.00
+## Skipped                     20 42  0.00  0.00   0.00    0.00  0.00  0.00  0.00
+## RespTime                    21 42  7.95  1.17   7.79    7.78  0.90  6.34 12.02
+##                           range  skew kurtosis   se
+## ID                        23.00  0.10    -1.29 1.11
+## Age                       10.00  1.43     0.84 0.43
+## Gender*                    2.00 -0.18    -0.38 0.08
+## InterpenetrationFeedback*  0.00   NaN      NaN 0.00
+## Part*                      1.00  0.00    -2.05 0.08
+## Block                      7.00 -0.01    -1.28 0.36
+## TrialInBlock               0.50 -1.65     2.74 0.02
+## Trial                     84.10 -0.01    -1.28 4.35
+## FullyShaded                0.00   NaN      NaN 0.00
+## NrOfAdjustments            0.20  2.29     4.29 0.01
+## InterpenetrationTime       0.70  0.81     0.74 0.02
+## TrialTime                  5.67  1.45     2.26 0.18
+## FirstContactTime           5.21  1.55     2.79 0.16
+## MaxInterpenetration        1.73  0.48    -0.49 0.06
+## AverageInterpenetration    1.79  0.42    -0.68 0.07
+## AverageOffsetFromSurface   0.01  0.59     1.09 0.00
+## ReleaseReactionTime        0.71  1.25     1.71 0.02
+## Completed                  0.00   NaN      NaN 0.00
+## Attempts                   0.00   NaN      NaN 0.00
+## Skipped                    0.00   NaN      NaN 0.00
+## RespTime                   5.67  1.45     2.26 0.18
+\end{verbatim}
+
+\#Let's visualize the data per interpenetration feedback and/or part of
 the experiment (part 1 \& part 2).
 
 \begin{Shaded}
@@ -1031,6 +1648,9 @@ Part:InterpenetrationFeedback & 2.11, 42.21 & 0.04 & 5.72 ** & .222 &
 \bottomrule
 \end{longtable}
 
+\#The Effect Sizes of the above ANOVAs: 1) Max Interpenetration 2)
+Average Interpenetration
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{effectsize}\OperatorTok{::}\KeywordTok{omega_squared}\NormalTok{(aMax, }\DataTypeTok{partial =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{ci =} \FloatTok{0.95}\NormalTok{)}
@@ -1059,11 +1679,17 @@ Part:InterpenetrationFeedback & 2.11, 42.21 & 0.04 & 5.72 ** & .222 &
 ## Part:InterpenetrationFeedback |             0.18 | [-0.01, 0.34]
 \end{verbatim}
 
-We can see that every type of feedback as well as the interrelationship
-with the part of the experiment have a large effect on DVs!!!!!!
+\#We can see that every type of feedback as well as the
+interrelationship with the part of the experiment have a large effect on
+DVs!!!!!!
 
-Reference for interpreting Omega Squared Small effect: ω2 = 0.01; Medium
-effect: ω2 = 0.06; Large effect: ω2 = 0.14.
+\#Reference for interpreting Omega Squared
+
+\#Small effect: ω2 = 0.01;
+
+\#Medium effect: ω2 = 0.06;
+
+\#Large effect: ω2 = 0.14.
 
 Let's plot the main effects (Interpenetration Feedback OR Part of the
 experiment).
@@ -1213,46 +1839,217 @@ Post-hoc Tests
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\StringTok{"}
-\StringTok{# Main Effects}
-\StringTok{lsmMaxFeedback <- lsmeans(aMax,~ InterpenetrationFeedback)}
-\StringTok{contrast(lsmMax, method=pairwise, interaction = TRUE)}
+\CommentTok{################################# Maximum Interpenetration #######################}
+\NormalTok{aMaxemm <-}\StringTok{ }\KeywordTok{emmeans}\NormalTok{(aMax,}\OperatorTok{~}\StringTok{ }\NormalTok{Part}\OperatorTok{:}\NormalTok{InterpenetrationFeedback,}
+ \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{adjust =} \StringTok{"bonf"}\NormalTok{)}
 
-\StringTok{lsmMaxPart <- lsmeans(aMax,~ Part)}
-\StringTok{contrast(lsmMax, method=pairwise, interaction = TRUE)}
-
-\StringTok{lsmMaxIntEff <- lsmeans(aMax,~ InterpenetrationFeedback:Part)}
-\StringTok{contrast(lsmMax, method=pairwise, interaction = TRUE)}
-
-\StringTok{lsmAvFeedback <- lsmeans(aAv,~ InterpenetrationFeedback)}
-\StringTok{contrast(lsmAvIntEff, method=pairwise, interaction = TRUE)}
-
-\StringTok{lsmAvPart <- lsmeans(aAv,~ Part)}
-\StringTok{contrast(lsmAvIntEff, method=pairwise, interaction = TRUE)}
-
-\StringTok{lsmAvIntEff <- lsmeans(aAv,~ InterpenetrationFeedback:Part)}
-\StringTok{contrast(lsmAvIntEff, method=pairwise, interaction = TRUE)}
-\StringTok{"}
+\KeywordTok{pairs}\NormalTok{(aMaxemm, }\DataTypeTok{adjust =} \StringTok{"bonf"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## [1] "\n# Main Effects\nlsmMaxFeedback <- lsmeans(aMax,~ InterpenetrationFeedback)\ncontrast(lsmMax, method=pairwise, interaction = TRUE)\n\nlsmMaxPart <- lsmeans(aMax,~ Part)\ncontrast(lsmMax, method=pairwise, interaction = TRUE)\n\nlsmMaxIntEff <- lsmeans(aMax,~ InterpenetrationFeedback:Part)\ncontrast(lsmMax, method=pairwise, interaction = TRUE)\n\nlsmAvFeedback <- lsmeans(aAv,~ InterpenetrationFeedback)\ncontrast(lsmAvIntEff, method=pairwise, interaction = TRUE)\n\nlsmAvPart <- lsmeans(aAv,~ Part)\ncontrast(lsmAvIntEff, method=pairwise, interaction = TRUE)\n\nlsmAvIntEff <- lsmeans(aAv,~ InterpenetrationFeedback:Part)\ncontrast(lsmAvIntEff, method=pairwise, interaction = TRUE)\n"
+##  contrast                                      estimate     SE   df t.ratio
+##  Part.1 Both - Part.2 Both                       0.2322 0.0576 69.6  4.030 
+##  Part.1 Both - Part.1 Electrotactile            -0.2972 0.0701 98.0 -4.242 
+##  Part.1 Both - Part.2 Electrotactile             0.0551 0.0751 99.4  0.734 
+##  Part.1 Both - Part.1 NoFeedback                -0.4568 0.0701 98.0 -6.521 
+##  Part.1 Both - Part.2 NoFeedback                -0.3508 0.0751 99.4 -4.669 
+##  Part.1 Both - Part.1 Visual                    -0.0381 0.0701 98.0 -0.543 
+##  Part.1 Both - Part.2 Visual                     0.0788 0.0751 99.4  1.049 
+##  Part.2 Both - Part.1 Electrotactile            -0.5293 0.0751 99.4 -7.044 
+##  Part.2 Both - Part.2 Electrotactile            -0.1770 0.0701 98.0 -2.527 
+##  Part.2 Both - Part.1 NoFeedback                -0.6890 0.0751 99.4 -9.169 
+##  Part.2 Both - Part.2 NoFeedback                -0.5830 0.0701 98.0 -8.322 
+##  Part.2 Both - Part.1 Visual                    -0.2702 0.0751 99.4 -3.596 
+##  Part.2 Both - Part.2 Visual                    -0.1534 0.0701 98.0 -2.189 
+##  Part.1 Electrotactile - Part.2 Electrotactile   0.3523 0.0576 69.6  6.115 
+##  Part.1 Electrotactile - Part.1 NoFeedback      -0.1596 0.0701 98.0 -2.279 
+##  Part.1 Electrotactile - Part.2 NoFeedback      -0.0537 0.0751 99.4 -0.714 
+##  Part.1 Electrotactile - Part.1 Visual           0.2591 0.0701 98.0  3.698 
+##  Part.1 Electrotactile - Part.2 Visual           0.3760 0.0751 99.4  5.003 
+##  Part.2 Electrotactile - Part.1 NoFeedback      -0.5119 0.0751 99.4 -6.813 
+##  Part.2 Electrotactile - Part.2 NoFeedback      -0.4060 0.0701 98.0 -5.795 
+##  Part.2 Electrotactile - Part.1 Visual          -0.0932 0.0751 99.4 -1.240 
+##  Part.2 Electrotactile - Part.2 Visual           0.0237 0.0701 98.0  0.338 
+##  Part.1 NoFeedback - Part.2 NoFeedback           0.1060 0.0576 69.6  1.839 
+##  Part.1 NoFeedback - Part.1 Visual               0.4187 0.0701 98.0  5.977 
+##  Part.1 NoFeedback - Part.2 Visual               0.5356 0.0751 99.4  7.128 
+##  Part.2 NoFeedback - Part.1 Visual               0.3128 0.0751 99.4  4.162 
+##  Part.2 NoFeedback - Part.2 Visual               0.4296 0.0701 98.0  6.133 
+##  Part.1 Visual - Part.2 Visual                   0.1169 0.0576 69.6  2.029 
+##  p.value
+##  0.0039 
+##  0.0014 
+##  1.0000 
+##  <.0001 
+##  0.0003 
+##  1.0000 
+##  1.0000 
+##  <.0001 
+##  0.3668 
+##  <.0001 
+##  <.0001 
+##  0.0141 
+##  0.8667 
+##  <.0001 
+##  0.6958 
+##  1.0000 
+##  0.0100 
+##  0.0001 
+##  <.0001 
+##  <.0001 
+##  1.0000 
+##  1.0000 
+##  1.0000 
+##  <.0001 
+##  <.0001 
+##  0.0019 
+##  <.0001 
+##  1.0000 
+## 
+## P value adjustment: bonferroni method for 28 tests
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{#lsmMaxIntEff <- lsmeans(aMax,~ InterpenetrationFeedback:Part)}
-\CommentTok{#contrast(lsmMaxIntEff, method= "pairwise", interaction = TRUE)}
+\KeywordTok{require}\NormalTok{(esvis)}
+\end{Highlighting}
+\end{Shaded}
 
-\CommentTok{#lsmAvIntEff <- lsmeans(aAv,~ InterpenetrationFeedback:Part)}
-\CommentTok{#contrast(lsmAvIntEff, method= "pairwise", interaction = TRUE)}
+\begin{verbatim}
+## Loading required package: esvis
+\end{verbatim}
 
-\CommentTok{#?lsmeans()}
-\CommentTok{# Only Interaction Effects}
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{EffectSizeMax <-}\StringTok{ }\KeywordTok{hedg_g}\NormalTok{(ParsiDF,MaxInterpenetration }\OperatorTok{~}\StringTok{ }\NormalTok{InterpenetrationFeedback }\OperatorTok{+}\StringTok{ }\NormalTok{Part, }\DataTypeTok{keep_d =} \OtherTok{FALSE}\NormalTok{) }\CommentTok{#Calculates the hedge's g per pair! }
+
+\NormalTok{EffectSizeMax}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 56 x 5
+## # Groups:   InterpenetrationFeedback_ref [4]
+##    InterpenetrationFeedback~ Part_ref InterpenetrationFeedback~ Part_foc  hedg_g
+##    <chr>                     <chr>    <chr>                     <chr>      <dbl>
+##  1 Both                      Part 1   Both                      Part 2    0.617 
+##  2 Both                      Part 1   Electrotactile            Part 1   -0.728 
+##  3 Both                      Part 1   Electrotactile            Part 2    0.135 
+##  4 Both                      Part 1   NoFeedback                Part 1   -1.17  
+##  5 Both                      Part 1   NoFeedback                Part 2   -1.05  
+##  6 Both                      Part 1   Visual                    Part 1   -0.0910
+##  7 Both                      Part 1   Visual                    Part 2    0.202 
+##  8 Both                      Part 2   Both                      Part 1   -0.617 
+##  9 Both                      Part 2   Electrotactile            Part 1   -1.32  
+## 10 Both                      Part 2   Electrotactile            Part 2   -0.441 
+## # ... with 46 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{################################# Average Interpenetration #######################}
+\NormalTok{aAvemm <-}\StringTok{ }\KeywordTok{emmeans}\NormalTok{(aAv,}\OperatorTok{~}\StringTok{ }\NormalTok{Part}\OperatorTok{:}\NormalTok{InterpenetrationFeedback,}
+ \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{adjust =} \StringTok{"bonf"}\NormalTok{)}
+
+\KeywordTok{pairs}\NormalTok{(aAvemm, }\DataTypeTok{adjust =} \StringTok{"bonf"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  contrast                                      estimate     SE   df t.ratio
+##  Part.1 Both - Part.2 Both                      0.28574 0.0608 66.2  4.698 
+##  Part.1 Both - Part.1 Electrotactile           -0.29512 0.0721 97.8 -4.095 
+##  Part.1 Both - Part.2 Electrotactile            0.08345 0.0786 97.7  1.062 
+##  Part.1 Both - Part.1 NoFeedback               -0.43712 0.0721 97.8 -6.066 
+##  Part.1 Both - Part.2 NoFeedback               -0.31874 0.0786 97.7 -4.058 
+##  Part.1 Both - Part.1 Visual                   -0.04879 0.0721 97.8 -0.677 
+##  Part.1 Both - Part.2 Visual                    0.08604 0.0786 97.7  1.095 
+##  Part.2 Both - Part.1 Electrotactile           -0.58085 0.0786 97.7 -7.395 
+##  Part.2 Both - Part.2 Electrotactile           -0.20229 0.0721 97.8 -2.807 
+##  Part.2 Both - Part.1 NoFeedback               -0.72285 0.0786 97.7 -9.202 
+##  Part.2 Both - Part.2 NoFeedback               -0.60448 0.0721 97.8 -8.388 
+##  Part.2 Both - Part.1 Visual                   -0.33452 0.0786 97.7 -4.259 
+##  Part.2 Both - Part.2 Visual                   -0.19970 0.0721 97.8 -2.771 
+##  Part.1 Electrotactile - Part.2 Electrotactile  0.37856 0.0608 66.2  6.225 
+##  Part.1 Electrotactile - Part.1 NoFeedback     -0.14200 0.0721 97.8 -1.970 
+##  Part.1 Electrotactile - Part.2 NoFeedback     -0.02363 0.0786 97.7 -0.301 
+##  Part.1 Electrotactile - Part.1 Visual          0.24633 0.0721 97.8  3.418 
+##  Part.1 Electrotactile - Part.2 Visual          0.38115 0.0786 97.7  4.852 
+##  Part.2 Electrotactile - Part.1 NoFeedback     -0.52056 0.0786 97.7 -6.627 
+##  Part.2 Electrotactile - Part.2 NoFeedback     -0.40219 0.0721 97.8 -5.581 
+##  Part.2 Electrotactile - Part.1 Visual         -0.13223 0.0786 97.7 -1.683 
+##  Part.2 Electrotactile - Part.2 Visual          0.00259 0.0721 97.8  0.036 
+##  Part.1 NoFeedback - Part.2 NoFeedback          0.11838 0.0608 66.2  1.946 
+##  Part.1 NoFeedback - Part.1 Visual              0.38833 0.0721 97.8  5.389 
+##  Part.1 NoFeedback - Part.2 Visual              0.52315 0.0786 97.7  6.660 
+##  Part.2 NoFeedback - Part.1 Visual              0.26995 0.0786 97.7  3.437 
+##  Part.2 NoFeedback - Part.2 Visual              0.40478 0.0721 97.8  5.617 
+##  Part.1 Visual - Part.2 Visual                  0.13482 0.0608 66.2  2.217 
+##  p.value
+##  0.0004 
+##  0.0024 
+##  1.0000 
+##  <.0001 
+##  0.0028 
+##  1.0000 
+##  1.0000 
+##  <.0001 
+##  0.1690 
+##  <.0001 
+##  <.0001 
+##  0.0013 
+##  0.1872 
+##  <.0001 
+##  1.0000 
+##  1.0000 
+##  0.0258 
+##  0.0001 
+##  <.0001 
+##  <.0001 
+##  1.0000 
+##  1.0000 
+##  1.0000 
+##  <.0001 
+##  <.0001 
+##  0.0243 
+##  <.0001 
+##  0.8420 
+## 
+## P value adjustment: bonferroni method for 28 tests
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{EffectSizeAv <-}\StringTok{ }\KeywordTok{hedg_g}\NormalTok{(ParsiDF,AverageInterpenetration }\OperatorTok{~}\StringTok{ }\NormalTok{InterpenetrationFeedback }\OperatorTok{+}\StringTok{ }\NormalTok{Part, }\DataTypeTok{keep_d =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{EffectSizeAv}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 56 x 5
+## # Groups:   InterpenetrationFeedback_ref [4]
+##    InterpenetrationFeedback_~ Part_ref InterpenetrationFeedback~ Part_foc hedg_g
+##    <chr>                      <chr>    <chr>                     <chr>     <dbl>
+##  1 Both                       Part 1   Both                      Part 2    0.689
+##  2 Both                       Part 1   Electrotactile            Part 1   -0.674
+##  3 Both                       Part 1   Electrotactile            Part 2    0.197
+##  4 Both                       Part 1   NoFeedback                Part 1   -1.10 
+##  5 Both                       Part 1   NoFeedback                Part 2   -0.882
+##  6 Both                       Part 1   Visual                    Part 1   -0.108
+##  7 Both                       Part 1   Visual                    Part 2    0.203
+##  8 Both                       Part 2   Both                      Part 1   -0.689
+##  9 Both                       Part 2   Electrotactile            Part 1   -1.33 
+## 10 Both                       Part 2   Electrotactile            Part 2   -0.482
+## # ... with 46 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{############ Change in the Performance (Part 1 vs Part2) per Interpenetration Feedback #############}
 
 \KeywordTok{contrast}\NormalTok{(}\KeywordTok{emmeans}\NormalTok{(aMax,}\OperatorTok{~}\StringTok{ }\NormalTok{Part}\OperatorTok{:}\NormalTok{InterpenetrationFeedback), }
-         \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=}\OtherTok{TRUE}\NormalTok{)}
+         \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{adjust =} \StringTok{"bonf"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1265,18 +2062,20 @@ Post-hoc Tests
 ##  Part.1 - Part.2 Electrotactile - Visual             0.2354 0.0718 60  3.277 
 ##  Part.1 - Part.2 NoFeedback - Visual                -0.0109 0.0718 60 -0.152 
 ##  p.value
-##  0.0997 
-##  0.0841 
-##  0.1137 
-##  0.0011 
-##  0.0017 
-##  0.8800
+##  0.5982 
+##  0.5043 
+##  0.6822 
+##  0.0066 
+##  0.0105 
+##  1.0000 
+## 
+## P value adjustment: bonferroni method for 6 tests
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{contrast}\NormalTok{(}\KeywordTok{emmeans}\NormalTok{(aAv,}\OperatorTok{~}\StringTok{ }\NormalTok{Part}\OperatorTok{:}\NormalTok{InterpenetrationFeedback), }
-         \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=}\OtherTok{TRUE}\NormalTok{)}
+         \DataTypeTok{method=}\StringTok{"pairwise"}\NormalTok{, }\DataTypeTok{interaction=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{adjust =} \StringTok{"bonf"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1289,59 +2088,1674 @@ Post-hoc Tests
 ##  Part.1 - Part.2 Electrotactile - Visual             0.2437 0.0738 60  3.304 
 ##  Part.1 - Part.2 NoFeedback - Visual                -0.0164 0.0738 60 -0.223 
 ##  p.value
-##  0.2132 
-##  0.0269 
-##  0.0452 
-##  0.0008 
-##  0.0016 
-##  0.8243
+##  1.0000 
+##  0.1615 
+##  0.2712 
+##  0.0049 
+##  0.0097 
+##  1.0000 
+## 
+## P value adjustment: bonferroni method for 6 tests
 \end{verbatim}
 
-The above compares the effect size of the chance of the types of
-interpenetration feedback between part 1 and part 2 of the experiment!
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Calculating the effect sizes of the significant comparisons}
+\KeywordTok{require}\NormalTok{(esc)}
+\end{Highlighting}
+\end{Shaded}
 
-we can see that for MAX INTERPENETRATION the significant comparisons
-are: Estimate SE df t.ratio p.value 1) Part.1 - Part.2 Electrotactile -
-NoFeedback 0.2463 0.0718 60 3.429 0.0011
+\begin{verbatim}
+## Loading required package: esc
+\end{verbatim}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi})}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Part.1 - Part.2 Electrotactile - Visual 0.2354 0.0718 60 3.277 0.0017
-\end{enumerate}
+\begin{verbatim}
+## 
+## Attaching package: 'esc'
+\end{verbatim}
 
-This means that the improvement of the performance from part 1 to part 2
-regarding the maximum interpenetration was significantly greater for the
-``Electrotactile Feedback'' compared to the ``No Feedback'' and ``Visual
-Feedback'' respectively! The rest of the comparisons were insignificant!
+\begin{verbatim}
+## The following objects are masked from 'package:rstatix':
+## 
+##     cohens_d, eta_squared
+\end{verbatim}
 
-For the AVERAGE INTERPENETRATION the significant comparisons are:
-Estimate SE df t.ratio p.value 1) Part.1 - Part.2 Both - NoFeedback
-0.1674 0.0738 60 2.268 0.0269
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hedges_g}\NormalTok{(}\DataTypeTok{d =} \FloatTok{0.63133007}\NormalTok{, }\DataTypeTok{totaln =} \DecValTok{60}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi})}
-\setcounter{enumi}{1}
-\item
-  Part.1 - Part.2 Both - Visual 0.1509 0.0738 60 2.046 0.0452
-\item
-  Part.1 - Part.2 Electrotactile - NoFeedback 0.2602 0.0738 60 3.527
-  0.0008
-\item
-  Part.1 - Part.2 Electrotactile - Visual 0.2437 0.0738 60 3.304 0.0016
-\end{enumerate}
+\begin{verbatim}
+## [1] 0.623131
+\end{verbatim}
 
-This means that the improvement of the performance from part 1 to part 2
-regarding the average interpenetration was significantly greater for the
-``Electrotactile Feedback'' compared to the ``No Feedback'' and ``Visual
-Feedback'' respectively!
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hedges_g}\NormalTok{(}\DataTypeTok{d =} \FloatTok{0.60334460}\NormalTok{, }\DataTypeTok{totaln =} \DecValTok{60}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
-Also, that the improvement of the performance from part 1 to part 2
-regarding the average interpenetration was significantly greater for the
-``Combined (i.e., Both) Feedback'' compared to the ``No Feedback'' and
-``Visual Feedback'' respectively! The rest of the comparisons were
-insignificant!
+\begin{verbatim}
+## [1] 0.595509
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hedges_g}\NormalTok{(}\DataTypeTok{d =} \FloatTok{0.64937334}\NormalTok{, }\DataTypeTok{totaln =} \DecValTok{60}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.6409399
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hedges_g}\NormalTok{(}\DataTypeTok{d =} \FloatTok{0.60831571}\NormalTok{, }\DataTypeTok{totaln =} \DecValTok{60}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.6004155
+\end{verbatim}
+
+\hypertarget{for-maximum-interpenetration}{%
+\paragraph{For Maximum
+Interpenetration}\label{for-maximum-interpenetration}}
+
+\hypertarget{significant-comparisons}{%
+\paragraph{Significant Comparisons:}\label{significant-comparisons}}
+
+\#Part.1 Both - Part.2 Both p = 0.0039 Hedge's g = 0.61676553
+
+\#Part.1 Both - Part.1 Electrotactile p = 0.0014 Hedge's g = -0.72831779
+
+\#Part.1 Both - Part.1 NoFeedback p \textless.0001 Hedge's g =
+-1.16801037
+
+\#Part.2 Both - Part.2 NoFeedback p \textless.0001 Hedge's g =
+-1.79394003
+
+\#Part.1 Electrotactile - Part.2 Electrotactile p \textless.0001 Hedge's
+g = 0.81636215
+
+\#Part.1 Electrotactile - Part.1 Visual p = 0.0100 Hedge's g =
+0.58901263
+
+\#Part.2 Electrotactile - Part.2 NoFeedback p \textless.0001 Hedge's g =
+-1.11877925
+
+\#Part.1 NoFeedback - Part.1 Visual p \textless.0001 Hedge's g =
+0.98702238
+
+\#Part.2 NoFeedback - Part.2 Visual p \textless.0001 Hedge's g =
+1.26405828
+
+\#Hedge's G Interpretation (Note: + or - just shows the direction!):
+
+\#Small effect (cannot be discerned by the naked eye) = 0.2
+
+\#Medium Effect = 0.5
+
+\#Large Effect (can be seen by the naked eye) = 0.8
+
+\hypertarget{for-average-interpenetration}{%
+\paragraph{For Average
+Interpenetration}\label{for-average-interpenetration}}
+
+\hypertarget{significant-comparisons-1}{%
+\paragraph{Significant Comparisons:}\label{significant-comparisons-1}}
+
+\#Part.1 Both - Part.2 Both p = 0.0004 Hedge's g = 0.688559174
+
+\#Part.1 Both - Part.1 Electrotactile p = 0.0024 Hedge's g =
+-0.673535198
+
+\#Part.1 Both - Part.1 NoFeedback p \textless{} .0001 Hedge's g =
+-1.102751598
+
+\#Part.2 Both - Part.2 NoFeedback p \textless{} .0001 Hedge's g =
+-1.688918621
+
+\#Part.1 Electrotactile - Part.2 Electrotactile p \textless{} .0001
+Hedge's g = 0.855157215
+
+\#Part.1 Electrotactile - Part.1 Visual p = 0.0258 Hedge's g =
+0.524527360
+
+\#Part.2 Electrotactile - Part.2 NoFeedback p \textless{} .0001 Hedge's
+g = -1.095756543
+
+\#Part.1 NoFeedback - Part.1 Visual p \textless{} .0001 Hedge's g =
+0.901187692
+
+\#Part.2 NoFeedback - Part.2 Visual p \textless{} .0001 Hedge's g =
+1.096379269
+
+\#Key Findings:
+
+\#Electrotactile in Part 1 has significant differences against Visual
+and combined feedback (moderate effects), while is not significant
+different from No Feedback.
+
+\#However, in part 2, Electrotactile is significant different from No
+Feedback, while it does not show significant differences against Visual
+and Combined feedback.
+
+\#Both (i.e., combined) and Visual feedback are significantly different
+against No Feedback in part 1 and part 2.
+
+\#Notably, ONLY Both (combined) and Electrotactile feedback show a
+significant improvement from part 1 to part 2.
+
+\#This explains why the comparison between combined feedback against No
+Feedback has far greater effect size in part 2.
+
+\#Importantly, this explains why the Electrotactile feedback becomes
+significantly different against No Feedback in part 2, as well as the
+absence of differences against Visual and Combined.
+
+\#Since the Visual and No feedback do not improve in part 2 (i.e, no
+differences between part 1 and part 2), we may infer that the
+practice/order effect does not affect significantly the performance.
+
+\#Also, since the Visual feedback do not improve in part 2, then we may
+infer that the significant improvement that we observe for combined
+feedback in part 2 (i.e., part 1 vs part 2) is predominantly attributed
+to the improvement of the electrotactile feedback.
+
+\#Hence, either the calibration of, or the familiarization with, or
+both, concerning the electrotactile feedback, is the reason that we
+observe these effects of electrotactile and combined feedback in part 2.
+
+\hypertarget{regarding-the-change-of-the-performance-for-each-type-of-interpenetration-feedback-between-part-1-and-part-2-of-the-experiment}{%
+\subparagraph{Regarding the change of the performance for each type of
+interpenetration feedback between part 1 and part 2 of the
+experiment!}\label{regarding-the-change-of-the-performance-for-each-type-of-interpenetration-feedback-between-part-1-and-part-2-of-the-experiment}}
+
+\hypertarget{we-can-see-that-for-max-interpenetration-the-significant-comparisons-are}{%
+\paragraph{we can see that for MAX INTERPENETRATION the significant
+comparisons
+are:}\label{we-can-see-that-for-max-interpenetration-the-significant-comparisons-are}}
+
+\#1) Part.1 - Part.2 Electrotactile - NoFeedback p = 0.0066 Hedge's g =
+0.623131
+
+\#2) Part.1 - Part.2 Electrotactile - Visual p = 0.0105 Hedge's g =
+0.595509
+
+\#This means that the improvement of the performance from part 1 to part
+2 regarding the maximum interpenetration was significantly greater for
+the ``Electrotactile Feedback'' compared to the ``No Feedback'' and
+``Visual Feedback'' respectively! (Medium to Large effects)
+
+\#The rest of the comparisons were insignificant!
+
+\#Hedge's G Interpretation (Note: + or - just shows the direction!):
+
+\#Small effect (cannot be discerned by the naked eye) = 0.2
+
+\#Medium Effect = 0.5
+
+\#Large Effect (can be seen by the naked eye) = 0.8
+
+\#For the AVERAGE INTERPENETRATION the significant comparisons are:
+
+\#1) Part.1 - Part.2 Electrotactile - NoFeedback p = 0.0049 Hedge's g =
+0.6409399
+
+\#2) Part.1 - Part.2 Electrotactile - Visual p = 0.0097 Hedge's g =
+0.6004155
+
+\#This means that the improvement of the performance from part 1 to part
+2 regarding the average interpenetration was significantly greater for
+the ``Electrotactile Feedback'' compared to the ``No Feedback'' and
+``Visual Feedback'' respectively! (Medium to Large effects)
+
+\#The rest of the comparisons were insignificant!
+
+Intensities of the Electrotactile Feedback
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(readr)}
+
+\NormalTok{intensities <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"C:/repos/contactExperimentRNotebook/intensities.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   ParticipantID = col_double(),
+##   Calibration = col_character(),
+##   Sensation = col_double(),
+##   Pain = col_double(),
+##   ActualValue = col_double()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, Sensation }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1   0.617  Sens~ final  initi~    24    24     4.50  1.63e-4    23    0.333
+## 2   0.0542 Sens~ final  middle    24    24     0.414 6.83e-1    23   -0.217
+## 3  -0.562  Sens~ initi~ middle    24    24    -8.47  1.60e-8    23   -0.700
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, Pain }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1    0.938 Pain  final  initi~    24    24     4.63  1.17e-4    23    0.519
+## 2   -0.129 Pain  final  middle    24    24    -0.647 5.24e-1    23   -0.542
+## 3   -1.07  Pain  initi~ middle    24    24    -4.83  7.10e-5    23   -1.52 
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, ActualValue }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1   0.817  Actu~ final  initi~    24    24     5.20  2.87e-5    23    0.492
+## 2  -0.0458 Actu~ final  middle    24    24    -0.300 7.67e-1    23   -0.362
+## 3  -0.862  Actu~ initi~ middle    24    24    -5.90  5.22e-6    23   -1.17 
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\#OK, for every DV (i.e., Sensation, Pain , and Actual Value) we have
+the same results
+
+\#Significant differences between
+
+\#Final and Initial !!!!!!
+
+\#Middle and Initial !!!!!!
+
+\#Non-Significant differences between
+
+\#Middle and Final calibration
+
+\#I interpret them as follows: During the 1st part (i.e., until the
+middle calibration ) the individuals get familiarized with the
+electrotactile feedback. Then, the variation drops significantly! So,
+the most reliable calibration appears the middle one (considering that
+the final doesnt differ, so it seems redundant). Importantly, these
+results utterly support the familiarization hypothesis regarding the
+results of the ANOVAs and Comparisons between the feedback types, as
+well as it explains why the electrotactile and both have greater effect
+size on the 2nd part!!!
+
+\#Let's check the effect sizes of the significant comparisons (i.e,
+Final vs Initial, Midlle vs Initial) now.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MidVSInitial <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(intensities, Calibration }\OperatorTok{!=}\StringTok{ "final"}\NormalTok{)}
+
+\NormalTok{FinalVSInitial <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(intensities, Calibration }\OperatorTok{!=}\StringTok{ "middle"}\NormalTok{)}
+
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{hedges_g}\NormalTok{(}\StringTok{"Sensation"}\NormalTok{, }\StringTok{"Calibration"}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ MidVSInitial, }\DataTypeTok{correction =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Hedge's g |         95% CI
+## --------------------------
+##     -1.55 | [-2.15, -0.99]
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{hedges_g}\NormalTok{(}\StringTok{"Pain"}\NormalTok{, }\StringTok{"Calibration"}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ MidVSInitial, }\DataTypeTok{correction =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Hedge's g |         95% CI
+## --------------------------
+##     -0.88 | [-1.34, -0.45]
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{hedges_g}\NormalTok{(}\StringTok{"ActualValue"}\NormalTok{, }\StringTok{"Calibration"}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ MidVSInitial, }\DataTypeTok{correction =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Hedge's g |         95% CI
+## --------------------------
+##     -1.08 | [-1.57, -0.61]
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{hedges_g}\NormalTok{(}\StringTok{"Sensation"}\NormalTok{, }\StringTok{"Calibration"}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ FinalVSInitial, }\DataTypeTok{correction =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Hedge's g |       95% CI
+## ------------------------
+##      0.82 | [0.39, 1.27]
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{hedges_g}\NormalTok{(}\StringTok{"Pain"}\NormalTok{, }\StringTok{"Calibration"}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ FinalVSInitial, }\DataTypeTok{correction =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Hedge's g |       95% CI
+## ------------------------
+##      0.85 | [0.42, 1.30]
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{effectsize}\OperatorTok{::}\KeywordTok{hedges_g}\NormalTok{(}\StringTok{"ActualValue"}\NormalTok{, }\StringTok{"Calibration"}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ FinalVSInitial, }\DataTypeTok{correction =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Hedge's g |       95% CI
+## ------------------------
+##      0.95 | [0.50, 1.42]
+\end{verbatim}
+
+\#The + or - is just the direction of the SDs change proportionally to
+how the comparison is called (e..g, Final vs Initial or Initial vs
+Final) so just ignore it.
+
+\#The important is the value of hedges g.
+
+\#We have a Large (or a Very large in some) Effect in every significant
+comparison.
+
+\#Hedge's G Interpretation:
+
+\#Small effect (cannot be discerned by the naked eye) = 0.2
+
+\#Medium Effect = 0.5
+
+\#Large Effect (can be seen by the naked eye) = 0.8
+
+Let's visualize the comparisons
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{intensities}\OperatorTok{$}\NormalTok{Calibration <-}\StringTok{ }\KeywordTok{as.ordered}\NormalTok{(intensities}\OperatorTok{$}\NormalTok{Calibration)}
+\KeywordTok{levels}\NormalTok{(intensities}\OperatorTok{$}\NormalTok{Calibration)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "final"   "initial" "middle"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{intensities}\OperatorTok{$}\NormalTok{Calibration <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(intensities}\OperatorTok{$}\NormalTok{Calibration,}\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{"initial"}\NormalTok{,}\StringTok{"middle"}\NormalTok{, }\StringTok{"final"}\NormalTok{),}
+                  \DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"initial"}\NormalTok{,}\StringTok{"middle"}\NormalTok{, }\StringTok{"final"}\NormalTok{))}
+\KeywordTok{ordered}\NormalTok{(intensities}\OperatorTok{$}\NormalTok{Calibration)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] initial middle  final   initial middle  final   initial middle  final  
+## [10] initial middle  final   initial middle  final   initial middle  final  
+## [19] initial middle  final   initial middle  final   initial middle  final  
+## [28] initial middle  final   initial middle  final   initial middle  final  
+## [37] initial middle  final   initial middle  final   initial middle  final  
+## [46] initial middle  final   initial middle  final   initial middle  final  
+## [55] initial middle  final   initial middle  final   initial middle  final  
+## [64] initial middle  final   initial middle  final   initial middle  final  
+## Levels: initial < middle < final
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p9 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ intensities,}
+  \DataTypeTok{x =} \StringTok{"Calibration"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"Sensation"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Calibration"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Sensation Threshold"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Sensation Threshold Per Calibration Stage Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p9}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p10 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ intensities,}
+  \DataTypeTok{x =} \StringTok{"Calibration"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"Pain"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Calibration"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Pain Threshold"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Pain Threshold Per Calibration Stage Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p10}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-14-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p11 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ intensities,}
+  \DataTypeTok{x =} \StringTok{"Calibration"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"ActualValue"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"p"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Calibration"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Actual Value"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Actual Value Per Calibration Stage Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p11}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-14-3.pdf}
+
+Checking if the results on the performance may be due to ineffective
+initial calibration and not due to familiriazation with electrotactile
+feedback.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{require}\NormalTok{(data.table)}
+\KeywordTok{setDT}\NormalTok{(intensities)}
+
+\NormalTok{intensities_wide <-}\StringTok{ }\KeywordTok{dcast}\NormalTok{(intensities,ParticipantID }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{value.var=}\KeywordTok{c}\NormalTok{(}\StringTok{"Sensation"}\NormalTok{, }\StringTok{"Pain"}\NormalTok{,}\StringTok{"ActualValue"}\NormalTok{))}
+
+\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{DiffSensation <-}\StringTok{ }\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{Sensation_middle }\OperatorTok{-}\StringTok{ }\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{Sensation_initial}
+
+\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{DiffPain <-}\StringTok{ }\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{Pain_middle }\OperatorTok{-}\StringTok{ }\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{Pain_initial}
+
+\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{DiffActual <-}\StringTok{ }\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{ActualValue_middle }\OperatorTok{-}\StringTok{ }\NormalTok{intensities_wide}\OperatorTok{$}\NormalTok{ActualValue_initial}
+
+
+
+\KeywordTok{identify_outliers}\NormalTok{(intensities_wide, }\DataTypeTok{variable =} \StringTok{"DiffSensation"}\NormalTok{, }\DataTypeTok{coef =} \FloatTok{1.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    ParticipantID Sensation_initial Sensation_middle Sensation_final
+## 1:            14               2.2              3.5             1.7
+##    Pain_initial Pain_middle Pain_final ActualValue_initial ActualValue_middle
+## 1:          4.1         4.6        3.8                 3.3                4.1
+##    ActualValue_final DiffSensation DiffPain DiffActual is.outlier is.extreme
+## 1:                 3           1.3      0.5        0.8       TRUE      FALSE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{identify_outliers}\NormalTok{(intensities_wide, }\DataTypeTok{variable =} \StringTok{"DiffPain"}\NormalTok{, }\DataTypeTok{coef =} \FloatTok{1.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    ParticipantID Sensation_initial Sensation_middle Sensation_final
+## 1:            12               3.1              3.7             5.1
+## 2:            19               2.1              3.2             2.7
+##    Pain_initial Pain_middle Pain_final ActualValue_initial ActualValue_middle
+## 1:          4.5         7.3        9.0                 3.9                5.9
+## 2:          4.3         9.0        5.1                 3.4                6.7
+##    ActualValue_final DiffSensation DiffPain DiffActual is.outlier is.extreme
+## 1:               7.4           0.6      2.8        2.0       TRUE      FALSE
+## 2:               4.1           1.1      4.7        3.3       TRUE       TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{identify_outliers}\NormalTok{(intensities_wide, }\DataTypeTok{variable =} \StringTok{"DiffActual"}\NormalTok{, }\DataTypeTok{coef =} \FloatTok{1.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    ParticipantID Sensation_initial Sensation_middle Sensation_final
+## 1:            12               3.1              3.7             5.1
+## 2:            19               2.1              3.2             2.7
+##    Pain_initial Pain_middle Pain_final ActualValue_initial ActualValue_middle
+## 1:          4.5         7.3        9.0                 3.9                5.9
+## 2:          4.3         9.0        5.1                 3.4                6.7
+##    ActualValue_final DiffSensation DiffPain DiffActual is.outlier is.extreme
+## 1:               7.4           0.6      2.8        2.0       TRUE      FALSE
+## 2:               4.1           1.1      4.7        3.3       TRUE       TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{require}\NormalTok{(psych)}
+\KeywordTok{describe.by}\NormalTok{(intensities_wide}\OperatorTok{$}\NormalTok{DiffSensation)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: describe.by is deprecated. Please use the describeBy function
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in describeBy(x = x, group = group, mat = mat, type = type, ...): no
+## grouping variable requested
+\end{verbatim}
+
+\begin{verbatim}
+##    vars  n mean   sd median trimmed mad  min max range skew kurtosis   se
+## X1    1 24 0.56 0.33    0.5    0.54 0.3 -0.1 1.3   1.4 0.55    -0.05 0.07
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{describe.by}\NormalTok{(intensities_wide}\OperatorTok{$}\NormalTok{DiffPain)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: describe.by is deprecated. Please use the describeBy function
+
+## Warning: no grouping variable requested
+\end{verbatim}
+
+\begin{verbatim}
+##    vars  n mean   sd median trimmed  mad  min max range skew kurtosis   se
+## X1    1 24 1.07 1.08    0.9    0.92 0.59 -0.2 4.7   4.9 1.61     2.92 0.22
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{describe.by}\NormalTok{(intensities_wide}\OperatorTok{$}\NormalTok{DiffActual)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: describe.by is deprecated. Please use the describeBy function
+
+## Warning: no grouping variable requested
+\end{verbatim}
+
+\begin{verbatim}
+##    vars  n mean   sd median trimmed  mad  min max range skew kurtosis   se
+## X1    1 24 0.86 0.72    0.8    0.78 0.59 -0.2 3.3   3.5 1.55     3.26 0.15
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#IDs 12 and 19 seem suspicious, however the rest are seem ok}
+\CommentTok{#lets exclude them and rerun the analyses}
+
+\NormalTok{intensities}\OperatorTok{$}\NormalTok{ParticipantID[intensities}\OperatorTok{$}\NormalTok{ParticipantID }\OperatorTok{==}\StringTok{ }\DecValTok{19}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{intensities}\OperatorTok{$}\NormalTok{ParticipantID[intensities}\OperatorTok{$}\NormalTok{ParticipantID }\OperatorTok{==}\StringTok{ }\DecValTok{12}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+
+\NormalTok{intensities <-}\StringTok{ }\KeywordTok{na.omit}\NormalTok{(intensities)}
+
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, Sensation }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1  -0.536  Sens~ initi~ middle    22    22    -7.90  1.01e-7    21   -0.678
+## 2  -0.555  Sens~ initi~ final     22    22    -4.12  4.89e-4    21   -0.835
+## 3  -0.0182 Sens~ middle final     22    22    -0.145 8.86e-1    21   -0.280
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, Pain }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1  -0.823  Pain  initi~ middle    22    22    -5.77  1.00e-5    21   -1.12 
+## 2  -0.782  Pain  initi~ final     22    22    -5.49  1.91e-5    21   -1.08 
+## 3   0.0409 Pain  middle final     22    22     0.424 6.76e-1    21   -0.160
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, ActualValue }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##    estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *     <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1 -7.00e- 1 Actu~ initi~ middle    22    22 -7.52e+ 0 2.18e-7    21   -0.894
+## 2 -7.00e- 1 Actu~ initi~ final     22    22 -6.08e+ 0 4.91e-6    21   -0.939
+## 3 -2.02e-17 Actu~ middle final     22    22 -2.19e-16 1.00e+0    21   -0.192
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#OK, we have similar results, lets go a wee bit farther}
+\CommentTok{# I will also exclude the IDs which were not included in the performance analyses. }
+
+\NormalTok{intensities}\OperatorTok{$}\NormalTok{ParticipantID[intensities}\OperatorTok{$}\NormalTok{ParticipantID }\OperatorTok{==}\StringTok{ }\DecValTok{9}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{intensities}\OperatorTok{$}\NormalTok{ParticipantID[intensities}\OperatorTok{$}\NormalTok{ParticipantID }\OperatorTok{==}\StringTok{ }\DecValTok{17}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{intensities}\OperatorTok{$}\NormalTok{ParticipantID[intensities}\OperatorTok{$}\NormalTok{ParticipantID }\OperatorTok{==}\StringTok{ }\DecValTok{20}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\NormalTok{intensities <-}\StringTok{ }\KeywordTok{na.omit}\NormalTok{(intensities)}
+
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, Sensation }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1  -0.532  Sens~ initi~ middle    19    19    -6.95  1.71e-6    18   -0.692
+## 2  -0.484  Sens~ initi~ final     19    19    -3.23  5.00e-3    18   -0.799
+## 3   0.0474 Sens~ middle final     19    19     0.339 7.38e-1    18   -0.246
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, Pain }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1  -0.884  Pain  initi~ middle    19    19    -5.70  2.09e-5    18   -1.21 
+## 2  -0.811  Pain  initi~ final     19    19    -5.03  8.69e-5    18   -1.15 
+## 3   0.0737 Pain  middle final     19    19     0.673 5.09e-1    18   -0.156
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise_t_test}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ intensities, ActualValue }\OperatorTok{~}\StringTok{ }\NormalTok{Calibration, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{, }\DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 15
+##   estimate .y.   group1 group2    n1    n2 statistic       p    df conf.low
+## *    <dbl> <chr> <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>    <dbl>
+## 1  -0.732  Actu~ initi~ middle    19    19    -7.25  9.64e-7    18   -0.944
+## 2  -0.689  Actu~ initi~ final     19    19    -5.25  5.42e-5    18   -0.965
+## 3   0.0421 Actu~ middle final     19    19     0.408 6.88e-1    18   -0.175
+## # ... with 5 more variables: conf.high <dbl>, method <chr>, alternative <chr>,
+## #   p.adj <dbl>, p.adj.signif <chr>
+\end{verbatim}
+
+\#OK, we have similar results again. So, it doesn't seem that for the
+lower performance in the 1st part the reason was an inappropriate
+calibration. On the other hand, a familiarization with the
+electrotactile feedback seems to explain better the difference in the
+performance between part 1 and part 2. To clarify, by familiarization I
+mean the acceptance of the electrotactile feedback (e.g., it doesnt
+startle or frighten the user) as well as the cognitive association (in
+psychological terms: conditioning, or in game terms: game mechanics)
+between an X event (e.g., when I feel that) and Y action (e.g., then I
+stop or I adjust the position of my hand).
+
+Questionnaires
+
+\#Now let's check the questionnaires' results
+
+\#For Questionnaires is better to compare the medians (i.e.,
+non-parametric tests) because the responses are not real numbers, the
+responses are ordinal data which may be better interpreted as ranks.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{quest <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"C:/repos/contactExperimentRNotebook/Questionnaires.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   Gender = col_character(),
+##   Handedness = col_character(),
+##   `Important Comments` = col_character()
+## )
+## i Use `spec()` for the full column specifications.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Lets check the median and the mode of the responses (These should be reported in a table)}
+\CommentTok{#TableQuestionnaire <- }
+
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualUseful)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualUseful)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+## attr(,"freq")
+## [1] 9
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectrotactileUseful)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectrotactileUseful)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+## attr(,"freq")
+## [1] 8
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualCoherent)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualCoherent)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+## attr(,"freq")
+## [1] 10
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{RelyingMoreOn)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{RelyingMoreOn)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3
+## attr(,"freq")
+## [1] 9
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalCoherent)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalCoherent)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+## attr(,"freq")
+## [1] 12
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualResembling)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualResembling)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3
+## attr(,"freq")
+## [1] 7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ModalitiesSynchronized)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ModalitiesSynchronized)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 7
+## attr(,"freq")
+## [1] 8
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectrotactileResembling)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectrotactileResembling)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1
+## attr(,"freq")
+## [1] 8
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{CombinedResembling)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{CombinedResembling)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+## attr(,"freq")
+## [1] 7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Usefulness}
+\KeywordTok{wilcox.test}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualUseful, quest}\OperatorTok{$}\NormalTok{ElectrotactileUseful, }
+                           \DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }
+                           \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+                           \DataTypeTok{exact =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{correct =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{conf.int =} \OtherTok{TRUE}\NormalTok{, }
+                           \DataTypeTok{data =}\NormalTok{ quest) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Wilcoxon signed rank test
+## 
+## data:  quest$VisualUseful and quest$ElectrotactileUseful
+## V = 57, p-value = 0.5436
+## alternative hypothesis: true location shift is not equal to 0
+## 95 percent confidence interval:
+##  -1.0000388  0.5000392
+## sample estimates:
+## (pseudo)median 
+##   -4.04176e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Coherence }
+\KeywordTok{wilcox.test}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualCoherent, quest}\OperatorTok{$}\NormalTok{ElectricalCoherent, }
+                           \DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }
+                           \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+                           \DataTypeTok{exact =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{correct =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{conf.int =} \OtherTok{TRUE}\NormalTok{, }
+                           \DataTypeTok{data =}\NormalTok{ quest) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Wilcoxon signed rank test
+## 
+## data:  quest$VisualCoherent and quest$ElectricalCoherent
+## V = 18, p-value = 1
+## alternative hypothesis: true location shift is not equal to 0
+## 95 percent confidence interval:
+##  -1.000049  1.000049
+## sample estimates:
+## (pseudo)median 
+##              0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Resemblance}
+\KeywordTok{wilcox.test}\NormalTok{(quest}\OperatorTok{$}\NormalTok{VisualResembling, quest}\OperatorTok{$}\NormalTok{ElectrotactileResembling, }
+                           \DataTypeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }
+                           \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+                           \DataTypeTok{exact =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{correct =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{conf.int =} \OtherTok{TRUE}\NormalTok{, }
+                           \DataTypeTok{data =}\NormalTok{ quest) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Wilcoxon signed rank test
+## 
+## data:  quest$VisualResembling and quest$ElectrotactileResembling
+## V = 130, p-value = 0.1472
+## alternative hypothesis: true location shift is not equal to 0
+## 95 percent confidence interval:
+##  -2.426288e-05  1.500011e+00
+## sample estimates:
+## (pseudo)median 
+##      0.5000355
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#No differences!}
+\CommentTok{###### Let's check on which type of feedback the users relied upon more}
+
+\CommentTok{#Includes Visual, Both, Electrotactile. Values: 0 or 1}
+\NormalTok{Reliance <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"C:/repos/contactExperimentRNotebook/reliance.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   ID = col_double(),
+##   Type = col_character(),
+##   Reliance = col_double()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Reliance}\OperatorTok{$}\NormalTok{Type <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(Reliance}\OperatorTok{$}\NormalTok{Type, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Both"}\NormalTok{, }\StringTok{"Visual"}\NormalTok{, }\StringTok{"Electrotactile"}\NormalTok{))}
+\KeywordTok{pairwise.wilcox.test}\NormalTok{(Reliance}\OperatorTok{$}\NormalTok{Reliance, Reliance}\OperatorTok{$}\NormalTok{Type, }\DataTypeTok{alternative =} \StringTok{"greater"}\NormalTok{,}\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
+## exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
+## exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
+## exact p-value with ties
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  Reliance$Reliance and Reliance$Type 
+## 
+##                Both  Visual
+## Visual         0.288 -     
+## Electrotactile 0.024 0.377 
+## 
+## P value adjustment method: bonferroni
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Includes Visual and Electrotactile. Values: 0,1,2,3}
+\NormalTok{RelianceMore <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"C:/repos/contactExperimentRNotebook/relianceMore.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   ID = col_double(),
+##   TypeMore = col_character(),
+##   RelianceMore = col_double()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{RelianceMore<-}\StringTok{ }\KeywordTok{dcast}\NormalTok{(RelianceMore,ID }\OperatorTok{~}\StringTok{ }\NormalTok{TypeMore, }\DataTypeTok{value.var=} \StringTok{"RelianceMore"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in dcast(RelianceMore, ID ~ TypeMore, value.var = "RelianceMore"): The
+## dcast generic in data.table has been passed a spec_tbl_df and will attempt to
+## redirect to the reshape2::dcast; please note that reshape2 is deprecated, and
+## this redirection is now deprecated as well. Please do this redirection yourself
+## like reshape2::dcast(RelianceMore). In the next version, this warning will
+## become an error.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{wilcox.test}\NormalTok{(RelianceMore}\OperatorTok{$}\NormalTok{Electrotactile, RelianceMore}\OperatorTok{$}\NormalTok{Visual,}
+                           \DataTypeTok{alternative =} \StringTok{"greater"}\NormalTok{, }
+                           \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+                           \DataTypeTok{exact =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{correct =} \OtherTok{FALSE}\NormalTok{, }
+                           \DataTypeTok{conf.int =} \OtherTok{TRUE}\NormalTok{, }
+                           \DataTypeTok{data =}\NormalTok{ RelianceMore) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Wilcoxon signed rank test
+## 
+## data:  RelianceMore$Electrotactile and RelianceMore$Visual
+## V = 142, p-value = 0.07042
+## alternative hypothesis: true location shift is greater than 0
+## 95 percent confidence interval:
+##  -1.206806e-05           Inf
+## sample estimates:
+## (pseudo)median 
+##      0.4999568
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{###### Let's check which resembled better touching a surface}
+\NormalTok{Resemble <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"C:/repos/contactExperimentRNotebook/resemblance3factors.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   ID = col_double(),
+##   Type = col_character(),
+##   Resemblance = col_double()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise.wilcox.test}\NormalTok{(Resemble}\OperatorTok{$}\NormalTok{Resemblance, Resemble}\OperatorTok{$}\NormalTok{Type, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
+## exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
+## exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot compute
+## exact p-value with ties
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  Resemble$Resemblance and Resemble$Type 
+## 
+##                Combined Electrotactile
+## Electrotactile 0.074    -             
+## Visual         0.596    0.655         
+## 
+## P value adjustment method: bonferroni
+\end{verbatim}
+
+\#Note for the interpertation:
+
+\#Median: The median value is the number that is in the middle, with the
+same amount of numbers below and above.
+
+\#Mode: The mode is the most commonly/frequently observed value in a set
+of data (i.e., the most frequent response)
+
+Visual
+
+\#Usefulness
+
+\#Median:5.5
+
+\#Mode: 5
+
+\#Interpertation: Useful
+
+\#Coherence
+
+\#Median:5
+
+\#Mode: 5
+
+\#Interpertation: Coherent
+
+\#Resemblance
+
+\#Median:3
+
+\#Mode: 3
+
+\#Interpertation: Different
+
+Electrotactile
+
+\#Usefulness
+
+\#Median:6
+
+\#Mode: 5 (8 Response)
+
+\#Interpertation: Useful to Very Useful
+
+\#Coherence
+
+\#Median:5
+
+\#Mode: 5
+
+\#Interpertation: Coherent
+
+\#Resemblance
+
+\#Median: 2.5
+
+\#Mode: 1 (8 responses)
+
+\#Interpertation: Different to Extremely Different
+
+Combined
+
+\#Usefulness (Rely more on visual or electrotactile)
+
+\#Median:4.5 (i.e., half of the responses indicated \textgreater{} 4
+which means 12 preferred the electrotactile since 5-7 corresponds to
+electrotactile. Note that \textless{} 4.5, means that the other 12
+responses were for both visual and combined feedback. combined = 4,
+while visual = 1 - 3)
+
+\#Mode: 3 (9 Responses)
+
+\#Interpertation: Ballanced, however it leans towards Electrotactile
+
+\#Modalities synchronized
+
+\#Median:6
+
+\#Mode: 7
+
+\#Interpertation: Very Coherent to Completely Coherent
+
+\#Resemblance
+
+\#Median:4
+
+\#Mode: 5
+
+\#Interpertation: Moderately Similar to Similar
+
+Comparisons
+
+\#1) In Terms of Usefulness, Coherence, and resemblance
+
+\#There are not significant differences between Combined, Visual, and
+Electrotatcile feedback, which replicates our findings on the users'
+performance in part 2, where we did not find any significant differences
+as well. In combination with the medians and modes for each question
+(see above), we may infer that electrotactile feedback was equivalent to
+visual feedback, as well as it received positive evaluations by the
+users especially in terms of usefulness and coherence.
+
+\#2) Reliance
+
+\#Again there were no significant differences amongst Combined, Visual,
+and Electrotatcile feedback. The only significant difference that was
+detected was between Electrotactile and Combined feedback (in favor of
+electrotactile). In general, considering also the medians and modes of
+the responses on this question (see also the bar chart below), we may
+infer that the users relied more on a single type of feedback in the
+combined feedback condition, and this single type of feedback was most
+of the times the electrotactile feedback (12 users), followed by visual
+feedback (8 users) and both (4 users). These findings again align with
+the the results on the performance in part 2.
+
+\hypertarget{resemblance-part2}{%
+\section{Resemblance Part2}\label{resemblance-part2}}
+
+\#Regarding the electrotactile feedback, our findings replicate the
+findings of previous studies which found that the sensation of touching
+provided by electrotactile feedback substantially deviates from the
+sensation of touching in real world.
+
+\#Now, Let's visualize the data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Visualization of the responses in terms of Usefulness, Coherence, and Resemblance}
+
+\NormalTok{visualVSelectro <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"C:/repos/contactExperimentRNotebook/visualVSelectro.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   ID = col_double(),
+##   Type = col_character(),
+##   Usefulnes = col_double(),
+##   Resemblance = col_double(),
+##   Coherence = col_double()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{?}\KeywordTok{ggbetweenstats}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## starting httpd help server ...
+\end{verbatim}
+
+\begin{verbatim}
+##  done
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p12 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ visualVSelectro,}
+  \DataTypeTok{x =} \StringTok{"Type"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"Usefulnes"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"np"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Usefulness"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Usefulness Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p12}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p13 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ visualVSelectro,}
+  \DataTypeTok{x =} \StringTok{"Type"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"Resemblance"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"np"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Resemblance"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Resemblance Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p13}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-17-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p14 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ visualVSelectro,}
+  \DataTypeTok{x =} \StringTok{"Type"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"Coherence"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"np"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Coherence"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Coherence Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p14}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-17-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Preferences <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"C:/repos/contactExperimentRNotebook/prefFeed.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   Reliance = col_double(),
+##   Type = col_character()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#This will show on which type of feedback the users relied upon more}
+\KeywordTok{ggplot}\NormalTok{(Preferences) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_bar}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Preferences}\OperatorTok{$}\NormalTok{Type))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-17-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#This will show on which type of feedback the users relied upon more}
+\KeywordTok{hist}\NormalTok{(quest}\OperatorTok{$}\NormalTok{RelyingMoreOn)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-17-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p15 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ Reliance,}
+  \DataTypeTok{x =} \StringTok{"Type"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"Reliance"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"np"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Reliance"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Reliance Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p15}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-17-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#This will show which type of feedback resemble better touching a surface}
+\NormalTok{p16 <-}\StringTok{ }\NormalTok{ggstatsplot}\OperatorTok{::}\KeywordTok{ggbetweenstats}\NormalTok{(}
+  \DataTypeTok{data =}\NormalTok{ Resemble,}
+  \DataTypeTok{x =} \StringTok{"Type"}\NormalTok{,}
+  \DataTypeTok{y =} \StringTok{"Resemblance"}\NormalTok{,}
+  \DataTypeTok{type =} \StringTok{"np"}\NormalTok{,}
+  \DataTypeTok{pairwise.comparisons =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{pairwise.display =} \StringTok{"significant"}\NormalTok{,}
+  \DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+  \DataTypeTok{effsize.type =} \StringTok{"unbiased"}\NormalTok{,}
+  \DataTypeTok{results.subtitle =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{xlab =} \StringTok{"Type of Feedback"}\NormalTok{,}
+  \DataTypeTok{ylab =} \StringTok{"Resemblance"}\NormalTok{,}
+  \DataTypeTok{sample.size.label =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{var.equal =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.plotting =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{mean.ci =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{paired =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{title.text =} \StringTok{"Resemblance Box-Violin Plots"}\NormalTok{,}
+  \DataTypeTok{title.color =} \StringTok{"black"}\NormalTok{,}
+  \DataTypeTok{caption.color =} \StringTok{"black"}
+\NormalTok{  )}
+\NormalTok{p16}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-17-7.pdf}
+
+\#The rest of info on the electrotactile feedback from the
+questionnaires
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalSensation)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalSensation)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4
+## attr(,"freq")
+## [1] 10
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Moderate i.e., neither pleasant nor annoying}
+\KeywordTok{hist}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalSensation)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{median}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalUpdatePerception)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Mode}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalUpdatePerception)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5 6 7
+## attr(,"freq")
+## [1] 6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Often, Very often, All the time! }
+\KeywordTok{hist}\NormalTok{(quest}\OperatorTok{$}\NormalTok{ElectricalUpdatePerception)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Report_files/figure-latex/unnamed-chunk-18-2.pdf}
+
+\#OK so we have a neutral feedback regarding the pleasantness or
+discomfort of the sensation provided by the electrotactile feedback.
+which I interpreted as a positive result since we did not recei,
+especially considering the previous literature.
+
+\#Regarding the perceptual update that the user presses harder the
+surface, the results are really positive, and postulate that the
+electrotactile feedback may contribute with strengthening the
+plausibility illusion (i.e., the illusion that the virtual environment
+responds to your action). However, this should be meticuously
+investigated in a future study.
 
 \end{document}
