@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.11.3)  4 NOV 2020 13:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.11.3)  10 JAN 2022 18:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -609,7 +609,7 @@ File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 126.
 
-Overfull \hbox (13.24358pt too wide) in paragraph at lines 156--156
+Overfull \hbox (13.24358pt too wide) in paragraph at lines 173--173
 []\T1/lmtt/m/n/10 ##      Patil, I. (2018). ggstatsplot: "ggplot2" Based Plots 
 with Statistical Details. CRAN.[] 
  []
@@ -617,227 +617,220 @@ with Statistical Details. CRAN.[]
 [1
 
 {c:/Users/pkourtes/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pd
-ftex.map}]
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 263--263
+ftex.map}] [2]
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 296--296
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 271--271
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 304--304
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 279--279
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 312--312
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 287--287
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 320--320
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 295--295
-[]\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
-he first, from namespace 'Matrix'[] 
- []
-
-[2]
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 303--303
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 328--328
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 311--311
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 336--336
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 319--319
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 344--344
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 327--327
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 352--352
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 335--335
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 360--360
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 343--343
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 368--368
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
 
-Overfull \hbox (23.74355pt too wide) in paragraph at lines 351--351
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 376--376
 []\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
 he first, from namespace 'Matrix'[] 
  []
 
-[3] [4] [5]
-<Report_files/figure-latex/unnamed-chunk-4-1.pdf, id=31, 469.755pt x 325.215pt>
+
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 384--384
+[]\T1/lmtt/m/n/10 ## Found more than one class "atomicVector" in cache; using t
+he first, from namespace 'Matrix'[] 
+ []
+
+[3] [4] [5] [6] [7] [8] [9] [10] [11] [12]
+<Report_files/figure-latex/unnamed-chunk-4-1.pdf, id=60, 469.755pt x 325.215pt>
 
 File: Report_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-4-1.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-4-1.pdf  used 
-on input line 554.
+on input line 976.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[6 <./Report_files/figure-latex/unnamed-chunk-4-1.pdf>]
-<Report_files/figure-latex/unnamed-chunk-4-2.pdf, id=44, 469.755pt x 325.215pt>
+<Report_files/figure-latex/unnamed-chunk-4-2.pdf, id=61, 469.755pt x 325.215pt>
 
 File: Report_files/figure-latex/unnamed-chunk-4-2.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-4-2.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-4-2.pdf  used 
-on input line 562.
+on input line 984.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[7 <./Report_files/figure-latex/unnamed-chunk-4-2.pdf>]
-<Report_files/figure-latex/unnamed-chunk-4-3.pdf, id=58, 469.755pt x 325.215pt>
+[13 <./Report_files/figure-latex/unnamed-chunk-4-1.pdf>] [14 <./Report_files/fi
+gure-latex/unnamed-chunk-4-2.pdf>]
+<Report_files/figure-latex/unnamed-chunk-4-3.pdf, id=87, 469.755pt x 325.215pt>
 
 File: Report_files/figure-latex/unnamed-chunk-4-3.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-4-3.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-4-3.pdf  used 
-on input line 645.
+on input line 1067.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[8]
-<Report_files/figure-latex/unnamed-chunk-4-4.pdf, id=63, 469.755pt x 325.215pt>
+[15]
+<Report_files/figure-latex/unnamed-chunk-4-4.pdf, id=92, 469.755pt x 325.215pt>
 
 File: Report_files/figure-latex/unnamed-chunk-4-4.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-4-4.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-4-4.pdf  used 
-on input line 653.
+on input line 1075.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[9 <./Report_files/figure-latex/unnamed-chunk-4-3.pdf>] [10 <./Report_files/fig
-ure-latex/unnamed-chunk-4-4.pdf>]
-<Report_files/figure-latex/unnamed-chunk-4-5.pdf, id=88, 469.755pt x 325.215pt>
-
+[16 <./Report_files/figure-latex/unnamed-chunk-4-3.pdf>] [17 <./Report_files/fi
+gure-latex/unnamed-chunk-4-4.pdf>]
+<Report_files/figure-latex/unnamed-chunk-4-5.pdf, id=117, 469.755pt x 325.215pt
+>
 File: Report_files/figure-latex/unnamed-chunk-4-5.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-4-5.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-4-5.pdf  used 
-on input line 706.
+on input line 1128.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-<Report_files/figure-latex/unnamed-chunk-4-6.pdf, id=89, 469.755pt x 325.215pt>
-
+<Report_files/figure-latex/unnamed-chunk-4-6.pdf, id=118, 469.755pt x 325.215pt
+>
 File: Report_files/figure-latex/unnamed-chunk-4-6.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-4-6.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-4-6.pdf  used 
-on input line 714.
+on input line 1136.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[11 <./Report_files/figure-latex/unnamed-chunk-4-5.pdf>] [12 <./Report_files/fi
-gure-latex/unnamed-chunk-4-6.pdf>]
-Underfull \vbox (badness 10000) detected at line 926
+[18 <./Report_files/figure-latex/unnamed-chunk-4-5.pdf>] [19 <./Report_files/fi
+gure-latex/unnamed-chunk-4-6.pdf>] [20] [21] [22] [23]
+Underfull \vbox (badness 10000) detected at line 1543
  []
 
 
-Underfull \vbox (badness 10000) detected at line 926
+Underfull \vbox (badness 10000) detected at line 1543
  []
 
-[13]
-Underfull \vbox (badness 10000) detected at line 926
- []
-
-
-Underfull \vbox (badness 10000) detected at line 926
- []
-
-[14]
-Underfull \vbox (badness 10000) detected at line 926
+[24]
+Underfull \vbox (badness 10000) detected at line 1543
  []
 
 
-Underfull \vbox (badness 10000) detected at line 926
+Underfull \vbox (badness 10000) detected at line 1543
  []
 
-[15]
-<Report_files/figure-latex/unnamed-chunk-5-1.pdf, id=123, 469.755pt x 325.215pt
+[25]
+<Report_files/figure-latex/unnamed-chunk-5-1.pdf, id=166, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-1.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-1.pdf  used 
-on input line 928.
+on input line 1545.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-<Report_files/figure-latex/unnamed-chunk-5-2.pdf, id=124, 469.755pt x 325.215pt
+[26]
+<Report_files/figure-latex/unnamed-chunk-5-2.pdf, id=171, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-2.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-2.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-2.pdf  used 
-on input line 936.
+on input line 1553.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[16 <./Report_files/figure-latex/unnamed-chunk-5-1.pdf>]
-<Report_files/figure-latex/unnamed-chunk-5-3.pdf, id=140, 469.755pt x 325.215pt
+[27 <./Report_files/figure-latex/unnamed-chunk-5-1.pdf>]
+<Report_files/figure-latex/unnamed-chunk-5-3.pdf, id=187, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-3.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-3.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-3.pdf  used 
-on input line 944.
+on input line 1561.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[17 <./Report_files/figure-latex/unnamed-chunk-5-2.pdf>]
-<Report_files/figure-latex/unnamed-chunk-5-4.pdf, id=157, 469.755pt x 325.215pt
+[28 <./Report_files/figure-latex/unnamed-chunk-5-2.pdf>]
+<Report_files/figure-latex/unnamed-chunk-5-4.pdf, id=203, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-4.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-4.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-4.pdf  used 
-on input line 952.
+on input line 1569.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[18 <./Report_files/figure-latex/unnamed-chunk-5-3.pdf>]
-<Report_files/figure-latex/unnamed-chunk-5-5.pdf, id=173, 469.755pt x 325.215pt
+[29 <./Report_files/figure-latex/unnamed-chunk-5-3.pdf>]
+<Report_files/figure-latex/unnamed-chunk-5-5.pdf, id=219, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-5.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-5.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-5.pdf  used 
-on input line 960.
+on input line 1577.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[19 <./Report_files/figure-latex/unnamed-chunk-5-4.pdf>]
-<Report_files/figure-latex/unnamed-chunk-5-6.pdf, id=190, 469.755pt x 325.215pt
+[30 <./Report_files/figure-latex/unnamed-chunk-5-4.pdf>]
+<Report_files/figure-latex/unnamed-chunk-5-6.pdf, id=235, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-6.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-6.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-6.pdf  used 
-on input line 968.
+on input line 1585.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[20 <./Report_files/figure-latex/unnamed-chunk-5-5.pdf>]
-<Report_files/figure-latex/unnamed-chunk-5-7.pdf, id=206, 469.755pt x 325.215pt
+[31 <./Report_files/figure-latex/unnamed-chunk-5-5.pdf>]
+<Report_files/figure-latex/unnamed-chunk-5-7.pdf, id=252, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-7.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-7.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-7.pdf  used 
-on input line 976.
+on input line 1593.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[21 <./Report_files/figure-latex/unnamed-chunk-5-6.pdf>]
-<Report_files/figure-latex/unnamed-chunk-5-8.pdf, id=222, 469.755pt x 325.215pt
+[32 <./Report_files/figure-latex/unnamed-chunk-5-6.pdf>]
+<Report_files/figure-latex/unnamed-chunk-5-8.pdf, id=268, 469.755pt x 325.215pt
 >
 File: Report_files/figure-latex/unnamed-chunk-5-8.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-5-8.pdf>
 Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-5-8.pdf  used 
-on input line 984.
+on input line 1601.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[22 <./Report_files/figure-latex/unnamed-chunk-5-7.pdf>]
+[33 <./Report_files/figure-latex/unnamed-chunk-5-7.pdf>]
 
 Package longtable Warning: Column widths have changed
-(longtable)                in table 1 on input line 1009.
+(longtable)                in table 1 on input line 1626.
 
 
 Package longtable Warning: Column widths have changed
-(longtable)                in table 2 on input line 1032.
+(longtable)                in table 2 on input line 1649.
 
 
 Overfull \vbox (8.29616pt too high) has occurred while \output is active []
 
-[23 <./Report_files/figure-latex/unnamed-chunk-5-8.pdf>]
+[34 <./Report_files/figure-latex/unnamed-chunk-5-8.pdf>]
 
 ! Package inputenc Error: Unicode character ω (U+03C9)
 (inputenc)                not set up for use with LaTeX.
@@ -846,12 +839,12 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1065 ...erpreting Omega Squared Small effect: ω
-                                                  2 = 0.01; Medium 
+l.1688 \#Small effect: ω
+                         2 = 0.01; 
 Here is how much of TeX's memory you used:
- 11420 strings out of 481433
- 168068 string characters out of 5918562
- 475375 words of memory out of 5000000
+ 11431 strings out of 481433
+ 168145 string characters out of 5918562
+ 488124 words of memory out of 5000000
  27958 multiletter control sequences out of 15000+600000
  560303 words of font info for 52 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
